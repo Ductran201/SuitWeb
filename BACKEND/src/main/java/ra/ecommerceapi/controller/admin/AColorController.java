@@ -55,6 +55,8 @@ public class AColorController {
                 .build());
     }
 
+
+
     @PostMapping("")
     public ResponseEntity<?> add(@Valid @RequestBody ColorRequest colorRequest) throws CustomException {
         return ResponseEntity.ok().body(ResponseWrapper.builder()
@@ -85,7 +87,7 @@ public class AColorController {
                 .build());
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{id}/toggleStatus")
     public ResponseEntity<?> toggleStatus(@PathVariable Long id) throws CustomException {
         findById(id);
         colorService.toggleStatus(id);

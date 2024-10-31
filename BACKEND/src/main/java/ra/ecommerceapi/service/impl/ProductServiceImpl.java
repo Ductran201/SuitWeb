@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
+import ra.ecommerceapi.model.dto.response.ProductOverviewResponse;
 import ra.ecommerceapi.model.dto.response.ProductResponse;
 import ra.ecommerceapi.model.entity.Product;
 import ra.ecommerceapi.repository.IProductRepo;
@@ -31,6 +32,16 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public List<Product> findAll() {
         return productRepo.findAll();
+    }
+
+    @Override
+    public List<ProductOverviewResponse> findTopProductNewest(Long id) {
+        return productRepo.findTopProductNewest(id);
+    }
+
+    @Override
+    public Page<ProductOverviewResponse> findAllPaginationUser(Long id,String search, Pageable pageable) {
+        return productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(id,search,pageable);
     }
 
     @Override
@@ -102,19 +113,21 @@ public class ProductServiceImpl implements IProductService {
         return productRepo.findAllByNameContains(search,pageable);
     }
 
-    @Override
-    public Page<ProductResponse> findAllPaginationUser(String search, Pageable pageable) {
-        return productRepo.findAllByNameContainsAndStatusTrueOrDescriptionContainsAndStatusTrue(search,search,pageable).map(p->modelMapper.map(p, ProductResponse.class));
-    }
+//    @Override
+//    public Page<ProductResponse> findAllPaginationUser(Long id,String search, Pageable pageable) {
+//        return productRepo.findAllByNameContainsAndStatusTrueOrDescriptionContainsAndStatusTrue(search,search,pageable).map(p->modelMapper.map(p, ProductResponse.class));
+//    }
 
-    @Override
-    public Page<ProductResponse> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable) {
 
-        Page<ProductResponse> productUserDTOS= productRepo.findAllByCategoryIdAndStatusTrue(id,pageable).map(p->modelMapper.map(p, ProductResponse.class));
-        if (productUserDTOS.isEmpty()){
-            throw new NoSuchElementException("Not found the product of category");
-        }
-        return productUserDTOS;
-    }
+
+//    @Override
+//    public Page<ProductResponse> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable) {
+//
+//        Page<ProductResponse> productUserDTOS= productRepo.findAllByCategoryIdAndStatusTrue(id,pageable).map(p->modelMapper.map(p, ProductResponse.class));
+//        if (productUserDTOS.isEmpty()){
+//            throw new NoSuchElementException("Not found the product of category");
+//        }
+//        return productUserDTOS;
+//    }
 
 }

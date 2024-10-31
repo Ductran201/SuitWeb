@@ -13,9 +13,13 @@ export const productPagination = createAsyncThunk(
   }
 );
 
+export const topNewestProduct = createAsyncThunk("product/topNewest",async (idCategory)=>{
+  const res = await BASE_URL.get(`admin/products/newest/${idCategory}`)
+  return res.data.data
+})
+
 export const addProduct = createAsyncThunk("product/add", async (product) => {
   const res = await FORM_DATA.post("admin/products", product);
-  console.log(res);
   return res;
 });
 
@@ -23,7 +27,6 @@ export const editProduct = createAsyncThunk(
   "product/edit",
   async ({ product, id }) => {
     const res = await FORM_DATA.put(`admin/products/${id}`, product);
-    console.log(res);
     return res;
   }
 );
@@ -36,7 +39,7 @@ export const deleteProduct = createAsyncThunk("product/delete", async (id) => {
 export const toggleStatusProduct = createAsyncThunk(
   "product/toggleStatus",
   async (id) => {
-    const res = await BASE_URL.put(`admin/products/${id}/status`);
+    const res = await BASE_URL.put(`admin/products/${id}/toggleStatus`);
     return res;
   }
 );

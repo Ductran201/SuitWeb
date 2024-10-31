@@ -14,6 +14,8 @@ import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
+import ra.ecommerceapi.repository.ICategoryRepo;
+import ra.ecommerceapi.service.ICategoryService;
 import ra.ecommerceapi.service.IProductService;
 
 @Controller
@@ -21,6 +23,7 @@ import ra.ecommerceapi.service.IProductService;
 @RequestMapping("api.com/v2/admin/products")
 public class AProductController {
     private final IProductService productService;
+    private final ICategoryService categoryService;
 
     /**
      * @param search   String
@@ -50,6 +53,18 @@ public class AProductController {
         return ResponseEntity.ok().body(
                 ResponseWrapper.builder()
                         .data(productService.findById(id))
+                        .status(EHttpStatus.SUCCESS)
+                        .code(200)
+                        .build()
+        );
+    }
+
+    @GetMapping("/newest/{categoryId}")
+    public ResponseEntity<?> topProductNewest(@PathVariable Long categoryId) {
+        categoryService.findById(categoryId);
+        return ResponseEntity.ok().body(
+                ResponseWrapper.builder()
+                        .data(productService.findTopProductNewest(categoryId))
                         .status(EHttpStatus.SUCCESS)
                         .code(200)
                         .build()
@@ -92,7 +107,6 @@ public class AProductController {
         productService.toggleStatus(id);
         return ResponseEntity.ok().body(new ResponseWrapper<>("Change status successfully!!", EHttpStatus.SUCCESS, 200));
     }
-
 
 
 }

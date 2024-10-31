@@ -7,20 +7,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.dto.request.CategoryRequest;
 import ra.ecommerceapi.service.ICategoryService;
+import ra.ecommerceapi.service.IProductService;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api.com/v2/admin/categories")
 public class ACategoryController {
     private final ICategoryService categoryService;
+    private final IProductService productService;
 
     /**
      * @param search   String
@@ -71,6 +73,23 @@ public class ACategoryController {
                         .code(200)
                         .build()
         );
+    }
+
+    @GetMapping("/{id}/products")
+    public ResponseEntity<?> ListPaginationUser(@PathVariable Long id,
+                                                @PageableDefault(size = 2) Pageable pageable,
+                                                @RequestParam(defaultValue = "") String search,
+                                                @RequestParam(defaultValue = "DESC") String sortDirection,
+                                                @RequestParam(defaultValue = "id") String sortField) throws CustomException {
+        findById(id);
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        return ResponseEntity.ok().body(ResponseWrapper.builder()
+                .data(productService.findAllPaginationUser(id,search, pageable))
+                .status(EHttpStatus.SUCCESS)
+                .code(200)
+                .build());
     }
 
     @PostMapping("")

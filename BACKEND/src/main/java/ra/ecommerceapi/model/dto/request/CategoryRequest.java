@@ -17,7 +17,6 @@ import java.util.Date;
 public class CategoryRequest {
     @NotBlank
     private String name;
-    @NotBlank
     private String description;
     private MultipartFile file;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd/MM/yyyy")

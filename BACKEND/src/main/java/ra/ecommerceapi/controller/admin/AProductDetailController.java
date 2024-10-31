@@ -61,4 +61,6 @@ public class AProductDetailController {
         return ResponseEntity.ok().body(new ResponseWrapper<>("Change status successfully!!", EHttpStatus.SUCCESS, 200));
     }
 
+
+
 }

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import ra.ecommerceapi.model.entity.Category;
+import ra.ecommerceapi.model.dto.response.ProductOverviewResponse;
 import ra.ecommerceapi.model.entity.Product;
 
 import java.util.List;
@@ -21,20 +21,30 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
     void toggleStatus(Long id);
 
     //    FOR USER
-    Page<Product> findAllByNameContainsAndStatusTrueOrDescriptionContainsAndStatusTrue(String name, String description, Pageable pageable);
+    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.name,p.image,p.createdDate,pd.price) " +
+            "from Product p " +
+            "join ProductDetail pd on pd.product=p " +
+            "where p.category.id = :id and p.name like %:name% and p.status = true")
+    Page<ProductOverviewResponse> findAllByCategoryIdAndNameContainsAndStatusTrue(Long id,String name, Pageable pageable);
 
-    Page<Product> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable);
     //    COMMON
     @Query("select p.image from Product p where p.id= :id")
     String getImgById(@Param("id") Long id);
 
     Boolean existsByName(String name);
 
-//    @Query("SELECT new com.example.ProductOverviewDTO(p.name, p.description, pd.price, p.createdDate) " +
-//            "FROM Product p JOIN p.productDetails pd " +
-//            "ORDER BY p.createdDate DESC")
-//    List<ProductOverviewDTO> findTop8NewestProducts(Pageable pageable);
+    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.name,p.image,p.createdDate,pd.price) " +
+            "from Product p " +
+            "join ProductDetail pd on pd.product=p where p.category.id=:id order by pd.price asc limit 1")
+    List<ProductOverviewResponse> findTopProductNewest(Long id);
+// This for if limit doesnt work
+//    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.name, pd.price) " +
+//            "from Product p " +
+//            "join ProductDetail pb on pb.product = p " +
+//            "order by pb.price desc")
+//    List<ProductOverviewResponse> findTopByPrice(Pageable pageable);
 
-//    @Query("SELECT p FROM Product p JOIN FETCH p.productDetails pd WHERE pd IS NOT NULL ORDER BY p.createdDate DESC")
-//    List<Product> findTop8NewestProducts(Pageable pageable);
+//    List<ProductOverviewResponse> topProducts = productRepo.findTopByPrice(PageRequest.of(0, 1));
+
+
 }

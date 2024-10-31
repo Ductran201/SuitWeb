@@ -85,7 +85,7 @@ public class ASizeController {
                 .build());
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{id}/toggleStatus")
     public ResponseEntity<?> toggleStatus(@PathVariable Long id) throws CustomException {
         findById(id);
         sizeService.toggleStatus(id);

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
+import ra.ecommerceapi.model.dto.response.ProductOverviewResponse;
 import ra.ecommerceapi.model.dto.response.ProductResponse;
 import ra.ecommerceapi.model.entity.Product;
 
@@ -24,13 +25,16 @@ public interface IProductService {
     void toggleStatus(Long id);
     // FOR USER
 
-    Page<ProductResponse> findAllPaginationUser(String search, Pageable pageable);
+//    Page<ProductResponse> findAllPaginationUser(String search, Pageable pageable);
 
-    Page<ProductResponse> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable);
+//    Page<ProductResponse> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable);
+
+    List<ProductOverviewResponse> findTopProductNewest(Long id);
+
+    Page<ProductOverviewResponse> findAllPaginationUser(Long id, String search, Pageable pageable);
+
     // COMMON
     List<Product> findAll();
-
-
 
 
 }

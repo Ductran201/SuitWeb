@@ -2,6 +2,7 @@ import ShopLayout from "../layouts/user";
 import AboutShop from "../pages/all/AboutShop";
 import ContactShop from "../pages/all/ContactShop";
 import HomeShop from "../pages/all/HomeShop";
+import ProductByCategory from "../pages/all/ProductByCategory";
 
 const publicRoutes = [
   {
@@ -21,6 +22,11 @@ const publicRoutes = [
         element: <AboutShop />,
       },
     ],
+  },
+
+  {
+    path: "/category/:id",
+    element: <ProductByCategory />,
   },
 ];
 
