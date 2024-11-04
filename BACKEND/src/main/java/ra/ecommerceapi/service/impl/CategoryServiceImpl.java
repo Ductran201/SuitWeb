@@ -85,11 +85,24 @@ public class CategoryServiceImpl implements ICategoryService {
         oldCategory.setName(categoryRequest.getName());
         oldCategory.setDescription(categoryRequest.getDescription());
 
+//        if (categoryRequest.getFile() != null && categoryRequest.getFile().getSize() > 0) {
+//            oldCategory.setImage(uploadService.uploadFileToServer(categoryRequest.getFile()));
+//        } else if(categoryRequest.getFile() != null && categoryRequest.getFile().getSize() == 0){
+////            oldCategory.setImage(categoryRepo.getImgById(id));
+//            oldCategory.setImage(null);
+//        }else{
+//            oldCategory.setImage(categoryRepo.getImgById(id));
+//        }
+
         if (categoryRequest.getFile() != null && categoryRequest.getFile().getSize() > 0) {
             oldCategory.setImage(uploadService.uploadFileToServer(categoryRequest.getFile()));
-        } else {
-            oldCategory.setImage(categoryRepo.getImgById(id));
+        } else if (categoryRequest.getFile() != null && categoryRequest.getFile().getSize() == 0) {
+            oldCategory.setImage(null);
         }
+//        else if (oldCategory.getImage() != null) {
+//            oldCategory.setImage(categoryRepo.getImgById(id));
+//        }
+
 
         return categoryRepo.save(oldCategory);
     }

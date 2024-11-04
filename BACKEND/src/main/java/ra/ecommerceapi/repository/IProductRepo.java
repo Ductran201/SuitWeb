@@ -21,7 +21,7 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
     void toggleStatus(Long id);
 
     //    FOR USER
-    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.name,p.image,p.createdDate,pd.price) " +
+    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
             "from Product p " +
             "join ProductDetail pd on pd.product=p " +
             "where p.category.id = :id and p.name like %:name% and p.status = true")
@@ -33,7 +33,7 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
 
     Boolean existsByName(String name);
 
-    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.name,p.image,p.createdDate,pd.price) " +
+    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
             "from Product p " +
             "join ProductDetail pd on pd.product=p where p.category.id=:id order by pd.price asc limit 1")
     List<ProductOverviewResponse> findTopProductNewest(Long id);

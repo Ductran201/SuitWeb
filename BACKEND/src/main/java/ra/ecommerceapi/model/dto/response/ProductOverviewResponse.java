@@ -11,6 +11,7 @@ import java.util.Date;
 @Setter
 @Builder
 public class ProductOverviewResponse {
+    private Long id;
     private String name;
     private String image;
     private Date createdDate;
