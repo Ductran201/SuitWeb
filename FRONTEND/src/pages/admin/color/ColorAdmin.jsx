@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import Choices from "../../components/choices";
+import Choices from "../../../components/choices";
 import {
   Close,
   Delete,
@@ -19,32 +19,21 @@ import {
   MoreHoriz,
 } from "@mui/icons-material";
 import {
-  addCategory,
-  categoryPagination,
-  deleteCategory,
-  editCategory,
-  toggleStatusCategory,
-} from "../../services/categoryService";
-import { styled } from "@mui/material/styles";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+  addColor,
+  colorPagination,
+  deleteColor,
+  editColor,
+  toggleStatusColor,
+} from "../../../services/colorService";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
-import DialogCustom from "../../components/dialog";
-import AlertCustom from "../../components/alert/AlertCustom";
-import NativeSelectCustom from "../../components/nativeSelect/NativeSelectCustom";
+import DialogCustom from "../../../components/dialog";
+import AlertCustom from "../../../components/alert/AlertCustom";
+import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
+import { useForm } from "react-hook-form";
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
-export default function CategoryAdmin() {
+export default function ColorAdmin() {
   const dispatch = useDispatch();
 
   // Pagination
@@ -52,7 +41,7 @@ export default function CategoryAdmin() {
   const [sortDirection, setSortDirection] = useState("DESC");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(2);
+  const [sizePage, setSizePage] = useState(2);
 
   const [isFormAdd, setIsFormAdd] = useState(false);
   const [isFormEdit, setIsFormEdit] = useState(false);
@@ -62,24 +51,69 @@ export default function CategoryAdmin() {
   const [isAlert, setIsAlert] = useState(false);
 
   const [baseId, setBaseId] = useState(null);
-  const [category, setCategory] = useState({
-    name: "",
-    description: "",
-  });
 
   const debounce = useDebounce(search, 500);
-  // Data of category
+  // Data of size
   const { data, error, totalPages, totalElements, numberOfElements } =
-    useSelector((state) => state.category);
+    useSelector((state) => state.color);
 
-  const loadCategoryPagination = () => {
+  const loadColorPagination = () => {
     dispatch(
-      categoryPagination({ page, size, search, sortField, sortDirection })
+      colorPagination({
+        page,
+        size: sizePage,
+        search,
+        sortField,
+        sortDirection,
+      })
     );
   };
   useEffect(() => {
-    loadCategoryPagination();
-  }, [page, debounce, size, sortDirection, sortField]);
+    loadColorPagination();
+  }, [page, debounce, sizePage, sortDirection, sortField]);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    reset,
+    clearErrors,
+    formState: { errors },
+  } = useForm();
+
+  const resetForm = () => {
+    reset();
+    clearErrors();
+    setIsFormAdd(false);
+    setIsFormEdit(false);
+  };
+
+  const onSubmit = async (dataForm) => {
+    try {
+      const action = isFormAdd
+        ? addColor(dataForm)
+        : editColor({ color: dataForm, id: baseId });
+
+      await dispatch(action).unwrap();
+
+      loadColorPagination();
+      // Show alert
+      const propsAlert = {
+        mainContent: isFormAdd
+          ? "Color added successfully!"
+          : "Color updated successfully!",
+        severity: "success",
+      };
+      handleShowAlert(propsAlert);
+      resetForm();
+    } catch (error) {
+      setError("name", {
+        type: "manual",
+        message: error, // API error message, e.g., "This color already exists"
+      });
+    }
+  };
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -91,27 +125,12 @@ export default function CategoryAdmin() {
   };
 
   const handleChangePageSize = (newSize) => {
-    setSize(newSize);
+    setSizePage(newSize);
   };
 
   const handleSelectFilter = (sortField, sortDirection) => {
     setSortField(sortField);
     setSortDirection(sortDirection);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCategory({
-      ...category,
-      [name]: value,
-    });
-  };
-
-  const [file, setFile] = useState(null);
-
-  const handleGetFile = (e) => {
-    console.log(e.target.files[0]);
-    setFile(e.target.files[0]);
   };
 
   const handleShowAlert = (propsAlert) => {
@@ -123,46 +142,10 @@ export default function CategoryAdmin() {
     }, 3000);
   };
 
-  const handleAdd = () => {
-    const formData = new FormData();
-    formData.append("name", category.name);
-    formData.append("description", category.description);
-    formData.append("file", file);
-    dispatch(addCategory(formData))
-      .then(() => {
-        loadCategoryPagination();
-        const propsAlert = {
-          mainContent: "Create new category successfully!!",
-          severity: "success",
-        };
-
-        handleShowAlert(propsAlert);
-        setIsFormAdd(false);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const handleEdit = (baseId) => {
-    const formData = new FormData();
-    formData.append("name", category.name);
-    formData.append("description", category.description);
-    formData.append("file", file);
-    dispatch(editCategory({ category: formData, id: baseId }))
-      .then(() => {
-        loadCategoryPagination();
-        setIsFormEdit(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const handleConfirmDelete = (id) => {
-    dispatch(deleteCategory(id))
+    dispatch(deleteColor(id))
       .then(() => {
-        loadCategoryPagination();
+        loadColorPagination();
         setIsDialog(false);
       })
       .catch((error) => {
@@ -171,9 +154,9 @@ export default function CategoryAdmin() {
   };
 
   const handleConfirmToggleStatus = (id) => {
-    dispatch(toggleStatusCategory(id))
+    dispatch(toggleStatusColor(id))
       .then(() => {
-        loadCategoryPagination();
+        loadColorPagination();
         // Config alert
         const propsAlert = {
           mainContent: "Change status successfully!!",
@@ -186,12 +169,16 @@ export default function CategoryAdmin() {
   };
 
   const handleOpenEdit = (id) => {
-    setBaseId(id);
-    setIsFormEdit(true);
+    const colorData = data.find((c) => c.id === id);
+    if (colorData) {
+      // Use Object to match old fileds
+      Object.entries(colorData).forEach(([key, value]) => {
+        setValue(key, value);
+      });
 
-    // find the old category
-    const findById = data.find((cat) => cat.id === id);
-    setCategory(findById);
+      setBaseId(id);
+      setIsFormEdit(true);
+    }
   };
 
   const handleOpenDialog = (id, action, status) => {
@@ -205,8 +192,8 @@ export default function CategoryAdmin() {
           onClose: () => {
             setIsDialog(false);
           },
-          title: "Delete Category",
-          mainContent: "Are you sure to delete this category?",
+          title: "Delete color",
+          mainContent: "Are you sure to delete this color?",
           onConfirm: () => handleConfirmDelete(id),
         };
         break;
@@ -215,10 +202,10 @@ export default function CategoryAdmin() {
           onClose: () => {
             setIsDialog(false);
           },
-          title: status ? "Block category" : "Unblock category",
+          title: status ? "Block color" : "Unblock color",
           mainContent: status
-            ? "Are you sure to block this category?"
-            : "Are you sure to unblock this category?",
+            ? "Are you sure to block this color?"
+            : "Are you sure to unblock this color?",
           onConfirm: () => handleConfirmToggleStatus(id),
         };
       default:
@@ -289,53 +276,30 @@ export default function CategoryAdmin() {
       {isFormAdd && (
         <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-[300px] min-h-[250px] bg-gray-500 p-4"
           >
             <div className="flex justify-between items-center mb-5">
               <h1 className="">Add</h1>
-              <Close
-                className="cursor-pointer"
-                onClick={() => {
-                  setIsFormAdd(false);
-                }}
-              />
+              <Close className="cursor-pointer" onClick={resetForm} />
             </div>
+
             <div className="flex justify-center items-center flex-col gap-6">
               <TextField
-                onChange={handleChange}
-                name="name"
                 size="small"
                 fullWidth
                 label="Name"
                 variant="outlined"
+                {...register("name", {
+                  required: "Must not be blank",
+                  validate: (value) =>
+                    value.trim() !== "" || "Must not be blank",
+                })}
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
-              <TextField
-                onChange={handleChange}
-                name="description"
-                size="small"
-                fullWidth
-                label="description"
-                variant="outlined"
-              />
-              <Button
-                fullWidth
-                component="label"
-                role={undefined}
-                variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudUploadIcon />}
-                onChange={handleGetFile}
-              >
-                Upload files
-                <VisuallyHiddenInput type="file" multiple />
-              </Button>
-              <Button
-                onClick={handleAdd}
-                type="submit"
-                variant="contained"
-                fullWidth
-              >
+              {/* {errors.name && <span>This field is required</span>} */}
+              <Button type="submit" variant="contained" fullWidth>
                 Add
               </Button>
             </div>
@@ -346,55 +310,29 @@ export default function CategoryAdmin() {
       {isFormEdit && (
         <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-[300px] min-h-[250px] bg-white border border-black p-4 "
           >
             <div className="flex justify-between items-center mb-5">
               <h1 className="">Edit</h1>
-              <Close
-                className="cursor-pointer"
-                onClick={() => {
-                  setIsFormEdit(false);
-                }}
-              />
+              <Close className="cursor-pointer" onClick={resetForm} />
             </div>
             <div className="flex justify-center items-center flex-col gap-6">
               <TextField
-                onChange={handleChange}
-                name="name"
                 size="small"
                 fullWidth
                 label="Name"
                 variant="outlined"
-                value={category.name}
+                {...register("name", {
+                  required: "Must not be blank",
+                  validate: (value) =>
+                    value.trim() !== "" || "Must not be blank",
+                })}
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
-              <TextField
-                onChange={handleChange}
-                name="description"
-                size="small"
-                fullWidth
-                label="description"
-                variant="outlined"
-                value={category.description}
-              />
-              <Button
-                fullWidth
-                component="label"
-                role={undefined}
-                variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudUploadIcon />}
-                onChange={handleGetFile}
-              >
-                Upload files
-                <VisuallyHiddenInput type="file" multiple />
-              </Button>
-              <Button
-                onClick={() => handleEdit(baseId)}
-                type="submit"
-                variant="contained"
-                fullWidth
-              >
+
+              <Button type="submit" variant="contained" fullWidth>
                 Edit
               </Button>
             </div>
@@ -406,7 +344,7 @@ export default function CategoryAdmin() {
 
       {/* HEADING */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="font-bold text-[20px]">Category Management</h1>
+        <h1 className="font-bold text-[20px]">Color Management</h1>
         <TextField
           onChange={handleSearch}
           size="small"
@@ -423,8 +361,14 @@ export default function CategoryAdmin() {
           ></Choices>
         </div>
 
-        <Button variant="contained" onClick={() => setIsFormAdd(true)}>
-          Add new category
+        <Button
+          variant="contained"
+          onClick={() => {
+            setIsFormAdd(true);
+            reset();
+          }}
+        >
+          Add new size
         </Button>
       </div>
       {/* MAIN TABLE */}
@@ -437,34 +381,26 @@ export default function CategoryAdmin() {
             <th className="border ">ID</th>
             <th className="border ">NAME</th>
             <th className="border ">STATUS</th>
-            <th className="border w-[150px]">IMAGE</th>
             <th className="border ">CREATED DATE</th>
             <th className="border w-4 "></th>
           </tr>
         </thead>
 
         <tbody className="text-center bg-white">
-          {data?.map((cat) => (
-            <tr key={cat.id}>
+          {data?.map((c) => (
+            <tr key={c.id}>
               <td className="">
                 <input type="checkbox" />
               </td>
-              <td>{cat.id}</td>
-              <td>{cat.name}</td>
-              <td>{cat.status ? "Active" : "Inactive"}</td>
-              <td>
-                <img
-                  src={cat.image}
-                  alt=""
-                  className="h-[100px] w-[100%] object-cover"
-                />
-              </td>
-              <td>{cat.createdDate}</td>
+              <td>{c.id}</td>
+              <td>{c.name}</td>
+              <td>{c.status ? "Active" : "Inactive"}</td>
+              <td>{c.createdDate}</td>
 
               <td>
                 <Choices
                   icon={<MoreHoriz />}
-                  listOptions={listOptions(cat.id, cat.status)}
+                  listOptions={listOptions(c.id, c.status)}
                 ></Choices>
               </td>
             </tr>
@@ -480,7 +416,7 @@ export default function CategoryAdmin() {
 
         <NativeSelectCustom
           onChange={handleChangePageSize}
-          label={"Size"}
+          //   label={"Size"}
           data={dataPageSize}
         />
 

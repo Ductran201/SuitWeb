@@ -21,15 +21,36 @@ export const sizeNoPagination = createAsyncThunk(
   }
 );
 
-export const addSize = createAsyncThunk("size/add", async (size) => {
-  const res = await BASE_URL.post("admin/sizes", size);
-  return res;
-});
+const handleErrorMessage = (error) => {
+  if (error.response && error.response.data.code === 409) {
+    return "This size already exists";
+  }
+  return "An error occurred, please try again later";
+};
 
-export const editSize = createAsyncThunk("size/edit", async ({ size, id }) => {
-  const res = await BASE_URL.put(`admin/sizes/${id}`, size);
-  return res;
-});
+export const addSize = createAsyncThunk(
+  "size/add",
+  async (size, { rejectWithValue }) => {
+    try {
+      const res = await BASE_URL.post("admin/sizes", size);
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error));
+    }
+  }
+);
+
+export const editSize = createAsyncThunk(
+  "size/edit",
+  async ({ size, id }, { rejectWithValue }) => {
+    try {
+      const res = await BASE_URL.put(`admin/sizes/${id}`, size);
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error));
+    }
+  }
+);
 
 export const deleteSize = createAsyncThunk("size/delete", async (id) => {
   const res = await BASE_URL.delete(`admin/sizes/${id}`);

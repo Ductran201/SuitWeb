@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import HeaderShop from "../../layouts/user/headerShop/HeaderShop";
 import FooterShop from "../../layouts/user/footerShop/FooterShop";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
 import { findAllProductByCategory } from "../../services/categoryService";
@@ -50,11 +50,11 @@ export default function ProductByCategory() {
           <div className="grid grid-cols-4 gap-4">
             {data?.map((pro) => (
               <div key={pro.id}>
-                <a href="">
+                <Link to={`/product/${pro.id}`}>
                   <img src={`${pro.image}`} alt="" />
                   <p>{pro.name}</p>
                   <b>{pro.price} đ</b>
-                </a>
+                </Link>
               </div>
             ))}
           </div>

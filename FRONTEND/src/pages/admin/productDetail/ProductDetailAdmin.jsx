@@ -1,53 +1,47 @@
-import {
-  Button,
-  MenuItem,
-  Pagination,
-  Select,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, Pagination, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import Choices from "../../components/choices";
+import Choices from "../../../components/choices";
 import {
   Close,
   Delete,
   Edit,
-  Filter,
   FilterAlt,
   Lock,
   LockOpen,
   MoreHoriz,
 } from "@mui/icons-material";
 import {
-  addProduct,
-  productPagination,
-  deleteProduct,
-  editProduct,
-  toggleStatusProduct,
-} from "../../services/productService";
+  productDetailPagination,
+  deleteProductDetail,
+  editProductDetail,
+  toggleStatusProductDetail,
+  addProductDetail,
+} from "../../../services/productDetailService";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
-import DialogCustom from "../../components/dialog";
-import AlertCustom from "../../components/alert/AlertCustom";
-import NativeSelectCustom from "../../components/nativeSelect/NativeSelectCustom";
-import { categoryNoPagination } from "../../services/categoryService";
-import SelectCustom from "../../components/select/SelectCustom";
-import { Link } from "react-router-dom";
+import DialogCustom from "../../../components/dialog";
+import AlertCustom from "../../../components/alert/AlertCustom";
+import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
+import { sizeNoPagination } from "../../../services/sizeService";
+import SelectCustom from "../../../components/select/SelectCustom";
+import { Link, useParams } from "react-router-dom";
+import { colorNoPagination } from "../../../services/colorService";
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
-export default function ProductAdmin() {
+// const VisuallyHiddenInput = styled("input")({
+//   clip: "rect(0 0 0 0)",
+//   clipPath: "inset(50%)",
+//   height: 1,
+//   overflow: "hidden",
+//   position: "absolute",
+//   bottom: 0,
+//   left: 0,
+//   whiteSpace: "nowrap",
+//   width: 1,
+// });
+
+export default function ProductDetailAdmin() {
   const dispatch = useDispatch();
 
   // Pagination
@@ -55,7 +49,7 @@ export default function ProductAdmin() {
   const [sortDirection, setSortDirection] = useState("DESC");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(2);
+  const [sizePage, setSizePage] = useState(2);
 
   const [isFormAdd, setIsFormAdd] = useState(false);
   const [isFormEdit, setIsFormEdit] = useState(false);
@@ -63,50 +57,74 @@ export default function ProductAdmin() {
   const [isDialog, setIsDialog] = useState(false);
   const [alertConfig, setAlertConfig] = useState({});
   const [isAlert, setIsAlert] = useState(false);
-
+  const { productId } = useParams();
   const [baseId, setBaseId] = useState(null);
-  const [product, setProduct] = useState({
+
+  const [productDetail, setProductDetail] = useState({
     name: "",
-    description: "",
-    categoryId: "",
+    price: "",
+    stockQuantity: "",
+    colorId: "",
+    sizeId: "",
+    productId: productId,
   });
 
-  const resetProduct = () => {
-    setProduct({
+  const resetProductDetail = () => {
+    setProductDetail({
       name: "",
-      description: "",
-      categoryId: "",
+      price: "",
+      stockQuantity: "",
+      colorId: "",
+      sizeId: "",
     });
   };
 
   const debounce = useDebounce(search, 500);
   // Data of product
   const {
-    data: productData,
-    error: productError,
+    data: productDetailData,
+    error: productDetailError,
     totalPages,
     totalElements,
     numberOfElements,
-  } = useSelector((state) => state.product);
+  } = useSelector((state) => state.productDetail);
 
-  // Data of category
-  const { data: categoryData, error: categoryError } = useSelector(
-    (state) => state.category
+  // Data of size
+  const { data: sizeData, error: sizeError } = useSelector(
+    (state) => state.size
   );
 
-  const loadProductPagination = () => {
+  // Data of color
+  const { data: colorData, error: colorError } = useSelector(
+    (state) => state.color
+  );
+
+  const loadProductDetailPagination = () => {
     dispatch(
-      productPagination({ page, size, search, sortField, sortDirection })
+      productDetailPagination({
+        page,
+        sizePage,
+        search,
+        sortField,
+        sortDirection,
+        productId,
+      })
     );
   };
 
-  const loadCategoryList = () => {
-    dispatch(categoryNoPagination());
+  const loadSizeList = () => {
+    dispatch(sizeNoPagination());
   };
+
+  const loadColorList = () => {
+    dispatch(colorNoPagination());
+  };
+
   useEffect(() => {
-    loadProductPagination();
-    loadCategoryList();
-  }, [page, debounce, size, sortDirection, sortField]);
+    loadProductDetailPagination();
+    loadColorList();
+    loadSizeList();
+  }, [page, debounce, sizePage, sortDirection, sortField]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -118,7 +136,7 @@ export default function ProductAdmin() {
   };
 
   const handleChangePageSize = (newSize) => {
-    setSize(newSize);
+    setSizePage(newSize);
   };
 
   const handleSelectFilter = (sortField, sortDirection) => {
@@ -128,8 +146,8 @@ export default function ProductAdmin() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProduct({
-      ...product,
+    setProductDetail({
+      ...productDetail,
       [name]: value,
     });
   };
@@ -137,7 +155,6 @@ export default function ProductAdmin() {
   const [file, setFile] = useState(null);
 
   const handleGetFile = (e) => {
-    console.log(e.target.files[0]);
     setFile(e.target.files[0]);
   };
 
@@ -151,14 +168,9 @@ export default function ProductAdmin() {
   };
 
   const handleAdd = () => {
-    const formData = new FormData();
-    formData.append("name", product.name);
-    formData.append("description", product.description);
-    formData.append("categoryId", product.categoryId);
-    formData.append("file", file);
-    dispatch(addProduct(formData))
+    dispatch(addProductDetail(productDetail))
       .then(() => {
-        loadProductPagination();
+        loadProductDetailPagination();
         const propsAlert = {
           mainContent: "Create new product successfully!!",
           severity: "success",
@@ -173,14 +185,9 @@ export default function ProductAdmin() {
   };
 
   const handleEdit = (baseId) => {
-    const formData = new FormData();
-    formData.append("name", product.name);
-    formData.append("description", product.description);
-    formData.append("categoryId", product.categoryId);
-    formData.append("file", file);
-    dispatch(editProduct({ product: formData, id: baseId }))
+    dispatch(editProductDetail({ product: productDetail, id: baseId }))
       .then(() => {
-        loadProductPagination();
+        loadProductDetailPagination();
         setIsFormEdit(false);
       })
       .catch((error) => {
@@ -189,9 +196,9 @@ export default function ProductAdmin() {
   };
 
   const handleConfirmDelete = (id) => {
-    dispatch(deleteProduct(id))
+    dispatch(deleteProductDetail(id))
       .then(() => {
-        loadProductPagination();
+        loadProductDetailPagination();
         setIsDialog(false);
       })
       .catch((error) => {
@@ -200,9 +207,10 @@ export default function ProductAdmin() {
   };
 
   const handleConfirmToggleStatus = (id) => {
-    dispatch(toggleStatusProduct(id))
+    console.log(id);
+    dispatch(toggleStatusProductDetail(id))
       .then(() => {
-        loadProductPagination();
+        loadProductDetailPagination();
         // Config alert
         const propsAlert = {
           mainContent: "Change status successfully!!",
@@ -219,10 +227,11 @@ export default function ProductAdmin() {
     setIsFormEdit(true);
 
     // find the old product
-    const findById = productData.find((pro) => pro.id === id);
-    setProduct({
+    const findById = productDetailData.find((pro) => pro.id === id);
+    setProductDetail({
       ...findById,
-      categoryId: findById.category.id,
+      colorId: findById.color.id,
+      sizeId: findById.size.id,
     });
   };
 
@@ -237,8 +246,8 @@ export default function ProductAdmin() {
           onClose: () => {
             setIsDialog(false);
           },
-          title: "Delete product",
-          mainContent: "Are you sure to delete this product?",
+          title: "Delete product detail",
+          mainContent: "Are you sure to delete this product detail?",
           onConfirm: () => handleConfirmDelete(id),
         };
         break;
@@ -247,10 +256,10 @@ export default function ProductAdmin() {
           onClose: () => {
             setIsDialog(false);
           },
-          title: status ? "Block product" : "Unblock product",
+          title: status ? "Block product detail" : "Unblock product detail",
           mainContent: status
-            ? "Are you sure to block this product?"
-            : "Are you sure to unblock this product?",
+            ? "Are you sure to block this product detail?"
+            : "Are you sure to unblock this product detail?",
           onConfirm: () => handleConfirmToggleStatus(id),
         };
       default:
@@ -344,20 +353,38 @@ export default function ProductAdmin() {
               />
               <TextField
                 onChange={handleChange}
-                name="description"
+                name="price"
+                type="number"
                 size="small"
                 fullWidth
-                label="description"
+                label="price"
+                variant="outlined"
+              />
+              <TextField
+                onChange={handleChange}
+                name="stockQuantity"
+                type="number"
+                size="small"
+                fullWidth
+                label="stockQuantity"
                 variant="outlined"
               />
               <SelectCustom
-                label={"category"}
-                data={categoryData}
-                name="categoryId"
-                value={product.categoryId}
+                label={"color"}
+                data={colorData}
+                name="colorId"
+                value={productDetail.colorId}
                 onChange={handleChange}
               ></SelectCustom>
-              <Button
+
+              <SelectCustom
+                label={"size"}
+                data={sizeData}
+                name="sizeId"
+                value={productDetail.sizeId}
+                onChange={handleChange}
+              ></SelectCustom>
+              {/* <Button
                 fullWidth
                 component="label"
                 role={undefined}
@@ -368,7 +395,7 @@ export default function ProductAdmin() {
               >
                 Upload files
                 <VisuallyHiddenInput type="file" multiple />
-              </Button>
+              </Button> */}
               <Button
                 onClick={handleAdd}
                 type="submit"
@@ -394,7 +421,7 @@ export default function ProductAdmin() {
                 className="cursor-pointer"
                 onClick={() => {
                   setIsFormEdit(false);
-                  resetProduct();
+                  resetProductDetail();
                 }}
               />
             </div>
@@ -404,29 +431,47 @@ export default function ProductAdmin() {
                 name="name"
                 size="small"
                 fullWidth
-                // id="outlined-basic"
                 label="Name"
                 variant="outlined"
                 value={product.name}
               />
               <TextField
                 onChange={handleChange}
-                name="description"
+                name="price"
+                type="number"
                 size="small"
                 fullWidth
-                // id="outlined-basic"
-                label="description"
+                label="Price"
                 variant="outlined"
-                value={product.description}
+                value={productDetail.price}
               />
+              <TextField
+                onChange={handleChange}
+                name="stockQuantity"
+                type="number"
+                size="small"
+                fullWidth
+                label="Stock quantity"
+                variant="outlined"
+                value={productDetail.stockQuantity}
+              />
+
               <SelectCustom
-                label={"category"}
-                data={categoryData}
-                name="categoryId"
-                value={product.categoryId}
+                label={"color"}
+                data={colorData}
+                name="colorId"
+                value={productDetail.colorId}
                 onChange={handleChange}
               ></SelectCustom>
-              <Button
+
+              <SelectCustom
+                label={"size"}
+                data={sizeData}
+                name="sizeId"
+                value={productDetail.sizeId}
+                onChange={handleChange}
+              ></SelectCustom>
+              {/* <Button
                 fullWidth
                 component="label"
                 role={undefined}
@@ -437,7 +482,7 @@ export default function ProductAdmin() {
               >
                 Upload files
                 <VisuallyHiddenInput type="file" multiple />
-              </Button>
+              </Button> */}
               <Button
                 onClick={() => handleEdit(baseId)}
                 type="submit"
@@ -455,7 +500,7 @@ export default function ProductAdmin() {
 
       {/* HEADING */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="font-bold text-[20px]">Product Management</h1>
+        <h1 className="font-bold text-[20px]">Product Detail Management</h1>
         <TextField
           onChange={handleSearch}
           size="small"
@@ -473,7 +518,7 @@ export default function ProductAdmin() {
         </div>
 
         <Button variant="contained" onClick={() => setIsFormAdd(true)}>
-          Add new product
+          Add new product detail
         </Button>
       </div>
 
@@ -486,32 +531,38 @@ export default function ProductAdmin() {
             </th>
             <th className="border ">ID</th>
             <th className="border ">NAME</th>
-            <th className="border w-[150px]">IMAGE</th>
-            <th className="border ">Category</th>
+            {/* <th className="border w-[150px]">IMAGE</th> */}
+            <th className="border ">PRICE</th>
+            <th className="border ">STOCK QUANTITY</th>
+            <th className="border ">COLOR</th>
+            <th className="border ">SIZE</th>
             <th className="border ">STATUS</th>
             <th className="border ">CREATED DATE</th>
             <th className="border w-4 "></th>
           </tr>
         </thead>
-
+        {console.log(productDetailData)}
         <tbody className="text-center bg-white">
-          {productData?.map((pro) => (
+          {productDetailData?.map((pro) => (
             <tr key={pro.id}>
               <td className="">
                 <input type="checkbox" />
               </td>
               <td>{pro.id}</td>
-              <td>
-                <Link to={`/admin/productDetail/${pro.id}`}>{pro.name}</Link>
-              </td>
-              <td>
+              <td>{pro.name}</td>
+              {/* <td>
                 <img
                   src={pro.image}
                   alt=""
                   className="h-[100px] w-[100%] object-cover"
                 />
-              </td>
-              <td>{pro.category.name}</td>
+              </td> */}
+              <td>{pro.price}</td>
+              <td>{pro.stockQuantity}</td>
+
+              <td>{pro.color.name}</td>
+
+              <td>{pro.size.name}</td>
 
               <td>{pro.status ? "Active" : "Inactive"}</td>
 

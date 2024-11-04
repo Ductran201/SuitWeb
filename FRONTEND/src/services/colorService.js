@@ -20,17 +20,35 @@ export const colorNoPagination = createAsyncThunk(
     return res.data.data;
   }
 );
+// Handle Error Message
+const handleErrorMessage = (error)=>{
+  if(error.response && error.response.data.code === 409){
+    return "This color already exists"
+  }
+  return "An error occurred, please try again later"
+}
 
-export const addColor = createAsyncThunk("color/add", async (color) => {
-  const res = await BASE_URL.post("admin/colors", color);
-  return res;
-});
+export const addColor = createAsyncThunk(
+  "color/add",
+  async (color, { rejectWithValue }) => {
+    try {
+      const res = await BASE_URL.post("admin/colors", color);
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error))
+    }
+  }
+);
 
 export const editColor = createAsyncThunk(
   "color/edit",
-  async ({ color, id }) => {
-    const res = await BASE_URL.put(`admin/colors/${id}`, color);
-    return res;
+  async ({ color, id },{rejectWithValue}) => {
+    try{
+      const res = await BASE_URL.put(`admin/colors/${id}`, color);
+      return res;
+    }catch(error){
+      return rejectWithValue(handleErrorMessage(error))
+    }
   }
 );
 
@@ -46,3 +64,5 @@ export const toggleStatusColor = createAsyncThunk(
     return res;
   }
 );
+
+

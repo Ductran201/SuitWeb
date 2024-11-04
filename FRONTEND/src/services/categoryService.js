@@ -21,24 +21,47 @@ export const categoryNoPagination = createAsyncThunk(
   }
 );
 
-export const findAllProductByCategory = createAsyncThunk("category/findAllProduct", async ({ id,page, search, size, sortField, sortDirection })=>{
-  const res = await BASE_URL.get(`admin/categories/${id}/products?page=${page-1}&size=${size}&sortDirection=${sortDirection}&sortField=${sortField}&search=${search}`)
-  return res.data.data
-})
+export const findAllProductByCategory = createAsyncThunk(
+  "category/findAllProduct",
+  async ({ id, page, search, size, sortField, sortDirection }) => {
+    const res = await BASE_URL.get(
+      `admin/categories/${id}/products?page=${
+        page - 1
+      }&size=${size}&sortDirection=${sortDirection}&sortField=${sortField}&search=${search}`
+    );
+    return res.data.data;
+  }
+);
+
+// Handle error message
+const handleErrorMessage = (error) => {
+  if (error.response && error.response.data.code === 409) {
+    return "This category already exists";
+  }
+  return "Has an error";
+};
 
 export const addCategory = createAsyncThunk(
   "category/add",
-  async (category) => {
-    const res = await FORM_DATA.post("admin/categories", category);
-    return res;
+  async (category, { rejectWithValue }) => {
+    try {
+      const res = await FORM_DATA.post("admin/categories", category);
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error));
+    }
   }
 );
 
 export const editCategory = createAsyncThunk(
   "category/edit",
-  async ({ category, id }) => {
-    const res = await FORM_DATA.put(`admin/categories/${id}`, category);
-    return res;
+  async ({ category, id }, { rejectWithValue }) => {
+    try {
+      const res = await FORM_DATA.put(`admin/categories/${id}`, category);
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error));
+    }
   }
 );
 
@@ -57,5 +80,3 @@ export const toggleStatusCategory = createAsyncThunk(
     return res;
   }
 );
-
-

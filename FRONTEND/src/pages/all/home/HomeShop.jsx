@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { productDetailPagination } from "../../services/productDetailService";
+import { productDetailPagination } from "../../../services/productDetailService";
 
 export default function HomeShop() {
   const dispatch = useDispatch();

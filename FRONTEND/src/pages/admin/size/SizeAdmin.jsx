@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import Choices from "../../components/choices";
+import Choices from "../../../components/choices";
 import {
   Close,
   Delete,
@@ -19,20 +19,22 @@ import {
   MoreHoriz,
 } from "@mui/icons-material";
 import {
-  addColor,
-  colorPagination,
-  deleteColor,
-  editColor,
-  toggleStatusColor,
-} from "../../services/colorService";
-
+  addSize,
+  sizePagination,
+  deleteSize,
+  editSize,
+  toggleStatusSize,
+} from "../../../services/sizeService";
+import { styled } from "@mui/material/styles";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
-import DialogCustom from "../../components/dialog";
-import AlertCustom from "../../components/alert/AlertCustom";
-import NativeSelectCustom from "../../components/nativeSelect/NativeSelectCustom";
+import DialogCustom from "../../../components/dialog";
+import AlertCustom from "../../../components/alert/AlertCustom";
+import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
+import { useForm } from "react-hook-form";
 
-export default function ColorAdmin() {
+export default function SizeAdmin() {
   const dispatch = useDispatch();
 
   // Pagination
@@ -50,28 +52,19 @@ export default function ColorAdmin() {
   const [isAlert, setIsAlert] = useState(false);
 
   const [baseId, setBaseId] = useState(null);
-  const [color, setColor] = useState({
-    name: "",
-  });
 
   const debounce = useDebounce(search, 500);
   // Data of size
   const { data, error, totalPages, totalElements, numberOfElements } =
-    useSelector((state) => state.color);
+    useSelector((state) => state.size);
 
-  const loadColorPagination = () => {
+  const loadSizePagination = () => {
     dispatch(
-      colorPagination({
-        page,
-        size: sizePage,
-        search,
-        sortField,
-        sortDirection,
-      })
+      sizePagination({ page, size: sizePage, search, sortField, sortDirection })
     );
   };
   useEffect(() => {
-    loadColorPagination();
+    loadSizePagination();
   }, [page, debounce, sizePage, sortDirection, sortField]);
 
   const handleSearch = (e) => {
@@ -92,19 +85,12 @@ export default function ColorAdmin() {
     setSortDirection(sortDirection);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setColor({
-      ...color,
-      [name]: value,
-    });
-  };
+  // const [file, setFile] = useState(null);
 
-  const [file, setFile] = useState(null);
-
-  const handleGetFile = (e) => {
-    setFile(e.target.files[0]);
-  };
+  // const handleGetFile = (e) => {
+  //   console.log(e.target.files[0]);
+  //   setFile(e.target.files[0]);
+  // };
 
   const handleShowAlert = (propsAlert) => {
     setAlertConfig(propsAlert);
@@ -115,38 +101,51 @@ export default function ColorAdmin() {
     }, 3000);
   };
 
-  const handleAdd = () => {
-    dispatch(addColor(color))
-      .then(() => {
-        loadColorPagination();
-        const propsAlert = {
-          mainContent: "Create new color successfully!!",
-          severity: "success",
-        };
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    setError,
+    reset,
+    clearErrors,
+    formState: { errors },
+  } = useForm();
 
-        handleShowAlert(propsAlert);
-        setIsFormAdd(false);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const resetForm = () => {
+    reset();
+    clearErrors();
+    setIsFormAdd(false);
+    setIsFormEdit(false);
   };
+  const onSubmit = async (dataForm) => {
+    try {
+      const action = isFormAdd
+        ? addSize(dataForm)
+        : editSize({ size: dataForm, id: baseId });
 
-  const handleEdit = (baseId) => {
-    dispatch(editColor({ color: color, id: baseId }))
-      .then(() => {
-        loadColorPagination();
-        setIsFormEdit(false);
-      })
-      .catch((error) => {
-        console.log(error);
+      await dispatch(action).unwrap();
+
+      loadSizePagination();
+      const propsAlert = {
+        mainContent: isFormAdd
+          ? "Create new size successfully!!"
+          : "Updated size successfully!",
+        severity: "success",
+      };
+      handleShowAlert(propsAlert);
+      resetForm();
+    } catch (error) {
+      setError("name", {
+        type: "manual",
+        message: error,
       });
+    }
   };
 
   const handleConfirmDelete = (id) => {
-    dispatch(deleteColor(id))
+    dispatch(deleteSize(id))
       .then(() => {
-        loadColorPagination();
+        loadSizePagination();
         setIsDialog(false);
       })
       .catch((error) => {
@@ -155,9 +154,9 @@ export default function ColorAdmin() {
   };
 
   const handleConfirmToggleStatus = (id) => {
-    dispatch(toggleStatusColor(id))
+    dispatch(toggleStatusSize(id))
       .then(() => {
-        loadColorPagination();
+        loadSizePagination();
         // Config alert
         const propsAlert = {
           mainContent: "Change status successfully!!",
@@ -170,12 +169,15 @@ export default function ColorAdmin() {
   };
 
   const handleOpenEdit = (id) => {
-    setBaseId(id);
-    setIsFormEdit(true);
+    const sizeData = data.find((s) => s.id === id);
+    if (sizeData) {
+      Object.entries(sizeData).forEach(([key, value]) => {
+        setValue(key, value);
+      });
 
-    // find the old size
-    const findById = data.find((c) => c.id === id);
-    setColor(findById);
+      setBaseId(id);
+      setIsFormEdit(true);
+    }
   };
 
   const handleOpenDialog = (id, action, status) => {
@@ -189,8 +191,8 @@ export default function ColorAdmin() {
           onClose: () => {
             setIsDialog(false);
           },
-          title: "Delete color",
-          mainContent: "Are you sure to delete this color?",
+          title: "Delete size",
+          mainContent: "Are you sure to delete this size?",
           onConfirm: () => handleConfirmDelete(id),
         };
         break;
@@ -199,10 +201,10 @@ export default function ColorAdmin() {
           onClose: () => {
             setIsDialog(false);
           },
-          title: status ? "Block color" : "Unblock color",
+          title: status ? "Block size" : "Unblock size",
           mainContent: status
-            ? "Are you sure to block this color?"
-            : "Are you sure to unblock this color?",
+            ? "Are you sure to block this size?"
+            : "Are you sure to unblock this size?",
           onConfirm: () => handleConfirmToggleStatus(id),
         };
       default:
@@ -273,34 +275,29 @@ export default function ColorAdmin() {
       {isFormAdd && (
         <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-[300px] min-h-[250px] bg-gray-500 p-4"
           >
             <div className="flex justify-between items-center mb-5">
               <h1 className="">Add</h1>
-              <Close
-                className="cursor-pointer"
-                onClick={() => {
-                  setIsFormAdd(false);
-                }}
-              />
+              <Close className="cursor-pointer" onClick={resetForm} />
             </div>
             <div className="flex justify-center items-center flex-col gap-6">
               <TextField
-                onChange={handleChange}
-                name="name"
+                {...register("name", {
+                  required: "Must not be blank",
+                  validate: (value) =>
+                    value.trim() !== "" || "Must not be blank",
+                })}
                 size="small"
                 fullWidth
                 label="Name"
                 variant="outlined"
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
 
-              <Button
-                onClick={handleAdd}
-                type="submit"
-                variant="contained"
-                fullWidth
-              >
+              <Button type="submit" variant="contained" fullWidth>
                 Add
               </Button>
             </div>
@@ -311,35 +308,30 @@ export default function ColorAdmin() {
       {isFormEdit && (
         <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-[300px] min-h-[250px] bg-white border border-black p-4 "
           >
             <div className="flex justify-between items-center mb-5">
               <h1 className="">Edit</h1>
-              <Close
-                className="cursor-pointer"
-                onClick={() => {
-                  setIsFormEdit(false);
-                }}
-              />
+              <Close className="cursor-pointer" onClick={resetForm} />
             </div>
             <div className="flex justify-center items-center flex-col gap-6">
               <TextField
-                onChange={handleChange}
-                name="name"
+                {...register("name", {
+                  required: "Must not be blank",
+                  validate: (value) =>
+                    value.trim() !== "" || "Must not be blank",
+                })}
                 size="small"
                 fullWidth
                 label="Name"
                 variant="outlined"
-                value={size.name}
+                // value={size.name}
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
 
-              <Button
-                onClick={() => handleEdit(baseId)}
-                type="submit"
-                variant="contained"
-                fullWidth
-              >
+              <Button type="submit" variant="contained" fullWidth>
                 Edit
               </Button>
             </div>
@@ -351,7 +343,7 @@ export default function ColorAdmin() {
 
       {/* HEADING */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="font-bold text-[20px]">Color Management</h1>
+        <h1 className="font-bold text-[20px]">Size Management</h1>
         <TextField
           onChange={handleSearch}
           size="small"
@@ -388,20 +380,20 @@ export default function ColorAdmin() {
         </thead>
 
         <tbody className="text-center bg-white">
-          {data?.map((c) => (
-            <tr key={c.id}>
+          {data?.map((s) => (
+            <tr key={s.id}>
               <td className="">
                 <input type="checkbox" />
               </td>
-              <td>{c.id}</td>
-              <td>{c.name}</td>
-              <td>{c.status ? "Active" : "Inactive"}</td>
-              <td>{c.createdDate}</td>
+              <td>{s.id}</td>
+              <td>{s.name}</td>
+              <td>{s.status ? "Active" : "Inactive"}</td>
+              <td>{s.createdDate}</td>
 
               <td>
                 <Choices
                   icon={<MoreHoriz />}
-                  listOptions={listOptions(c.id, c.status)}
+                  listOptions={listOptions(s.id, s.status)}
                 ></Choices>
               </td>
             </tr>

@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import Choices from "../../components/choices";
+import Choices from "../../../components/choices";
 import {
   Close,
   Delete,
@@ -19,21 +19,35 @@ import {
   MoreHoriz,
 } from "@mui/icons-material";
 import {
-  addSize,
-  sizePagination,
-  deleteSize,
-  editSize,
-  toggleStatusSize,
-} from "../../services/sizeService";
+  addProduct,
+  productPagination,
+  deleteProduct,
+  editProduct,
+  toggleStatusProduct,
+} from "../../../services/productService";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
-import DialogCustom from "../../components/dialog";
-import AlertCustom from "../../components/alert/AlertCustom";
-import NativeSelectCustom from "../../components/nativeSelect/NativeSelectCustom";
+import DialogCustom from "../../../components/dialog";
+import AlertCustom from "../../../components/alert/AlertCustom";
+import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
+import { categoryNoPagination } from "../../../services/categoryService";
+import SelectCustom from "../../../components/select/SelectCustom";
+import { Link } from "react-router-dom";
 
-export default function SizeAdmin() {
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+export default function ProductAdmin() {
   const dispatch = useDispatch();
 
   // Pagination
@@ -41,7 +55,7 @@ export default function SizeAdmin() {
   const [sortDirection, setSortDirection] = useState("DESC");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [sizePage, setSizePage] = useState(2);
+  const [size, setSize] = useState(2);
 
   const [isFormAdd, setIsFormAdd] = useState(false);
   const [isFormEdit, setIsFormEdit] = useState(false);
@@ -51,23 +65,48 @@ export default function SizeAdmin() {
   const [isAlert, setIsAlert] = useState(false);
 
   const [baseId, setBaseId] = useState(null);
-  const [size, setSize] = useState({
+  const [product, setProduct] = useState({
     name: "",
+    description: "",
+    categoryId: "",
   });
 
-  const debounce = useDebounce(search, 500);
-  // Data of size
-  const { data, error, totalPages, totalElements, numberOfElements } =
-    useSelector((state) => state.size);
+  const resetProduct = () => {
+    setProduct({
+      name: "",
+      description: "",
+      categoryId: "",
+    });
+  };
 
-  const loadSizePagination = () => {
+  const debounce = useDebounce(search, 500);
+  // Data of product
+  const {
+    data: productData,
+    error: productError,
+    totalPages,
+    totalElements,
+    numberOfElements,
+  } = useSelector((state) => state.product);
+
+  // Data of category
+  const { data: categoryData, error: categoryError } = useSelector(
+    (state) => state.category
+  );
+
+  const loadProductPagination = () => {
     dispatch(
-      sizePagination({ page, size: sizePage, search, sortField, sortDirection })
+      productPagination({ page, size, search, sortField, sortDirection })
     );
   };
+
+  const loadCategoryList = () => {
+    dispatch(categoryNoPagination());
+  };
   useEffect(() => {
-    loadSizePagination();
-  }, [page, debounce, sizePage, sortDirection, sortField]);
+    loadProductPagination();
+    loadCategoryList();
+  }, [page, debounce, size, sortDirection, sortField]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -79,7 +118,7 @@ export default function SizeAdmin() {
   };
 
   const handleChangePageSize = (newSize) => {
-    setSizePage(newSize);
+    setSize(newSize);
   };
 
   const handleSelectFilter = (sortField, sortDirection) => {
@@ -89,8 +128,8 @@ export default function SizeAdmin() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSize({
-      ...size,
+    setProduct({
+      ...product,
       [name]: value,
     });
   };
@@ -112,11 +151,16 @@ export default function SizeAdmin() {
   };
 
   const handleAdd = () => {
-    dispatch(addSize(size))
+    const formData = new FormData();
+    formData.append("name", product.name);
+    formData.append("description", product.description);
+    formData.append("categoryId", product.categoryId);
+    formData.append("file", file);
+    dispatch(addProduct(formData))
       .then(() => {
-        loadSizePagination();
+        loadProductPagination();
         const propsAlert = {
-          mainContent: "Create new size successfully!!",
+          mainContent: "Create new product successfully!!",
           severity: "success",
         };
 
@@ -129,9 +173,14 @@ export default function SizeAdmin() {
   };
 
   const handleEdit = (baseId) => {
-    dispatch(editSize({ size: size, id: baseId }))
+    const formData = new FormData();
+    formData.append("name", product.name);
+    formData.append("description", product.description);
+    formData.append("categoryId", product.categoryId);
+    formData.append("file", file);
+    dispatch(editProduct({ product: formData, id: baseId }))
       .then(() => {
-        loadSizePagination();
+        loadProductPagination();
         setIsFormEdit(false);
       })
       .catch((error) => {
@@ -140,9 +189,9 @@ export default function SizeAdmin() {
   };
 
   const handleConfirmDelete = (id) => {
-    dispatch(deleteSize(id))
+    dispatch(deleteProduct(id))
       .then(() => {
-        loadSizePagination();
+        loadProductPagination();
         setIsDialog(false);
       })
       .catch((error) => {
@@ -151,9 +200,9 @@ export default function SizeAdmin() {
   };
 
   const handleConfirmToggleStatus = (id) => {
-    dispatch(toggleStatusSize(id))
+    dispatch(toggleStatusProduct(id))
       .then(() => {
-        loadSizePagination();
+        loadProductPagination();
         // Config alert
         const propsAlert = {
           mainContent: "Change status successfully!!",
@@ -169,9 +218,12 @@ export default function SizeAdmin() {
     setBaseId(id);
     setIsFormEdit(true);
 
-    // find the old size
-    const findById = data.find((s) => s.id === id);
-    setSize(findById);
+    // find the old product
+    const findById = productData.find((pro) => pro.id === id);
+    setProduct({
+      ...findById,
+      categoryId: findById.category.id,
+    });
   };
 
   const handleOpenDialog = (id, action, status) => {
@@ -185,8 +237,8 @@ export default function SizeAdmin() {
           onClose: () => {
             setIsDialog(false);
           },
-          title: "Delete size",
-          mainContent: "Are you sure to delete this size?",
+          title: "Delete product",
+          mainContent: "Are you sure to delete this product?",
           onConfirm: () => handleConfirmDelete(id),
         };
         break;
@@ -195,10 +247,10 @@ export default function SizeAdmin() {
           onClose: () => {
             setIsDialog(false);
           },
-          title: status ? "Block size" : "Unblock size",
+          title: status ? "Block product" : "Unblock product",
           mainContent: status
-            ? "Are you sure to block this size?"
-            : "Are you sure to unblock this size?",
+            ? "Are you sure to block this product?"
+            : "Are you sure to unblock this product?",
           onConfirm: () => handleConfirmToggleStatus(id),
         };
       default:
@@ -290,7 +342,33 @@ export default function SizeAdmin() {
                 label="Name"
                 variant="outlined"
               />
-
+              <TextField
+                onChange={handleChange}
+                name="description"
+                size="small"
+                fullWidth
+                label="description"
+                variant="outlined"
+              />
+              <SelectCustom
+                label={"category"}
+                data={categoryData}
+                name="categoryId"
+                value={product.categoryId}
+                onChange={handleChange}
+              ></SelectCustom>
+              <Button
+                fullWidth
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+                onChange={handleGetFile}
+              >
+                Upload files
+                <VisuallyHiddenInput type="file" multiple />
+              </Button>
               <Button
                 onClick={handleAdd}
                 type="submit"
@@ -316,6 +394,7 @@ export default function SizeAdmin() {
                 className="cursor-pointer"
                 onClick={() => {
                   setIsFormEdit(false);
+                  resetProduct();
                 }}
               />
             </div>
@@ -325,11 +404,40 @@ export default function SizeAdmin() {
                 name="name"
                 size="small"
                 fullWidth
+                // id="outlined-basic"
                 label="Name"
                 variant="outlined"
-                value={size.name}
+                value={product.name}
               />
-
+              <TextField
+                onChange={handleChange}
+                name="description"
+                size="small"
+                fullWidth
+                // id="outlined-basic"
+                label="description"
+                variant="outlined"
+                value={product.description}
+              />
+              <SelectCustom
+                label={"category"}
+                data={categoryData}
+                name="categoryId"
+                value={product.categoryId}
+                onChange={handleChange}
+              ></SelectCustom>
+              <Button
+                fullWidth
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+                onChange={handleGetFile}
+              >
+                Upload files
+                <VisuallyHiddenInput type="file" multiple />
+              </Button>
               <Button
                 onClick={() => handleEdit(baseId)}
                 type="submit"
@@ -347,7 +455,7 @@ export default function SizeAdmin() {
 
       {/* HEADING */}
       <div className="flex items-center justify-between mb-3">
-        <h1 className="font-bold text-[20px]">Size Management</h1>
+        <h1 className="font-bold text-[20px]">Product Management</h1>
         <TextField
           onChange={handleSearch}
           size="small"
@@ -365,9 +473,10 @@ export default function SizeAdmin() {
         </div>
 
         <Button variant="contained" onClick={() => setIsFormAdd(true)}>
-          Add new size
+          Add new product
         </Button>
       </div>
+
       {/* MAIN TABLE */}
       <table className="w-full border">
         <thead>
@@ -377,6 +486,8 @@ export default function SizeAdmin() {
             </th>
             <th className="border ">ID</th>
             <th className="border ">NAME</th>
+            <th className="border w-[150px]">IMAGE</th>
+            <th className="border ">Category</th>
             <th className="border ">STATUS</th>
             <th className="border ">CREATED DATE</th>
             <th className="border w-4 "></th>
@@ -384,20 +495,32 @@ export default function SizeAdmin() {
         </thead>
 
         <tbody className="text-center bg-white">
-          {data?.map((s) => (
-            <tr key={s.id}>
+          {productData?.map((pro) => (
+            <tr key={pro.id}>
               <td className="">
                 <input type="checkbox" />
               </td>
-              <td>{s.id}</td>
-              <td>{s.name}</td>
-              <td>{s.status ? "Active" : "Inactive"}</td>
-              <td>{s.createdDate}</td>
+              <td>{pro.id}</td>
+              <td>
+                <Link to={`/admin/productDetail/${pro.id}`}>{pro.name}</Link>
+              </td>
+              <td>
+                <img
+                  src={pro.image}
+                  alt=""
+                  className="h-[100px] w-[100%] object-cover"
+                />
+              </td>
+              <td>{pro.category.name}</td>
+
+              <td>{pro.status ? "Active" : "Inactive"}</td>
+
+              <td>{pro.createdDate}</td>
 
               <td>
                 <Choices
                   icon={<MoreHoriz />}
-                  listOptions={listOptions(s.id, s.status)}
+                  listOptions={listOptions(pro.id, pro.status)}
                 ></Choices>
               </td>
             </tr>
@@ -413,7 +536,7 @@ export default function SizeAdmin() {
 
         <NativeSelectCustom
           onChange={handleChangePageSize}
-          //   label={"Size"}
+          // label={"Size"}
           data={dataPageSize}
         />
 

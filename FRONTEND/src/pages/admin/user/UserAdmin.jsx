@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import Choices from "../../components/choices";
+import Choices from "../../../components/choices";
 import {
   Close,
   Delete,
@@ -24,15 +24,18 @@ import {
   deleteCategory,
   editCategory,
   toggleStatusCategory,
-} from "../../services/categoryService";
+} from "../../../services/categoryService";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
-import DialogCustom from "../../components/dialog";
-import AlertCustom from "../../components/alert/AlertCustom";
-import NativeSelectCustom from "../../components/nativeSelect/NativeSelectCustom";
-import { toggleStatusUser, userPagination } from "../../services/userService";
+import DialogCustom from "../../../components/dialog";
+import AlertCustom from "../../../components/alert/AlertCustom";
+import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
+import {
+  toggleStatusUser,
+  userPagination,
+} from "../../../services/userService";
 
 export default function UserAdmin() {
   const dispatch = useDispatch();

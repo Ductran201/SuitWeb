@@ -74,11 +74,11 @@ export default function NavShop() {
       <div className="grid grid-cols-4 gap-5">
         {products?.map((item, index) => (
           <div key={index}>
-            <a href="">
+            <Link to={`/product/${item.id}`}>
               <img src={`${item.image}`} alt="" />
               <p>{item.name}</p>
               <b>{item.price} đ</b>
-            </a>
+            </Link>
           </div>
         ))}
       </div>

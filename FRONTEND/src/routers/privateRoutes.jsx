@@ -1,11 +1,11 @@
-import CategoryAdmin from "../pages/admin/CategoryAdmin";
 import AdminLayout from "../layouts/admin";
-import Dashboard from "../pages/admin/dashboard/Dashboard";
-import ProductAdmin from "../pages/admin/ProductAdmin";
-import UserAdmin from "../pages/admin/UserAdmin";
-import ProductDetailAdmin from "../pages/admin/ProductDetailAdmin";
-import SizeAdmin from "../pages/admin/SizeAdmin";
-import ColorAdmin from "../pages/admin/ColorAdmin";
+import CategoryAdmin from "../pages/admin/category/CategoryAdmin";
+import ColorAdmin from "../pages/admin/color/ColorAdmin";
+import DashboardAdmin from "../pages/admin/dashboard/Dashboard";
+import ProductAdmin from "../pages/admin/product/ProductAdmin";
+import ProductDetailAdmin from "../pages/admin/productDetail/ProductDetailAdmin";
+import SizeAdmin from "../pages/admin/size/SizeAdmin";
+import UserAdmin from "../pages/admin/user/UserAdmin";
 
 const privateRoutes = [
   {
@@ -14,7 +14,7 @@ const privateRoutes = [
     children: [
       {
         index: true,
-        element: <Dashboard />,
+        element: <DashboardAdmin />,
       },
       {
         path: "user",
