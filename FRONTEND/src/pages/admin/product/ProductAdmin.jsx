@@ -35,18 +35,8 @@ import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCus
 import { categoryNoPagination } from "../../../services/categoryService";
 import SelectCustom from "../../../components/select/SelectCustom";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
 export default function ProductAdmin() {
   const dispatch = useDispatch();
 
@@ -65,18 +55,68 @@ export default function ProductAdmin() {
   const [isAlert, setIsAlert] = useState(false);
 
   const [baseId, setBaseId] = useState(null);
-  const [product, setProduct] = useState({
-    name: "",
-    description: "",
-    categoryId: "",
-  });
 
-  const resetProduct = () => {
-    setProduct({
-      name: "",
-      description: "",
-      categoryId: "",
-    });
+  const [fileAdd, setFileAdd] = useState(null);
+  const [fileEdit, setFileEdit] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    clearErrors,
+    setError,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const resetForm = () => {
+    reset();
+    clearErrors();
+    setFileAdd(false);
+    setFileEdit(false);
+    setIsFormAdd(false);
+    setIsFormEdit(false);
+  };
+
+  const onSubmit = async (dataForm) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", dataForm.name);
+      formData.append("description", dataForm.description);
+      formData.append("categoryId", dataForm.categoryId);
+
+      if (fileAdd) {
+        formData.append("file", fileAdd.file);
+      } else if (fileEdit && fileEdit.file) {
+        // Update change the old image
+        formData.append("file", fileEdit.file);
+      } else if (!fileEdit) {
+        //  Delete the old image
+        formData.append("file", new File([], ""));
+      }
+
+      const action = isFormAdd
+        ? addProduct(formData)
+        : editProduct({ product: formData, id: baseId });
+
+      await dispatch(action).unwrap();
+      loadProductPagination();
+      const propsAlert = {
+        mainContent: isFormAdd
+          ? "Create new product successfully!!"
+          : "Updated product successfully!!",
+        severity: "success",
+      };
+
+      handleShowAlert(propsAlert);
+      resetForm();
+    } catch (error) {
+      setError("name", {
+        type: "manual",
+        message: error,
+      });
+    }
   };
 
   const debounce = useDebounce(search, 500);
@@ -103,9 +143,13 @@ export default function ProductAdmin() {
   const loadCategoryList = () => {
     dispatch(categoryNoPagination());
   };
+
+  useEffect(() => {
+    loadCategoryList();
+  }, []);
+
   useEffect(() => {
     loadProductPagination();
-    loadCategoryList();
   }, [page, debounce, size, sortDirection, sortField]);
 
   const handleSearch = (e) => {
@@ -126,19 +170,29 @@ export default function ProductAdmin() {
     setSortDirection(sortDirection);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct({
-      ...product,
-      [name]: value,
-    });
+  const handleGetFile = (e, formType) => {
+    const file = e.target.files[0];
+    if (file) {
+      const newFile = {
+        url: URL.createObjectURL(file),
+        file,
+      };
+      if (formType == "add") {
+        setFileAdd(newFile);
+      } else if (formType == "edit") {
+        setFileEdit(newFile);
+      }
+
+      // setErrorMessage("");
+    }
   };
 
-  const [file, setFile] = useState(null);
-
-  const handleGetFile = (e) => {
-    console.log(e.target.files[0]);
-    setFile(e.target.files[0]);
+  const handleRemoveImage = (formType) => {
+    if (formType === "add") {
+      setFileAdd(null);
+    } else if (formType === "edit") {
+      setFileEdit(null);
+    }
   };
 
   const handleShowAlert = (propsAlert) => {
@@ -148,44 +202,6 @@ export default function ProductAdmin() {
     setTimeout(() => {
       setIsAlert(false);
     }, 3000);
-  };
-
-  const handleAdd = () => {
-    const formData = new FormData();
-    formData.append("name", product.name);
-    formData.append("description", product.description);
-    formData.append("categoryId", product.categoryId);
-    formData.append("file", file);
-    dispatch(addProduct(formData))
-      .then(() => {
-        loadProductPagination();
-        const propsAlert = {
-          mainContent: "Create new product successfully!!",
-          severity: "success",
-        };
-
-        handleShowAlert(propsAlert);
-        setIsFormAdd(false);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const handleEdit = (baseId) => {
-    const formData = new FormData();
-    formData.append("name", product.name);
-    formData.append("description", product.description);
-    formData.append("categoryId", product.categoryId);
-    formData.append("file", file);
-    dispatch(editProduct({ product: formData, id: baseId }))
-      .then(() => {
-        loadProductPagination();
-        setIsFormEdit(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const handleConfirmDelete = (id) => {
@@ -215,15 +231,19 @@ export default function ProductAdmin() {
   };
 
   const handleOpenEdit = (id) => {
-    setBaseId(id);
-    setIsFormEdit(true);
-
     // find the old product
     const findById = productData.find((pro) => pro.id === id);
-    setProduct({
-      ...findById,
-      categoryId: findById.category.id,
-    });
+
+    if (findById) {
+      setBaseId(id);
+      setIsFormEdit(true);
+
+      Object.entries(findById).forEach(([key, value]) => {
+        setValue(key, value);
+      });
+      setFileEdit(findById.image ? { url: findById.image } : null);
+      setValue("categoryId", findById.category.id);
+    }
   };
 
   const handleOpenDialog = (id, action, status) => {
@@ -321,60 +341,87 @@ export default function ProductAdmin() {
       {isFormAdd && (
         <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-[300px] min-h-[250px] bg-gray-500 p-4"
           >
             <div className="flex justify-between items-center mb-5">
               <h1 className="">Add</h1>
-              <Close
-                className="cursor-pointer"
-                onClick={() => {
-                  setIsFormAdd(false);
-                }}
-              />
+              <Close className="cursor-pointer" onClick={resetForm} />
             </div>
             <div className="flex justify-center items-center flex-col gap-6">
               <TextField
-                onChange={handleChange}
-                name="name"
+                {...register("name", {
+                  required: "Must not be blank",
+                  validate: (value) =>
+                    value.trim() !== "" ? true : "Must not be blank",
+                })}
                 size="small"
                 fullWidth
                 label="Name"
                 variant="outlined"
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
               <TextField
-                onChange={handleChange}
-                name="description"
+                {...register("description", {
+                  required: "Must not be blank",
+                  validate: (value) =>
+                    value.trim() !== "" || "Must not be blank",
+                })}
                 size="small"
                 fullWidth
                 label="description"
                 variant="outlined"
+                error={!!errors.description}
+                helperText={
+                  errors.description ? errors.description.message : ""
+                }
               />
+
               <SelectCustom
+                {...register("categoryId", {
+                  required: "Please select a category",
+                })}
                 label={"category"}
                 data={categoryData}
-                name="categoryId"
-                value={product.categoryId}
-                onChange={handleChange}
+                value={watch("categoryId")}
+                onChange={(e) => {
+                  setValue("categoryId", e.target.value);
+                  clearErrors("categoryId");
+                }}
+                error={!!errors.categoryId}
+                helperText={errors.categoryId?.message}
               ></SelectCustom>
               <Button
                 fullWidth
-                component="label"
-                role={undefined}
                 variant="contained"
-                tabIndex={-1}
+                component="label"
                 startIcon={<CloudUploadIcon />}
-                onChange={handleGetFile}
+                onChange={(e) => {
+                  handleGetFile(e, "add");
+                }}
               >
                 Upload files
-                <VisuallyHiddenInput type="file" multiple />
+                <input type="file" hidden />
               </Button>
-              <Button
-                onClick={handleAdd}
-                type="submit"
-                variant="contained"
-                fullWidth
-              >
+              {fileAdd && (
+                <div className="relative w-20 h-20 mt-2">
+                  <img
+                    src={fileAdd.url}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage("add")}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                  >
+                    X
+                  </button>
+                </div>
+              )}
+
+              <Button type="submit" variant="contained" fullWidth>
                 Add
               </Button>
             </div>
@@ -385,65 +432,87 @@ export default function ProductAdmin() {
       {isFormEdit && (
         <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit(onSubmit)}
             className="w-[300px] min-h-[250px] bg-white border border-black p-4 "
           >
             <div className="flex justify-between items-center mb-5">
               <h1 className="">Edit</h1>
-              <Close
-                className="cursor-pointer"
-                onClick={() => {
-                  setIsFormEdit(false);
-                  resetProduct();
-                }}
-              />
+              <Close className="cursor-pointer" onClick={resetForm} />
             </div>
             <div className="flex justify-center items-center flex-col gap-6">
               <TextField
-                onChange={handleChange}
-                name="name"
+                {...register("name", {
+                  required: "Must not be blank",
+                  validate: (value) => {
+                    value.trim() != "" || "Must not be blank";
+                  },
+                })}
                 size="small"
                 fullWidth
-                // id="outlined-basic"
                 label="Name"
                 variant="outlined"
-                value={product.name}
+                error={!!errors.name}
+                helperText={errors.name ? errors.name.message : ""}
               />
               <TextField
-                onChange={handleChange}
-                name="description"
+                {...register("description", {
+                  required: "Must not be blank",
+                  validate: (value) => {
+                    value.trim() != "" || "Must not be blank";
+                  },
+                })}
                 size="small"
                 fullWidth
-                // id="outlined-basic"
                 label="description"
                 variant="outlined"
-                value={product.description}
+                error={!!errors.description}
+                helperText={
+                  errors.description ? errors.description?.message : ""
+                }
               />
               <SelectCustom
+                {...register("categoryId", {
+                  required: "Must not be blank",
+                })}
+                onChange={(e) => {
+                  setValue("categoryId", e.target.value);
+                  clearErrors("categoryId");
+                }}
                 label={"category"}
                 data={categoryData}
-                name="categoryId"
-                value={product.categoryId}
-                onChange={handleChange}
+                value={watch("categoryId")}
+                error={!!errors.categoryId}
+                helperText={errors.categoryId?.message}
               ></SelectCustom>
               <Button
                 fullWidth
                 component="label"
-                role={undefined}
                 variant="contained"
-                tabIndex={-1}
                 startIcon={<CloudUploadIcon />}
-                onChange={handleGetFile}
+                onChange={(e) => {
+                  handleGetFile(e, "edit");
+                }}
               >
                 Upload files
-                <VisuallyHiddenInput type="file" multiple />
+                <input type="file" hidden />
               </Button>
-              <Button
-                onClick={() => handleEdit(baseId)}
-                type="submit"
-                variant="contained"
-                fullWidth
-              >
+              {fileEdit && (
+                <div className="relative w-20 h-20 mt-2">
+                  <img
+                    src={fileEdit.url}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage("edit")}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                  >
+                    X
+                  </button>
+                </div>
+              )}
+              <Button type="submit" variant="contained" fullWidth>
                 Edit
               </Button>
             </div>
@@ -505,11 +574,13 @@ export default function ProductAdmin() {
                 <Link to={`/admin/productDetail/${pro.id}`}>{pro.name}</Link>
               </td>
               <td>
-                <img
-                  src={pro.image}
-                  alt=""
-                  className="h-[100px] w-[100%] object-cover"
-                />
+                {pro.image && (
+                  <img
+                    src={pro.image}
+                    alt=""
+                    className="h-[100px] w-[100%] object-cover"
+                  />
+                )}
               </td>
               <td>{pro.category.name}</td>
 

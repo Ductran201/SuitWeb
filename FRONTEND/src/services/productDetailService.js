@@ -21,19 +21,38 @@ export const productDetailNoPagination = createAsyncThunk(
   }
 );
 
+// Handle error message
+const handleErrorMessage = (error) => {
+  if (error.response && error.response.data.code === 409) {
+    return "This category already exists";
+  }
+  return "Has an error";
+};
+
 export const addProductDetail = createAsyncThunk(
   "productDetail/add",
-  async (productDetail) => {
-    const res = await BASE_URL.post("admin/productDetails", productDetail);
-    return res;
+  async (productDetail, { rejectWithValue }) => {
+    try {
+      const res = await FORM_DATA.post("admin/productDetails", productDetail);
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error));
+    }
   }
 );
 
 export const editProductDetail = createAsyncThunk(
   "productDetail/edit",
-  async ({ productDetail, id }) => {
-    const res = await BASE_URL.put(`admin/productDetails/${id}`, productDetail);
-    return res;
+  async ({ productDetail, id }, { rejectWithValue }) => {
+    try {
+      const res = await FORM_DATA.put(
+        `admin/productDetails/${id}`,
+        productDetail
+      );
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error));
+    }
   }
 );
 

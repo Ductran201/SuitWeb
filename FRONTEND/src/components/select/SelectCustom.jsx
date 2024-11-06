@@ -4,15 +4,19 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-export default function SelectCustom({ label, data, onChange, name, value }) {
+const SelectCustom = (
+  { label, data, onChange, value, error, helperText },
+  ref
+) => {
   return (
-    <FormControl fullWidth size="small">
+    <FormControl fullWidth size="small" error={error}>
       <InputLabel>{label}</InputLabel>
       <Select
+        ref={ref} // Forward the ref to the Select component
         value={value ?? ""}
-        name={name}
         label={label}
-        onChange={(e) => onChange(e)}
+        onChange={onChange}
+        error={error}
       >
         {data?.map((item) => (
           <MenuItem key={item.id} value={item.id}>
@@ -20,6 +24,9 @@ export default function SelectCustom({ label, data, onChange, name, value }) {
           </MenuItem>
         ))}
       </Select>
+      {helperText && <p className="text-red-500 text-sm mt-1">{helperText}</p>}
     </FormControl>
   );
-}
+};
+
+export default React.forwardRef(SelectCustom);

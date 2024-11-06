@@ -4,9 +4,11 @@ package ra.ecommerceapi.model.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,4 +27,5 @@ public class ProductDetailRequest {
     @NotNull
     private Long sizeId;
     private Long productId;
+    private List<MultipartFile> images;
 }

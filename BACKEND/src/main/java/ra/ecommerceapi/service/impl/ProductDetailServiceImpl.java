@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.ProductDetailRequest;
 import ra.ecommerceapi.model.entity.ProductDetail;
@@ -25,8 +26,8 @@ public class ProductDetailServiceImpl implements IProductDetailService {
     private final IColorService colorService;
 
     @Override
-    public Page<ProductDetail> findAllProductDetailByNameAdmin(String search,Long id, Pageable pageable) {
-        return productDetailRepo.findByNameContainsAndProductId(search, id,pageable);
+    public Page<ProductDetail> findAllProductDetailByNameAdmin(String search, Long id, Pageable pageable) {
+        return productDetailRepo.findByNameContainsAndProductId(search, id, pageable);
     }
 
     @Override
@@ -51,9 +52,18 @@ public class ProductDetailServiceImpl implements IProductDetailService {
                 .build();
         productDetail.setCreatedDate(new Date());
         productDetail.setStatus(false);
-        productDetailRepo.save(productDetail);
-        return null;
+
+        return productDetailRepo.save(productDetail);
+
     }
+
+    //if (!productDetailRequest.getImages().isEmpty()){
+//for (MultipartFile image : productDetailRequest.getImages()) {
+//
+//}
+//}
+
+
 
     @Override
     public ProductDetail edit(ProductDetailRequest productDetailRequest, Long id) throws CustomException {

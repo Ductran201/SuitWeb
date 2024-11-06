@@ -13,21 +13,43 @@ export const productPagination = createAsyncThunk(
   }
 );
 
-export const topNewestProduct = createAsyncThunk("product/topNewest",async (idCategory)=>{
-  const res = await BASE_URL.get(`admin/products/newest/${idCategory}`)
-  return res.data.data
-})
+export const topNewestProduct = createAsyncThunk(
+  "product/topNewest",
+  async (idCategory) => {
+    const res = await BASE_URL.get(`admin/products/newest/${idCategory}`);
+    return res.data.data;
+  }
+);
 
-export const addProduct = createAsyncThunk("product/add", async (product) => {
-  const res = await FORM_DATA.post("admin/products", product);
-  return res;
-});
+// Handle error message
+const handleErrorMessage = (error) => {
+  if (error.response && error.response.data.code == 409) {
+    return "This product already exists";
+  }
+  return "Has an error";
+};
+
+export const addProduct = createAsyncThunk(
+  "product/add",
+  async (product, { rejectWithValue }) => {
+    try {
+      const res = await FORM_DATA.post("admin/products", product);
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error));
+    }
+  }
+);
 
 export const editProduct = createAsyncThunk(
   "product/edit",
-  async ({ product, id }) => {
-    const res = await FORM_DATA.put(`admin/products/${id}`, product);
-    return res;
+  async ({ product, id }, { rejectWithValue }) => {
+    try {
+      const res = await FORM_DATA.put(`admin/products/${id}`, product);
+      return res;
+    } catch (error) {
+      return rejectWithValue(handleErrorMessage(error));
+    }
   }
 );
 

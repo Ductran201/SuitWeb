@@ -91,8 +91,8 @@ public class ProductServiceImpl implements IProductService {
 
         if (productRequest.getFile() != null && productRequest.getFile().getSize() > 0) {
             oldProduct.setImage(uploadService.uploadFileToServer(productRequest.getFile()));
-        } else {
-            oldProduct.setImage(productRepo.getImgById(id));
+        } else if(productRequest.getFile() != null && productRequest.getFile().getSize() == 0){
+            oldProduct.setImage(null);
         }
 
         return productRepo.save(oldProduct);

@@ -37,12 +37,12 @@ public class AProductDetailController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> add(@Valid @RequestBody ProductDetailRequest productDetailRequest) throws CustomException {
+    public ResponseEntity<?> add(@Valid @ModelAttribute ProductDetailRequest productDetailRequest) throws CustomException {
         return ResponseEntity.ok().body(new ResponseWrapper<>(productDetailService.add(productDetailRequest), EHttpStatus.SUCCESS, 200));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> edit(@Valid @RequestBody ProductDetailRequest productDetailRequest, @PathVariable Long id) throws CustomException {
+    public ResponseEntity<?> edit(@Valid @ModelAttribute ProductDetailRequest productDetailRequest, @PathVariable Long id) throws CustomException {
         findById(id);
         return ResponseEntity.ok().body(new ResponseWrapper<>(productDetailService.edit(productDetailRequest,id), EHttpStatus.SUCCESS, 200));
     }
