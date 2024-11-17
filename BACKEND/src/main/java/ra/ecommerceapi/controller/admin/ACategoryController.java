@@ -75,22 +75,22 @@ public class ACategoryController {
         );
     }
 
-    @GetMapping("/{id}/products")
-    public ResponseEntity<?> ListPaginationUser(@PathVariable Long id,
-                                                @PageableDefault(size = 2) Pageable pageable,
-                                                @RequestParam(defaultValue = "") String search,
-                                                @RequestParam(defaultValue = "DESC") String sortDirection,
-                                                @RequestParam(defaultValue = "id") String sortField) throws CustomException {
-        findById(id);
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
-
-        return ResponseEntity.ok().body(ResponseWrapper.builder()
-                .data(productService.findAllPaginationUser(id,search, pageable))
-                .status(EHttpStatus.SUCCESS)
-                .code(200)
-                .build());
-    }
+//    @GetMapping("/{id}/products")
+//    public ResponseEntity<?> ListPaginationUser(@PathVariable Long id,
+//                                                @PageableDefault(size = 2) Pageable pageable,
+//                                                @RequestParam(defaultValue = "") String search,
+//                                                @RequestParam(defaultValue = "DESC") String sortDirection,
+//                                                @RequestParam(defaultValue = "id") String sortField) throws CustomException {
+//        findById(id);
+//        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+//        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+//
+//        return ResponseEntity.ok().body(ResponseWrapper.builder()
+//                .data(productService.findAllPaginationUser(id,search, pageable))
+//                .status(EHttpStatus.SUCCESS)
+//                .code(200)
+//                .build());
+//    }
 
     @PostMapping("")
     public ResponseEntity<?> add(@Valid @ModelAttribute CategoryRequest categoryRequest) throws CustomException {

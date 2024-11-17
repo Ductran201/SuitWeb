@@ -36,6 +36,7 @@ import { categoryNoPagination } from "../../../services/categoryService";
 import SelectCustom from "../../../components/select/SelectCustom";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { data } from "autoprefixer";
 
 export default function ProductAdmin() {
   const dispatch = useDispatch();
@@ -73,8 +74,8 @@ export default function ProductAdmin() {
   const resetForm = () => {
     reset();
     clearErrors();
-    setFileAdd(false);
-    setFileEdit(false);
+    setFileAdd(null);
+    setFileEdit(null);
     setIsFormAdd(false);
     setIsFormEdit(false);
   };
@@ -331,6 +332,8 @@ export default function ProductAdmin() {
       id: 4,
     },
   ];
+
+  console.log(productData);
 
   // ==================== HTML ================================
   return (

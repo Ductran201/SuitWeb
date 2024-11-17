@@ -4,7 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.ProductDetailRequest;
+import ra.ecommerceapi.model.dto.response.ProductDetailAllResponse;
 import ra.ecommerceapi.model.entity.ProductDetail;
+
+import java.util.List;
 
 public interface IProductDetailService {
     //FOR ADMIN
@@ -21,7 +24,11 @@ public interface IProductDetailService {
     void toggleStatus(Long id);
     //FOR USER
 
+    ProductDetailAllResponse getAllProductDetails(Long id) throws CustomException;
+
     //COMMON
+
+    List<ProductDetail> findAllByProductId(Long id);
 
 
 }

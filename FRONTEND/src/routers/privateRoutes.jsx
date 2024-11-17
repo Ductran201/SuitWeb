@@ -6,6 +6,7 @@ import ProductAdmin from "../pages/admin/product/ProductAdmin";
 import ProductDetailAdmin from "../pages/admin/productDetail/ProductDetailAdmin";
 import SizeAdmin from "../pages/admin/size/SizeAdmin";
 import UserAdmin from "../pages/admin/user/UserAdmin";
+import AccountRecord from "../pages/user/AccountRecord/AccountRecord";
 
 const privateRoutes = [
   {
@@ -41,6 +42,10 @@ const privateRoutes = [
         element: <ProductDetailAdmin />,
       },
     ],
+  },
+  {
+    path: "/account",
+    element: <AccountRecord />,
   },
 ];
 

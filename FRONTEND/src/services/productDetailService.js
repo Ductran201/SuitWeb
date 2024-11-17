@@ -21,6 +21,14 @@ export const productDetailNoPagination = createAsyncThunk(
   }
 );
 
+export const productDetailById = createAsyncThunk(
+  "productDtail/findById",
+  async (id) => {
+    const res = await BASE_URL.get(`admin/productDetails/${id}`);
+    return res.data.data;
+  }
+);
+
 // Handle error message
 const handleErrorMessage = (error) => {
   if (error.response && error.response.data.code === 409) {

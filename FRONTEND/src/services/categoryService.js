@@ -25,7 +25,7 @@ export const findAllProductByCategory = createAsyncThunk(
   "category/findAllProduct",
   async ({ id, page, search, size, sortField, sortDirection }) => {
     const res = await BASE_URL.get(
-      `admin/categories/${id}/products?page=${
+      `categories/${id}/products?page=${
         page - 1
       }&size=${size}&sortDirection=${sortDirection}&sortField=${sortField}&search=${search}`
     );

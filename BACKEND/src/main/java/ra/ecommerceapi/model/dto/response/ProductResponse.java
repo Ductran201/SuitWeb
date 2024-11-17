@@ -1,10 +1,12 @@
 package ra.ecommerceapi.model.dto.response;
 
-import jakarta.persistence.*;
 import lombok.*;
-import ra.ecommerceapi.model.entity.Category;
+import ra.ecommerceapi.model.entity.Color;
+import ra.ecommerceapi.model.entity.Product;
+import ra.ecommerceapi.model.entity.Size;
 
-import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,9 +15,20 @@ import java.util.Date;
 @Builder
 public class ProductResponse {
 
-    private String name;
-    private String description;
-    private String image;
-    private String categoryName;
+    private Product product;
+    private Set<Color> colorSet;
+    private Set<Size> sizeSet;
+    private List<String> images;
+    private List<ProductDetailAllResponse> productDetailAllResponse;
+
 
 }
+
+//public class ProductResponseDTO {
+//    private String name;
+//    private String description;
+//    private String image;
+//    private List<ProductDetailDTO> productDetails;
+//
+//    // Getters và Setters
+//}

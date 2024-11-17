@@ -5,14 +5,11 @@ import {
   categoryNoPagination,
   findAllProductByCategory,
 } from "../../../services/categoryService";
-import {
-  productDetailNoPagination,
-  productDetailPagination,
-} from "../../../services/productDetailService";
+
 import { Button } from "@mui/material";
 import { topNewestProduct } from "../../../services/productService";
 
-export default function NavShop() {
+export default function ListCategory() {
   const [selectCategory, setSelectCategory] = useState();
   const dispatch = useDispatch();
 
@@ -45,12 +42,8 @@ export default function NavShop() {
     dispatch(topNewestProduct(id));
   };
 
-  // const handleSeeMore = () => {
-  //   console.log(selectCategory);
-  //   dispatch(
-  //     findAllProductByCategory({ page, search, size, sortField, sortDirection })
-  //   );
-  // };
+  console.log(categories);
+
   return (
     <>
       <div className="text-center font-bold">Suggest products</div>

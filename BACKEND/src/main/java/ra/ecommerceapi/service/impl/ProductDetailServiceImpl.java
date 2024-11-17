@@ -1,6 +1,8 @@
 package ra.ecommerceapi.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -8,20 +10,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.ProductDetailRequest;
+import ra.ecommerceapi.model.dto.response.ProductDetailAllResponse;
+import ra.ecommerceapi.model.entity.ImgProductDetail;
 import ra.ecommerceapi.model.entity.ProductDetail;
 import ra.ecommerceapi.repository.IProductDetailRepo;
-import ra.ecommerceapi.service.IColorService;
-import ra.ecommerceapi.service.IProductDetailService;
-import ra.ecommerceapi.service.IProductService;
-import ra.ecommerceapi.service.ISizeService;
+import ra.ecommerceapi.service.*;
+
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProductDetailServiceImpl implements IProductDetailService {
     private final IProductDetailRepo productDetailRepo;
     private final IProductService productService;
+    private final UploadService uploadService;
+    private final IImgProductDetailService imgProductDetailService;
     private final ISizeService sizeService;
     private final IColorService colorService;
 
@@ -49,20 +55,25 @@ public class ProductDetailServiceImpl implements IProductDetailService {
                 .color(colorService.findById(productDetailRequest.getColorId()))
                 .size(sizeService.findById(productDetailRequest.getSizeId()))
                 .product(productService.findById(productDetailRequest.getProductId()))
+
                 .build();
         productDetail.setCreatedDate(new Date());
         productDetail.setStatus(false);
 
+        if (!productDetailRequest.getImages().isEmpty()) {
+            for (MultipartFile file : productDetailRequest.getImages()) {
+                ImgProductDetail imgProductDetail = ImgProductDetail.builder()
+                        .image(uploadService.uploadFileToServer(file))
+                        .productDetail(productDetail)
+                        .build();
+                imgProductDetail.setStatus(true);
+                imgProductDetail.setCreatedDate(new Date());
+                imgProductDetailService.add(imgProductDetail);
+            }
+        }
         return productDetailRepo.save(productDetail);
 
     }
-
-    //if (!productDetailRequest.getImages().isEmpty()){
-//for (MultipartFile image : productDetailRequest.getImages()) {
-//
-//}
-//}
-
 
 
     @Override
@@ -74,6 +85,17 @@ public class ProductDetailServiceImpl implements IProductDetailService {
             throw new CustomException("This product has already exist", HttpStatus.CONFLICT);
         }
 
+        List<Long> existingImageIdsToKeep = productDetailRequest.getExistingImageIdsToKeep();
+
+        List<ImgProductDetail> currentImages = imgProductDetailService.findAllImagesByProductDetailId(id);
+        if (existingImageIdsToKeep != null) {
+            currentImages.stream()
+                    .filter(image -> !existingImageIdsToKeep.contains(image.getId()))
+                    .forEach(image -> imgProductDetailService.deleteImageById(image.getId()));
+        }else{
+            imgProductDetailService.deleteAllImagesByProductDetailId(id);
+        }
+
         oldProductDetail.setName(productDetailRequest.getName());
         oldProductDetail.setPrice(productDetailRequest.getPrice());
         oldProductDetail.setStockQuantity(productDetailRequest.getStockQuantity());
@@ -81,16 +103,49 @@ public class ProductDetailServiceImpl implements IProductDetailService {
         oldProductDetail.setColor(colorService.findById(productDetailRequest.getColorId()));
         oldProductDetail.setSize(sizeService.findById(productDetailRequest.getSizeId()));
 
+        if (productDetailRequest.getImages() != null && !productDetailRequest.getImages().isEmpty()) {
+            for (MultipartFile file : productDetailRequest.getImages()) {
+                ImgProductDetail imgProductDetail = ImgProductDetail.builder()
+                        .image(uploadService.uploadFileToServer(file))
+                        .productDetail(oldProductDetail)
+                        .build();
+                imgProductDetail.setStatus(true);
+                imgProductDetail.setCreatedDate(new Date());
+                imgProductDetailService.add(imgProductDetail);
+            }
+        }
+
         return productDetailRepo.save(oldProductDetail);
     }
+
 
     @Override
     public void delete(Long id) {
         productDetailRepo.deleteById(id);
+        imgProductDetailService.deleteAllImagesByProductDetailId(id);
     }
 
     @Override
     public void toggleStatus(Long id) {
         productDetailRepo.toggleStatus(id);
+    }
+
+    @Override
+    public ProductDetailAllResponse getAllProductDetails(Long id) throws CustomException {
+
+        List<ImgProductDetail> listImages = imgProductDetailService.findAllImagesByProductDetailId(id);
+
+        return ProductDetailAllResponse.builder()
+                .productDetail(findById(id))
+                .images(listImages)
+                .build();
+
+    }
+
+    @Override
+    public List<ProductDetail> findAllByProductId(Long id) {
+        productService.findById(id);
+
+        return productDetailRepo.findAllByProductId(id);
     }
 }

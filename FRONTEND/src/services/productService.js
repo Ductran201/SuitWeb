@@ -13,10 +13,18 @@ export const productPagination = createAsyncThunk(
   }
 );
 
+export const findProductById = createAsyncThunk(
+  "product/findById",
+  async (id) => {
+    const res = await BASE_URL.get(`products/${id}`);
+    return res.data.data;
+  }
+);
+
 export const topNewestProduct = createAsyncThunk(
   "product/topNewest",
   async (idCategory) => {
-    const res = await BASE_URL.get(`admin/products/newest/${idCategory}`);
+    const res = await BASE_URL.get(`products/newest/${idCategory}`);
     return res.data.data;
   }
 );

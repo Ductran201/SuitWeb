@@ -16,9 +16,7 @@ import java.util.UUID;
 @Setter
 @Builder
 public class PurchaseOrder extends BaseObject {
-    //    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     private UUID code;
@@ -27,8 +25,6 @@ public class PurchaseOrder extends BaseObject {
     private String receiveName;
     private String receiveAddress;
     private String receivePhone;
-    //    @Temporal(TemporalType.DATE)
-//    private Date createdDate;
     @Temporal(TemporalType.DATE)
     private Date updatedDate;
     @Temporal(TemporalType.DATE)

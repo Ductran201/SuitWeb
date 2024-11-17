@@ -16,7 +16,7 @@ export default function ProductByCategory() {
   const [sortDirection, setSortDirection] = useState("DESC");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(5);
+  const [size, setSize] = useState(3);
 
   //
 
@@ -39,20 +39,26 @@ export default function ProductByCategory() {
   useEffect(() => {
     loadInitialData();
   }, [id, page, size, sortDirection, sortField]);
-
+  console.log(data);
   return (
     <>
       <HeaderShop />
-      {console.log(data)}
       <section className="grid grid-cols-6">
+        {/* Super filter */}
         <div className=" bg-red-400 col-span-1">Super Filter</div>
+
+        {/* List product of category */}
         <article className=" bg-green-400 col-span-5 p-[30px]">
           <div className="grid grid-cols-4 gap-4">
             {data?.map((pro) => (
               <div key={pro.id}>
                 <Link to={`/product/${pro.id}`}>
-                  <img src={`${pro.image}`} alt="" />
-                  <p>{pro.name}</p>
+                  <img
+                    src={`${pro.image}`}
+                    alt=""
+                    className="object-cover w-full h-[400px]"
+                  />
+                  <p className="mt-2">{pro.name}</p>
                   <b>{pro.price} đ</b>
                 </Link>
               </div>

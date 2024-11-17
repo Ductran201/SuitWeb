@@ -16,7 +16,7 @@ public class Product extends BaseObject {
     @Column(unique = true)
     private String name;
     private String description;
-    private String image; // maybe have many image because product just diff in size
+    private String image;
     @Temporal(TemporalType.DATE)
     private Date updatedDate;
     @ManyToOne

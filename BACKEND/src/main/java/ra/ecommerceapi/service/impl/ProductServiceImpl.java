@@ -2,29 +2,30 @@ package ra.ecommerceapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
+import ra.ecommerceapi.model.dto.response.ProductDetailAllResponse;
 import ra.ecommerceapi.model.dto.response.ProductOverviewResponse;
 import ra.ecommerceapi.model.dto.response.ProductResponse;
-import ra.ecommerceapi.model.entity.Product;
+import ra.ecommerceapi.model.entity.*;
+import ra.ecommerceapi.repository.IProductDetailRepo;
 import ra.ecommerceapi.repository.IProductRepo;
-import ra.ecommerceapi.service.ICategoryService;
-import ra.ecommerceapi.service.IProductService;
-import ra.ecommerceapi.service.UploadService;
+import ra.ecommerceapi.service.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements IProductService {
     private final IProductRepo productRepo;
+    private final IProductDetailRepo productDetailRepo;
+    private final IImgProductDetailService imgProductDetailService;
     private final ICategoryService categoryService;
     private final UploadService uploadService;
     private final ModelMapper modelMapper;
@@ -40,8 +41,49 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public Page<ProductOverviewResponse> findAllPaginationUser(Long id,String search, Pageable pageable) {
-        return productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(id,search,pageable);
+    public Page<ProductOverviewResponse> findAllPaginationUser(Long id, String search, Pageable pageable) {
+        return productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(id, search, pageable);
+    }
+
+    @Override
+    public ProductResponse findProductResponseByProductId(Long id) {
+        findById(id);
+
+        Set<Color> colorSet = new HashSet<>();
+        Set<Size> sizeSet = new HashSet<>();
+        List<ImgProductDetail> imgProductDetailList = new ArrayList<>();
+        List<String> imageList = new ArrayList<>();
+
+
+        List<ProductDetail> productDetailList = productDetailRepo.findAllByProductId(id);
+
+        List<ProductDetailAllResponse> productDetailAllResponseList = new ArrayList<>();
+
+
+        for (ProductDetail productDetail : productDetailList) {
+
+            colorSet.add(productDetail.getColor());
+            sizeSet.add(productDetail.getSize());
+
+            imgProductDetailList = imgProductDetailService.findAllImagesByProductDetailId(productDetail.getId());
+            productDetailAllResponseList.add(ProductDetailAllResponse.builder()
+                    .productDetail(productDetail)
+                    .images(imgProductDetailList)
+                    .build());
+            for (ImgProductDetail imgProductDetail : imgProductDetailList) {
+                imageList.add(imgProductDetail.getImage());
+
+            }
+
+        }
+
+        return ProductResponse.builder()
+                .colorSet(colorSet)
+                .sizeSet(sizeSet)
+                .product(findById(id))
+                .images(imageList)
+                .productDetailAllResponse(productDetailAllResponseList)
+                .build();
     }
 
     @Override
@@ -52,7 +94,7 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public Product save(ProductRequest productRequest) throws CustomException {
 
-        if (productRepo.existsByName(productRequest.getName())){
+        if (productRepo.existsByName(productRequest.getName())) {
             throw new CustomException("This product already exist", HttpStatus.CONFLICT);
         }
 
@@ -79,8 +121,8 @@ public class ProductServiceImpl implements IProductService {
     public Product save(ProductRequest productRequest, Long id) throws CustomException {
         Product oldProduct = findById(id);
 
-        if (!Objects.equals(productRequest.getName(), findById(id).getName()) && productRepo.existsByName(productRequest.getName())){
-            throw new CustomException("This product already exist",HttpStatus.CONFLICT);
+        if (!Objects.equals(productRequest.getName(), findById(id).getName()) && productRepo.existsByName(productRequest.getName())) {
+            throw new CustomException("This product already exist", HttpStatus.CONFLICT);
         }
 
         // change manually by set each field or can be use modelMapper
@@ -91,7 +133,7 @@ public class ProductServiceImpl implements IProductService {
 
         if (productRequest.getFile() != null && productRequest.getFile().getSize() > 0) {
             oldProduct.setImage(uploadService.uploadFileToServer(productRequest.getFile()));
-        } else if(productRequest.getFile() != null && productRequest.getFile().getSize() == 0){
+        } else if (productRequest.getFile() != null && productRequest.getFile().getSize() == 0) {
             oldProduct.setImage(null);
         }
 
@@ -110,14 +152,8 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Page<Product> findAllPaginationAdmin(String search, Pageable pageable) {
-        return productRepo.findAllByNameContains(search,pageable);
+        return productRepo.findAllByNameContains(search, pageable);
     }
-
-//    @Override
-//    public Page<ProductResponse> findAllPaginationUser(Long id,String search, Pageable pageable) {
-//        return productRepo.findAllByNameContainsAndStatusTrueOrDescriptionContainsAndStatusTrue(search,search,pageable).map(p->modelMapper.map(p, ProductResponse.class));
-//    }
-
 
 
 //    @Override

@@ -16,6 +16,7 @@ import {
   editProductDetail,
   toggleStatusProductDetail,
   addProductDetail,
+  productDetailById,
 } from "../../../services/productDetailService";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -49,6 +50,8 @@ export default function ProductDetailAdmin() {
   const { productId } = useParams();
   const [baseId, setBaseId] = useState(null);
 
+  const [fileAdd, setFileAdd] = useState([]);
+  const [fileEdit, setFileEdit] = useState([]);
   const debounce = useDebounce(search, 500);
   // Data of product
   const {
@@ -75,9 +78,10 @@ export default function ProductDetailAdmin() {
     clearErrors();
     setIsFormAdd(false);
     setIsFormEdit(false);
-    setFileAdd(false);
-    setFileEdit(false);
+    setFileAdd([]);
+    setFileEdit([]);
   };
+  // console.log(" add", fileAdd);
 
   const onSubmit = async (dataForm) => {
     try {
@@ -89,10 +93,29 @@ export default function ProductDetailAdmin() {
       formData.append("sizeId", dataForm.sizeId);
       formData.append("productId", productId);
 
-      const files = isFormAdd ? fileAdd : fileEdit;
-      files.forEach((fileObj, index) => {
-        formData.append(`file_${index}`, fileObj.file);
-      });
+      // Kiểm tra kỹ các phần tử của fileEdit để đảm bảo chỉ lấy những id hợp lệ
+      const existingImageIdsToKeep = fileEdit
+        ?.map((image) => image.id) // Lấy id từ mỗi đối tượng
+        .filter((id) => id !== null && id !== undefined); // Lọc bỏ null và undefined
+
+      // console.log(existingImageIdsToKeep);
+
+      if (existingImageIdsToKeep.length > 0) {
+        // Truyền từng id của existingImageIdsToKeep vào FormData
+        existingImageIdsToKeep.forEach((id) => {
+          formData.append("existingImageIdsToKeep", id); // Thêm từng id một
+        });
+      }
+
+      if (fileAdd && fileAdd.length > 0) {
+        fileAdd.forEach((file) => {
+          if (file.file) formData.append("images", file.file);
+        });
+      } else if (fileEdit && fileEdit.length > 0) {
+        fileEdit.forEach((file) => {
+          if (file.file) formData.append("images", file.file);
+        });
+      }
 
       const action = isFormAdd
         ? addProductDetail(formData)
@@ -176,12 +199,12 @@ export default function ProductDetailAdmin() {
     setSortDirection(sortDirection);
   };
 
-  const [fileAdd, setFileAdd] = useState([]);
-  const [fileEdit, setFileEdit] = useState([]);
+  // console.log(fileEdit?.length == 0);
+
+  console.log("fileedit:", fileEdit);
 
   const handleGetFile = (e, formType) => {
     const files = Array.from(e.target.files);
-    console.log(files);
     const newFiles = files.map((file) => ({
       url: URL.createObjectURL(file),
       file,
@@ -192,6 +215,7 @@ export default function ProductDetailAdmin() {
       console.log(fileAdd);
     } else if (formType === "edit") {
       setFileEdit((prevFiles) => [...prevFiles, ...newFiles]);
+      console.log(fileEdit);
     }
   };
 
@@ -239,20 +263,27 @@ export default function ProductDetailAdmin() {
       .catch((error) => console.log(error));
   };
 
-  const handleOpenEdit = (id) => {
+  const handleOpenEdit = async (id) => {
     // find the old product
-    const findById = productDetailData.find((pro) => pro.id === id);
-
+    const findById = await dispatch(productDetailById(id)).unwrap();
+    console.log(findById);
     if (findById) {
       setBaseId(id);
       setIsFormEdit(true);
-
-      Object.entries(findById).forEach(([key, value]) => {
+      Object.entries(findById.productDetail).forEach(([key, value]) => {
         setValue(key, value);
       });
-      console.log(findById);
-      setValue("colorId", findById.color.id);
-      setValue("sizeId", findById.size.id);
+
+      setValue("colorId", findById.productDetail.color.id);
+      setValue("sizeId", findById.productDetail.size.id);
+
+      // Tạo mảng `newFiles` từ `findById.images` để phù hợp với `setFileEdit`
+      const newFiles = findById.images.map((img) => ({
+        url: img.image, // Đường dẫn URL ảnh từ `ImgProductDetail`
+        // file: null,
+        id: img.id,
+      }));
+      setFileEdit(newFiles);
     }
   };
 
@@ -436,7 +467,7 @@ export default function ProductDetailAdmin() {
                 <input type="file" multiple={true} hidden />
               </Button>
               <div className="grid grid-cols-3 gap-4 mt-2">
-                {fileAdd.map((file, index) => (
+                {fileAdd?.map((file, index) => (
                   <div key={index} className="relative w-20 h-20 mt-2">
                     <img
                       src={file.url}
@@ -469,7 +500,7 @@ export default function ProductDetailAdmin() {
             className="w-[300px] min-h-[250px] bg-gray-500 p-4"
           >
             <div className="flex justify-between items-center mb-5">
-              <h1 className="">Add</h1>
+              <h1 className="">Edit</h1>
               <Close className="cursor-pointer" onClick={resetForm} />
             </div>
             <div className="flex justify-center items-center flex-col gap-6">
@@ -539,20 +570,37 @@ export default function ProductDetailAdmin() {
                 error={!!errors.sizeId}
                 helperText={errors.sizeId?.message}
               ></SelectCustom>
-              {/* <Button
-               fullWidth
-               component="label"
-               role={undefined}
-               variant="contained"
-               tabIndex={-1}
-               startIcon={<CloudUploadIcon />}
-               onChange={handleGetFile}
-             >
-               Upload files
-               <VisuallyHiddenInput type="file" multiple />
-             </Button> */}
+              <Button
+                fullWidth
+                component="label"
+                variant="contained"
+                startIcon={<CloudUploadIcon />}
+                onChange={(e) => handleGetFile(e, "edit")}
+              >
+                Upload files
+                <input type="file" multiple={true} hidden />
+              </Button>
+              <div className="grid grid-cols-3 gap-4 mt-2">
+                {fileEdit?.map((file, index) => (
+                  <div key={index} className="relative w-20 h-20 mt-2">
+                    <img
+                      src={file.url}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage("edit", index)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+
               <Button type="submit" variant="contained" fullWidth>
-                Add
+                Edit
               </Button>
             </div>
           </form>
@@ -594,7 +642,7 @@ export default function ProductDetailAdmin() {
             </th>
             <th className="border ">ID</th>
             <th className="border ">NAME</th>
-            <th className="border w-[150px]">IMAGE</th>
+            {/* <th className="border w-[150px]">IMAGE</th> */}
             <th className="border ">PRICE</th>
             <th className="border ">STOCK QUANTITY</th>
             <th className="border ">COLOR</th>
@@ -612,13 +660,13 @@ export default function ProductDetailAdmin() {
               </td>
               <td>{pro.id}</td>
               <td>{pro.name}</td>
-              <td>
+              {/* <td>
                 <img
                   src={pro.image}
                   alt=""
                   className="h-[100px] w-[100%] object-cover"
                 />
-              </td>
+              </td> */}
               <td>{pro.price}</td>
               <td>{pro.stockQuantity}</td>
 

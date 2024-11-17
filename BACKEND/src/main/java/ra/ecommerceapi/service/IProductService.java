@@ -25,16 +25,15 @@ public interface IProductService {
     void toggleStatus(Long id);
     // FOR USER
 
-//    Page<ProductResponse> findAllPaginationUser(String search, Pageable pageable);
-
-//    Page<ProductResponse> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable);
-
     List<ProductOverviewResponse> findTopProductNewest(Long id);
 
     Page<ProductOverviewResponse> findAllPaginationUser(Long id, String search, Pageable pageable);
 
+    ProductResponse findProductResponseByProductId(Long id);
+
     // COMMON
     List<Product> findAll();
+
 
 
 }

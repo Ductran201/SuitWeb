@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ra.ecommerceapi.model.entity.ProductDetail;
 
+import java.util.List;
+
 @Transactional
 public interface IProductDetailRepo extends JpaRepository<ProductDetail, Long> {
     //    FOR ADMIN
@@ -20,7 +22,9 @@ public interface IProductDetailRepo extends JpaRepository<ProductDetail, Long> {
     Boolean existsByName(String name);
 //    FOR USER
 
-//    COMMON
 
+//    COMMON
+    List<ProductDetail> findAllByProductId(Long id);
 
 }
+

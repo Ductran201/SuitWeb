@@ -62,7 +62,9 @@ export default function CategoryAdmin() {
   // Data of category
   const { data, error, totalPages, totalElements, numberOfElements } =
     useSelector((state) => state.category);
-
+  const { data: pro } = useSelector((state) => state.product);
+  console.log(data);
+  console.log(pro);
   const loadCategoryPagination = () => {
     dispatch(
       categoryPagination({ page, size, search, sortField, sortDirection })

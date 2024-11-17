@@ -59,18 +59,6 @@ public class AProductController {
         );
     }
 
-    @GetMapping("/newest/{categoryId}")
-    public ResponseEntity<?> topProductNewest(@PathVariable Long categoryId) {
-        categoryService.findById(categoryId);
-        return ResponseEntity.ok().body(
-                ResponseWrapper.builder()
-                        .data(productService.findTopProductNewest(categoryId))
-                        .status(EHttpStatus.SUCCESS)
-                        .code(200)
-                        .build()
-        );
-    }
-
     @PostMapping("")
     public ResponseEntity<?> add(@Valid @ModelAttribute ProductRequest productRequest) throws CustomException {
         return new ResponseEntity<>(ResponseWrapper.builder()

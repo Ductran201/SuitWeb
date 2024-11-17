@@ -28,4 +28,7 @@ public class ProductDetailRequest {
     private Long sizeId;
     private Long productId;
     private List<MultipartFile> images;
+
+    private List<Long> existingImageIdsToKeep;
+
 }

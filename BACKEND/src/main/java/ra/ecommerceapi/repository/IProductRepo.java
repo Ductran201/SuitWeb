@@ -21,11 +21,24 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
     void toggleStatus(Long id);
 
     //    FOR USER
-    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
-            "from Product p " +
-            "join ProductDetail pd on pd.product=p " +
-            "where p.category.id = :id and p.name like %:name% and p.status = true")
-    Page<ProductOverviewResponse> findAllByCategoryIdAndNameContainsAndStatusTrue(Long id,String name, Pageable pageable);
+//    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
+//            "from Product p " +
+//            "join ProductDetail pd on pd.product=p " +
+//            "where p.category.id = :id and p.name like %:name% and p.status = true")
+//    @Query("SELECT DISTINCT new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id, p.name, p.image, p.createdDate, pd.price) " +
+//            "FROM Product p " +
+//            "JOIN ProductDetail pd ON pd.product = p " +
+//            "WHERE p.category.id = :id AND p.name LIKE %:name% AND p.status = true " +
+//            "GROUP BY p.id")
+    @Query("SELECT new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price)" +
+            "FROM Product p " +
+            "JOIN ProductDetail pd ON pd.product = p " +
+            "WHERE p.category.id = :categoryId and p.name like %:name% and p.status = true " +
+            "AND pd.id = (SELECT MIN(pd2.id) " +
+            "             FROM ProductDetail pd2 " +
+            "             WHERE pd2.product = p)")
+
+    Page<ProductOverviewResponse> findAllByCategoryIdAndNameContainsAndStatusTrue(Long categoryId,String name, Pageable pageable);
 
     //    COMMON
     @Query("select p.image from Product p where p.id= :id")
@@ -35,7 +48,7 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
 
     @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
             "from Product p " +
-            "join ProductDetail pd on pd.product=p where p.category.id=:id order by pd.price asc limit 1")
+            "join ProductDetail pd on pd.product=p where p.category.id=:id and p.status = true order by pd.price asc limit 1")
     List<ProductOverviewResponse> findTopProductNewest(Long id);
 // This for if limit doesnt work
 //    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.name, pd.price) " +

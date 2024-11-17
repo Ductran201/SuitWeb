@@ -6,6 +6,7 @@ import ra.ecommerceapi.model.base.BaseObject;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
