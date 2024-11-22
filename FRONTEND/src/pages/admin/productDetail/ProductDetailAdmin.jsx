@@ -94,16 +94,18 @@ export default function ProductDetailAdmin() {
       formData.append("productId", productId);
 
       // Kiểm tra kỹ các phần tử của fileEdit để đảm bảo chỉ lấy những id hợp lệ
+
+      // Send the id of existingImageIdsToKeep to server
       const existingImageIdsToKeep = fileEdit
-        ?.map((image) => image.id) // Lấy id từ mỗi đối tượng
-        .filter((id) => id !== null && id !== undefined); // Lọc bỏ null và undefined
+        ?.map((image) => image.id)
+        .filter((id) => id !== null && id !== undefined); // remove null and undefine
 
       // console.log(existingImageIdsToKeep);
 
       if (existingImageIdsToKeep.length > 0) {
-        // Truyền từng id của existingImageIdsToKeep vào FormData
+        // Pass the id of existingImageIdsToKeep to formData
         existingImageIdsToKeep.forEach((id) => {
-          formData.append("existingImageIdsToKeep", id); // Thêm từng id một
+          formData.append("existingImageIdsToKeep", id);
         });
       }
 

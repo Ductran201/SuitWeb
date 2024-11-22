@@ -1,6 +1,9 @@
 package ra.ecommerceapi.model.dto.response;
 
 import lombok.*;
+import ra.ecommerceapi.model.entity.ProductDetail;
+
+import java.math.BigDecimal;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -8,8 +11,8 @@ import lombok.*;
 @Setter
 @Builder
 public class CartResponse {
-    private Long productId;
-    private String productName;
+
+    private ProductDetail productDetail;
+    private BigDecimal totalPrice;
     private Integer quantity;
-    private Double price;
 }

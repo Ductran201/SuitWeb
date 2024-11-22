@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import HeaderShop from "../../layouts/user/headerShop/HeaderShop";
-import FooterShop from "../../layouts/user/footerShop/FooterShop";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
@@ -42,7 +40,6 @@ export default function ProductByCategory() {
   console.log(data);
   return (
     <>
-      <HeaderShop />
       <section className="grid grid-cols-6">
         {/* Super filter */}
         <div className=" bg-red-400 col-span-1">Super Filter</div>
@@ -66,8 +63,6 @@ export default function ProductByCategory() {
           </div>
         </article>
       </section>
-
-      <FooterShop />
     </>
   );
 }

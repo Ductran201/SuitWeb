@@ -23,22 +23,9 @@ export default function SignIn() {
   const onSubmit = async (dataForm) => {
     try {
       const res = await dispatch(signIn(dataForm)).unwrap();
+
+      console.log("res trong signin", res);
       if (res) {
-        console.log(res);
-        const userInfor = {
-          address: res.address,
-          avatar: res.avatar,
-          // createdAt: res.createdAt,
-          email: res.email,
-          fullName: res.fullName,
-          phone: res.phone,
-          roles: res.roles,
-          status: res.status,
-        };
-        console.log(userInfor);
-
-        localStorage.setItem("userInfor", JSON.stringify(userInfor));
-
         if (res.roles.some((item) => item === "ROLE_ADMIN")) {
           navigate("/admin");
         } else {

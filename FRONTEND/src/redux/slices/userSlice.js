@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { userPagination } from "../../services/userService";
+import { getUserInfor, userPagination } from "../../services/userService";
 import { FAILED, PENDING, SUCCESS } from "../constants";
 const initialState = {
   loading: "idle",
+  infor: null,
   data: null,
   error: null,
   totalPages: 1,
@@ -32,6 +33,11 @@ const userSlice = createSlice({
     builder.addCase(userPagination.rejected, (state, action) => {
       state.loading = FAILED;
       state.error = action.error;
+    });
+
+    builder.addCase(getUserInfor.fulfilled, (state, action) => {
+      state.loading = SUCCESS;
+      state.infor = action.payload;
     });
   },
 });

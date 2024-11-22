@@ -15,10 +15,9 @@ import java.util.Set;
 @Builder
 public class ProductResponse {
 
-    private Product product;
+    private String productName;
     private Set<Color> colorSet;
     private Set<Size> sizeSet;
-    private List<String> images;
     private List<ProductDetailAllResponse> productDetailAllResponse;
 
 

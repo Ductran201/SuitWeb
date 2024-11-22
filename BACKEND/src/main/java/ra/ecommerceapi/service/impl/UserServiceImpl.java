@@ -69,7 +69,8 @@ public class UserServiceImpl implements IUserService {
 
         User oldUser= userRepo.findById(authService.getCurrentUser().getUser().getId()).orElseThrow(() -> new NoSuchElementException("Not found this user"));
 
-//        oldUser.setEmail(userRequest.getEmail());
+        System.out.println("Received UserRequest: " + userRequest);
+
         oldUser.setFullName(userRequest.getFullName());
         oldUser.setPhone(userRequest.getPhone());
         oldUser.setGender(userRequest.getGender());
@@ -81,6 +82,7 @@ public class UserServiceImpl implements IUserService {
         } else {
             oldUser.setAvatar(userRepo.getAvatarById(authService.getCurrentUser().getUser().getId()));
         }
+
 
         userRepo.save(oldUser);
 

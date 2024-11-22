@@ -1,13 +1,24 @@
+import { patch } from "@mui/material";
+import AccountRecord from "../layouts/accountRecord";
 import ShopLayout from "../layouts/user";
 import AboutShop from "../pages/all/about/AboutShop";
 import ContactShop from "../pages/all/contact/ContactShop";
 import HomeShop from "../pages/all/home/HomeShop";
 import ProductByCategory from "../pages/all/ProductByCategory";
 import ProductDetail from "../pages/all/ProductDetail";
+import Test from "../pages/all/Test";
 import NotFound from "../pages/NotFound";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
 import UnauthorizedPage from "../pages/Unauthorized";
+import Information from "../pages/user/information/Information";
+import Social from "../pages/user/social/Social";
+import WishList from "../pages/user/wishList/WishList";
+import ShippingAddress from "../pages/user/shippingAddress/ShippingAddress";
+import History from "../pages/user/history/History";
+import Coupons from "../pages/user/coupons/Coupons";
+import data from "../data/index.json";
+import CartUser from "../pages/user/cart/CartUser";
 
 const publicRoutes = [
   {
@@ -26,16 +37,54 @@ const publicRoutes = [
         path: "about",
         element: <AboutShop />,
       },
+      {
+        path: "/account",
+        element: <AccountRecord />,
+        children: [
+          {
+            index: true,
+            path: "infor",
+            element: <Information />,
+          },
+          {
+            path: "social",
+            element: <Social />,
+          },
+          {
+            path: "shipping-address",
+            element: <ShippingAddress />,
+          },
+          {
+            path: "history",
+            element: <History />,
+          },
+          {
+            path: "coupons",
+            element: <Coupons />,
+          },
+          {
+            path: "wishlist",
+            element: <WishList />,
+          },
+        ],
+      },
+      {
+        path: "/cart",
+        element: <CartUser />,
+      },
+      {
+        path: "/category/:id",
+        element: <ProductByCategory />,
+      },
+      {
+        path: "/product/:id",
+        element: <ProductDetail />,
+      },
+      {
+        path: "/test",
+        element: <Test data={data} />,
+      },
     ],
-  },
-
-  {
-    path: "/category/:id",
-    element: <ProductByCategory />,
-  },
-  {
-    path: "/product/:id",
-    element: <ProductDetail />,
   },
 
   {

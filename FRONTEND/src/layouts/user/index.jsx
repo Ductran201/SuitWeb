@@ -19,10 +19,12 @@ export default function ShopLayout() {
   //   });
   // }, [location.pathname]);
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <HeaderShop />
-      <Outlet />
+      <div className="flex-1">
+        <Outlet />
+      </div>
       <FooterShop />
-    </>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   categoryNoPagination,
-  categoryPagination,
+  categoryPaginationAdmin,
   findAllProductByCategory,
 } from "../../services/categoryService";
 import { FAILED, PENDING, SUCCESS } from "../constants";
@@ -21,11 +21,11 @@ const categorySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     // PAGINATION
-    builder.addCase(categoryPagination.pending, (state) => {
+    builder.addCase(categoryPaginationAdmin.pending, (state) => {
       state.loading = PENDING;
     });
 
-    builder.addCase(categoryPagination.fulfilled, (state, action) => {
+    builder.addCase(categoryPaginationAdmin.fulfilled, (state, action) => {
       const { content, totalPages, totalElements, numberOfElements } =
         action.payload;
       state.loading = SUCCESS;
@@ -41,11 +41,10 @@ const categorySlice = createSlice({
       state.data = action.payload;
     });
 
-    builder.addCase(categoryPagination.rejected, (state, action) => {
+    builder.addCase(categoryPaginationAdmin.rejected, (state, action) => {
       state.loading = FAILED;
       state.error = action.error;
     });
-    
   },
 });
 

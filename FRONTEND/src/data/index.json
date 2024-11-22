@@ -1,0 +1,459 @@
+{
+        "product": {
+            "id": 1,
+            "status": true,
+            "createdDate": "2024-10-28",
+            "name": "Shirt Standard",
+            "description": "Des for shirt",
+            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+            "updatedDate": "2024-10-28",
+            "category": {
+                "id": 3,    
+                "status": true,
+                "createdDate": "2024-10-28",
+                "name": "Shirt",
+                "description": "fg",
+                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+            }
+        },
+        "colorSet": [
+            {
+                "id": 1,
+                "status": true,
+                "createdDate": "2024-10-28",
+                "name": "Red"
+            },
+            {
+                "id": 2,
+                "status": true,
+                "createdDate": "2024-10-28",
+                "name": "Black"
+            },
+            {
+                "id": 7,
+                "status": true,
+                "createdDate": "2024-11-02",
+                "name": "yellow"
+            }
+        ],
+        "sizeSet": [
+            {
+                "id": 1,
+                "status": true,
+                "createdDate": "2024-10-28",
+                "name": "S"
+            },
+            {
+                "id": 3,
+                "status": true,
+                "createdDate": "2024-10-28",
+                "name": "XL"
+            },
+            {
+                "id": 2,
+                "status": true,
+                "createdDate": "2024-10-28",
+                "name": "M"
+            }
+        ],
+        "images": [
+            "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-48-0251ww-o5rh7L._AC_SY1000_.jpg?generation=1731048484532679&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-48-031539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1731048485363912&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-52-1951ww-o5rh7L._AC_SY1000_.jpg?generation=1731048741322731&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-52-491539702152_20181009-150631-A10185BPT_Shoe_Patent_Leather_PVC.avif?generation=1731048771220809&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-52-50dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731048771796218&alt=media",
+            "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-52-50Mitchell-Black-Hero_900x900_crop_center.jpg.webp?generation=1731048772403161&alt=media"
+        ],
+        "productDetailAllResponse": [
+            {
+                "productDetail": {
+                    "id": 23,
+                    "status": false,
+                    "createdDate": "2024-11-08",
+                    "name": "Shirt Standard Red",
+                    "price": 11111.00,
+                    "stockQuantity": 111,
+                    "updatedDate": "2024-11-08",
+                    "size": {
+                        "id": 3,
+                        "status": true,
+                        "createdDate": "2024-10-28",
+                        "name": "XL"
+                    },
+                    "color": {
+                        "id": 1,
+                        "status": true,
+                        "createdDate": "2024-10-28",
+                        "name": "Red"
+                    },
+                    "product": {
+                        "id": 1,
+                        "status": true,
+                        "createdDate": "2024-10-28",
+                        "name": "Shirt Standard",
+                        "description": "Des for shirt",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                        "updatedDate": "2024-10-28",
+                        "category": {
+                            "id": 3,
+                            "status": true,
+                            "createdDate": "2024-10-28",
+                            "name": "Shirt",
+                            "description": "fg",
+                            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                        }
+                    }
+                },
+                "images": [
+                    {
+                        "id": 22,
+                        "status": true,
+                        "createdDate": "2024-11-08",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-48-0251ww-o5rh7L._AC_SY1000_.jpg?generation=1731048484532679&alt=media",
+                        "productDetail": {
+                            "id": 23,
+                            "status": false,
+                            "createdDate": "2024-11-08",
+                            "name": "Shirt Standard Red",
+                            "price": 11111.00,
+                            "stockQuantity": 111,
+                            "updatedDate": "2024-11-08",
+                            "size": {
+                                "id": 3,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "XL"
+                            },
+                            "color": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Red"
+                            },
+                            "product": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Shirt Standard",
+                                "description": "Des for shirt",
+                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                                "updatedDate": "2024-10-28",
+                                "category": {
+                                    "id": 3,
+                                    "status": true,
+                                    "createdDate": "2024-10-28",
+                                    "name": "Shirt",
+                                    "description": "fg",
+                                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": 23,
+                        "status": true,
+                        "createdDate": "2024-11-08",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-48-031539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1731048485363912&alt=media",
+                        "productDetail": {
+                            "id": 23,
+                            "status": false,
+                            "createdDate": "2024-11-08",
+                            "name": "Shirt Standard Red",
+                            "price": 11111.00,
+                            "stockQuantity": 111,
+                            "updatedDate": "2024-11-08",
+                            "size": {
+                                "id": 3,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "XL"
+                            },
+                            "color": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Red"
+                            },
+                            "product": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Shirt Standard",
+                                "description": "Des for shirt",
+                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                                "updatedDate": "2024-10-28",
+                                "category": {
+                                    "id": 3,
+                                    "status": true,
+                                    "createdDate": "2024-10-28",
+                                    "name": "Shirt",
+                                    "description": "fg",
+                                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "productDetail": {
+                    "id": 24,
+                    "status": false,
+                    "createdDate": "2024-11-08",
+                    "name": "Shirt Standard Black",
+                    "price": 22222.00,
+                    "stockQuantity": 222,
+                    "updatedDate": "2024-11-08",
+                    "size": {
+                        "id": 1,
+                        "status": true,
+                        "createdDate": "2024-10-28",
+                        "name": "S"
+                    },
+                    "color": {
+                        "id": 2,
+                        "status": true,
+                        "createdDate": "2024-10-28",
+                        "name": "Black"
+                    },
+                    "product": {
+                        "id": 1,
+                        "status": true,
+                        "createdDate": "2024-10-28",
+                        "name": "Shirt Standard",
+                        "description": "Des for shirt",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                        "updatedDate": "2024-10-28",
+                        "category": {
+                            "id": 3,
+                            "status": true,
+                            "createdDate": "2024-10-28",
+                            "name": "Shirt",
+                            "description": "fg",
+                            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                        }
+                    }
+                },
+                "images": [
+                    {
+                        "id": 24,
+                        "status": true,
+                        "createdDate": "2024-11-08",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-52-1951ww-o5rh7L._AC_SY1000_.jpg?generation=1731048741322731&alt=media",
+                        "productDetail": {
+                            "id": 24,
+                            "status": false,
+                            "createdDate": "2024-11-08",
+                            "name": "Shirt Standard Black",
+                            "price": 22222.00,
+                            "stockQuantity": 222,
+                            "updatedDate": "2024-11-08",
+                            "size": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "S"
+                            },
+                            "color": {
+                                "id": 2,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Black"
+                            },
+                            "product": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Shirt Standard",
+                                "description": "Des for shirt",
+                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                                "updatedDate": "2024-10-28",
+                                "category": {
+                                    "id": 3,
+                                    "status": true,
+                                    "createdDate": "2024-10-28",
+                                    "name": "Shirt",
+                                    "description": "fg",
+                                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "productDetail": {
+                    "id": 25,
+                    "status": false,
+                    "createdDate": "2024-11-08",
+                    "name": "Shirt Standard Yellow",
+                    "price": 3333.00,
+                    "stockQuantity": 333,
+                    "updatedDate": "2024-11-08",
+                    "size": {
+                        "id": 2,
+                        "status": true,
+                        "createdDate": "2024-10-28",
+                        "name": "M"
+                    },
+                    "color": {
+                        "id": 7,
+                        "status": true,
+                        "createdDate": "2024-11-02",
+                        "name": "yellow"
+                    },
+                    "product": {
+                        "id": 1,
+                        "status": true,
+                        "createdDate": "2024-10-28",
+                        "name": "Shirt Standard",
+                        "description": "Des for shirt",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                        "updatedDate": "2024-10-28",
+                        "category": {
+                            "id": 3,
+                            "status": true,
+                            "createdDate": "2024-10-28",
+                            "name": "Shirt",
+                            "description": "fg",
+                            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                        }
+                    }
+                },
+                "images": [
+                    {
+                        "id": 25,
+                        "status": true,
+                        "createdDate": "2024-11-08",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-52-491539702152_20181009-150631-A10185BPT_Shoe_Patent_Leather_PVC.avif?generation=1731048771220809&alt=media",
+                        "productDetail": {
+                            "id": 25,
+                            "status": false,
+                            "createdDate": "2024-11-08",
+                            "name": "Shirt Standard Yellow",
+                            "price": 3333.00,
+                            "stockQuantity": 333,
+                            "updatedDate": "2024-11-08",
+                            "size": {
+                                "id": 2,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "M"
+                            },
+                            "color": {
+                                "id": 7,
+                                "status": true,
+                                "createdDate": "2024-11-02",
+                                "name": "yellow"
+                            },
+                            "product": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Shirt Standard",
+                                "description": "Des for shirt",
+                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                                "updatedDate": "2024-10-28",
+                                "category": {
+                                    "id": 3,
+                                    "status": true,
+                                    "createdDate": "2024-10-28",
+                                    "name": "Shirt",
+                                    "description": "fg",
+                                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": 26,
+                        "status": true,
+                        "createdDate": "2024-11-08",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-52-50dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731048771796218&alt=media",
+                        "productDetail": {
+                            "id": 25,
+                            "status": false,
+                            "createdDate": "2024-11-08",
+                            "name": "Shirt Standard Yellow",
+                            "price": 3333.00,
+                            "stockQuantity": 333,
+                            "updatedDate": "2024-11-08",
+                            "size": {
+                                "id": 2,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "M"
+                            },
+                            "color": {
+                                "id": 7,
+                                "status": true,
+                                "createdDate": "2024-11-02",
+                                "name": "yellow"
+                            },
+                            "product": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Shirt Standard",
+                                "description": "Des for shirt",
+                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                                "updatedDate": "2024-10-28",
+                                "category": {
+                                    "id": 3,
+                                    "status": true,
+                                    "createdDate": "2024-10-28",
+                                    "name": "Shirt",
+                                    "description": "fg",
+                                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": 27,
+                        "status": true,
+                        "createdDate": "2024-11-08",
+                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-08_13-52-50Mitchell-Black-Hero_900x900_crop_center.jpg.webp?generation=1731048772403161&alt=media",
+                        "productDetail": {
+                            "id": 25,
+                            "status": false,
+                            "createdDate": "2024-11-08",
+                            "name": "Shirt Standard Yellow",
+                            "price": 3333.00,
+                            "stockQuantity": 333,
+                            "updatedDate": "2024-11-08",
+                            "size": {
+                                "id": 2,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "M"
+                            },
+                            "color": {
+                                "id": 7,
+                                "status": true,
+                                "createdDate": "2024-11-02",
+                                "name": "yellow"
+                            },
+                            "product": {
+                                "id": 1,
+                                "status": true,
+                                "createdDate": "2024-10-28",
+                                "name": "Shirt Standard",
+                                "description": "Des for shirt",
+                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_04-06-47somi_tgvn%20(1).jpg?generation=1730063209266473&alt=media",
+                                "updatedDate": "2024-10-28",
+                                "category": {
+                                    "id": 3,
+                                    "status": true,
+                                    "createdDate": "2024-10-28",
+                                    "name": "Shirt",
+                                    "description": "fg",
+                                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-12_22-08-11dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1731424093440582&alt=media"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }

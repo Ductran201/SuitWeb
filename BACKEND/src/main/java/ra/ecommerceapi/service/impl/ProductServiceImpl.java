@@ -52,7 +52,6 @@ public class ProductServiceImpl implements IProductService {
         Set<Color> colorSet = new HashSet<>();
         Set<Size> sizeSet = new HashSet<>();
         List<ImgProductDetail> imgProductDetailList = new ArrayList<>();
-        List<String> imageList = new ArrayList<>();
 
 
         List<ProductDetail> productDetailList = productDetailRepo.findAllByProductId(id);
@@ -70,18 +69,12 @@ public class ProductServiceImpl implements IProductService {
                     .productDetail(productDetail)
                     .images(imgProductDetailList)
                     .build());
-            for (ImgProductDetail imgProductDetail : imgProductDetailList) {
-                imageList.add(imgProductDetail.getImage());
-
-            }
-
         }
 
         return ProductResponse.builder()
                 .colorSet(colorSet)
                 .sizeSet(sizeSet)
-                .product(findById(id))
-                .images(imageList)
+                .productName(findById(id).getName())
                 .productDetailAllResponse(productDetailAllResponseList)
                 .build();
     }

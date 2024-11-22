@@ -1,5 +1,6 @@
 package ra.ecommerceapi.controller.user;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.dto.request.UserRequest;
-import ra.ecommerceapi.service.IAuthService;
 import ra.ecommerceapi.service.IUserService;
 
 @Controller
@@ -23,7 +23,7 @@ public class UUserController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateInformation(@ModelAttribute UserRequest userRequest) {
+    public ResponseEntity<?> updateInformation(@Valid @ModelAttribute UserRequest userRequest) {
         return new ResponseEntity<>(new ResponseWrapper<>(userService.save(userRequest), EHttpStatus.SUCCESS, 200), HttpStatus.OK);
     }
 

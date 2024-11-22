@@ -3,24 +3,25 @@ import HeaderAdmin from "./header/HeaderAmin";
 import NavAdmin from "./nav/NavAdmin";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-
+import Cookies from "js-cookie";
 export default function AdminLayout() {
   // const { isSignIn, data } = useSelector((state) => state.auth);
 
   // console.log(isSignIn);
   // console.log(data);
-  const user = JSON.parse(localStorage.getItem("userInfor"));
+  const cookies = JSON.parse(Cookies.get("objectCookies") || null);
+  console.log(cookies);
 
   return (
     <div className="flex h-[100vh]">
       <NavAdmin />
       <div className=" flex-1">
         <HeaderAdmin />
-        {/* Check if there is no user on localStorage => 
+        {/* Check if there is no cookies => 
           signIn / if has => check role to admin page*/}
-        {!user ? (
+        {!cookies ? (
           <Navigate to={"/signin"} />
-        ) : user?.roles.some((item) => item === "ROLE_ADMIN") ? (
+        ) : cookies?.data.roles.some((item) => item === "ROLE_ADMIN") ? (
           <Outlet />
         ) : (
           <Navigate to={"/unauthorized"} />

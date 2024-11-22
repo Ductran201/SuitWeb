@@ -7,6 +7,8 @@ import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.OrderRequestStatus;
 import ra.ecommerceapi.model.dto.response.OrderResponse;
 
+import java.util.UUID;
+
 
 public interface IOrderService {
     Page<OrderResponse> findAllPaginationAdmin(String search, Pageable pageable);
@@ -19,7 +21,7 @@ public interface IOrderService {
 
     OrderResponse findById(Long id);
 
-    OrderResponse findByUSerAndCode(String code) throws CustomException;
+    OrderResponse findByUserAndCode(UUID code) throws CustomException;
 
     OrderResponse changeStatus(Long id, OrderRequestStatus orderRequestStatus);
 

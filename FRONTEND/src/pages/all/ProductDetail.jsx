@@ -2,22 +2,83 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { findProductById } from "../../services/productService";
-import HeaderShop from "../../layouts/user/headerShop/HeaderShop";
-import FooterShop from "../../layouts/user/footerShop/FooterShop";
+
+const FIXED_SIZES = ["S", "M", "L", "XL", "XXL"];
 
 export default function ProductDetail() {
   const { id } = useParams();
-
   const dispatch = useDispatch();
-
   const { productInfor } = useSelector((state) => state.product);
 
-  const [selectedImage, setSelectedImage] = useState(productInfor?.images[0]);
-  const [selectedColor, setSelectedColor] = useState(
-    productInfor?.colorSet[0].id
-  );
-  const [selectedSize, setSelectedSize] = useState(productInfor?.sizeSet[0].id);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(true);
+
+  console.log(productInfor);
+
+  // Kiểm tra size khả dụng dựa trên màu sắc đã chọn
+  const isSizeAvailableForColor = (sizeName) => {
+    return productInfor?.productDetailAllResponse.some(
+      (item) =>
+        item.productDetail.color.id === selectedColor &&
+        item.productDetail.size.name === sizeName
+    );
+  };
+
+  // Lọc chi tiết sản phẩm theo màu sắc và kích thước
+  const filterProductDetail = productInfor?.productDetailAllResponse.find(
+    (item) =>
+      item.productDetail.color.id === selectedColor &&
+      item.productDetail.size.id === selectedSize
+  );
+
+  // Lấy dữ liệu sản phẩm
+  useEffect(() => {
+    const loadData = () => {
+      dispatch(findProductById(id));
+      setLoading(false);
+    };
+    loadData();
+  }, [id, dispatch]);
+
+  // Cập nhật state khi productInfor thay đổi
+  useEffect(() => {
+    if (productInfor) {
+      // setSelectedImage(productInfor?.images[0]);
+      setSelectedImage(null);
+      setSelectedColor(productInfor?.colorSet[0]?.id);
+      setSelectedSize(null); // Đặt size mặc định là null để chờ chọn
+    }
+  }, [productInfor]);
+
+  // Cập nhật size khi màu thay đổi
+  useEffect(() => {
+    if (selectedColor) {
+      const firstAvailableSize = FIXED_SIZES.find((sizeName) =>
+        isSizeAvailableForColor(sizeName)
+      );
+
+      console.log(firstAvailableSize);
+      if (firstAvailableSize) {
+        const sizeData = productInfor?.sizeSet.find(
+          (size) => size.name === firstAvailableSize
+        );
+        setSelectedSize(sizeData?.id);
+      } else {
+        setSelectedSize(null);
+      }
+    }
+  }, [selectedColor, productInfor]);
+
+  useEffect(() => {
+    if (filterProductDetail) {
+      setSelectedImage(filterProductDetail.images[0]?.image);
+    } else {
+      setSelectedImage(null);
+    }
+  }, [filterProductDetail]);
 
   const handleQuantityChange = (value) => {
     if (value >= 1 && value <= 100) {
@@ -25,58 +86,55 @@ export default function ProductDetail() {
     }
   };
 
-  const loadData = async () => {
-    dispatch(findProductById(id));
-    setColorSet(productInfor?.colorSet);
-    setSizeSet(productInfor?.sizeSet);
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  console.log("123", productInfor);
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <>
-      <HeaderShop />
-      <p>link....</p>
-
+      <p>Breadcrumb</p>
       <section className="grid grid-cols-2 gap-5 px-[100px]">
-        {/* Bộ sưu tập hình ảnh */}
+        {/* List images for each productDetail */}
         <div className="flex gap-2">
-          <div>
-            {productInfor?.images.map((img, index) => (
+          <div className="space-y-4">
+            {filterProductDetail?.images.map((img, index) => (
               <img
                 key={index}
-                src={img}
-                alt={`thumbnail-${index}`}
-                onClick={() => setSelectedImage(img)}
+                src={img.image}
+                width={100}
+                onClick={() => setSelectedImage(img.image)}
                 className={`w-[50px] h-[50px] cursor-pointer ${
-                  img === selectedImage ? "border-2 border-black" : ""
+                  img.image === selectedImage ? "border-2 border-black" : ""
                 }`}
               />
             ))}
           </div>
+          {/* The first image show here */}
           <div>
             <img
               src={selectedImage}
-              alt="selected-product"
-              className=" h-svh object-cover"
+              className=" h-[calc(100vh-56px)] w-full object-cover"
             />
           </div>
         </div>
 
         {/* Thông tin sản phẩm */}
         <div>
-          <h2 className="text-2xl font-bold">{productInfor?.product.name}</h2>
-          <p className="text-lg font-semibold text-gray-600">
-            {productInfor?.productDetailAllResponse[0].productDetail.price} đ
-          </p>
+          <h2 className="text-2xl font-bold">{productInfor?.productName}</h2>
+          {filterProductDetail && (
+            <>
+              <h1>Kind: {filterProductDetail.productDetail.name}</h1>
+              <p className="text-red-600 font-bold text-[20px]">
+                {" "}
+                {filterProductDetail.productDetail.price} vnđ
+              </p>
+              <p>Stock: {filterProductDetail.productDetail.stockQuantity}</p>
+            </>
+          )}
 
-          {/* Chọn màu sắc */}
+          {/* List color */}
           <div className="mt-4">
-            <h4 className="font-medium">Màu sắc:</h4>
+            <h4 className="font-medium">Color:</h4>
             <div className="flex gap-2 mt-2">
               {productInfor?.colorSet.map((color) => (
                 <button
@@ -85,7 +143,9 @@ export default function ProductDetail() {
                     backgroundColor: color.name,
                   }}
                   className={`w-8 h-8 rounded-full ${
-                    color.id === selectedColor ? "ring-2 ring-black" : ""
+                    color.id === selectedColor
+                      ? "border-[5px] border-purple-600"
+                      : ""
                   }`}
                   onClick={() => setSelectedColor(color.id)}
                 ></button>
@@ -93,35 +153,44 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Chọn kích thước */}
+          {/* List size */}
           <div className="mt-4">
-            <h4 className="text-lg font-medium">Kích thước:</h4>
+            <h4 className="text-lg font-medium">Size:</h4>
             <div className="flex gap-2 mt-2">
-              {productInfor?.sizeSet.map((size) => (
-                <button
-                  key={size.id}
-                  className={`px-3 py-1 border ${
-                    size.id === selectedSize
-                      ? "border-black"
-                      : "border-gray-300"
-                  }`}
-                  onClick={() => setSelectedSize(size.id)}
-                >
-                  {size.name}
-                </button>
-              ))}
+              {FIXED_SIZES.map((sizeName) => {
+                const sizeData = productInfor?.sizeSet.find(
+                  (size) => size.name === sizeName
+                ); // return class size
+                const isAvailable = isSizeAvailableForColor(sizeName);
+
+                return (
+                  <button
+                    key={sizeName}
+                    className={`px-3 py-1 border rounded ${
+                      isAvailable
+                        ? sizeData?.id === selectedSize
+                          ? "border-black"
+                          : ""
+                        : "border-gray-200 bg-gray-100 cursor-not-allowed opacity-50"
+                    }`}
+                    onClick={() => isAvailable && setSelectedSize(sizeData?.id)}
+                    disabled={!isAvailable}
+                  >
+                    {sizeName}
+                  </button>
+                );
+              })}
             </div>
+            {/* {!selectedSize && (
+            <p className="text-red-500 mt-2">
+              No available sizes for this color
+            </p>
+          )} */}
           </div>
 
-          {/* Chọn số lượng */}
+          {/* Quantity cart */}
           <div className="mt-4">
-            <h4 className="text-lg font-medium">
-              Số lượng:{" "}
-              {
-                productInfor?.productDetailAllResponse[0].productDetail
-                  .stockQuantity
-              }
-            </h4>
+            <h4 className="text-lg font-medium">Quantity:</h4>
             <div className="flex gap-2 mt-2">
               <button
                 className="px-2 py-1 border border-gray-300"
@@ -133,7 +202,7 @@ export default function ProductDetail() {
                 type="number"
                 value={quantity}
                 onChange={(e) => handleQuantityChange(Number(e.target.value))}
-                className="w-16 text-center border border-gray-300"
+                className=" w-16 text-center border border-gray-300"
               />
               <button
                 className="px-2 py-1 border border-gray-300"
@@ -144,7 +213,7 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Nút thêm vào giỏ và mua ngay */}
+          {/* Buy button */}
           <div className="mt-4 space-y-2">
             <button className="w-full bg-orange-500 text-white py-2 cursor-pointer">
               Thêm vào giỏ
@@ -155,7 +224,6 @@ export default function ProductDetail() {
           </div>
         </div>
       </section>
-      <FooterShop />
     </>
   );
 }

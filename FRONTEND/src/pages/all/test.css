@@ -1,0 +1,18 @@
+button {
+  margin: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.product-main {
+  text-align: center;
+}
+
+.images img {
+  margin: 5px;
+  border-radius: 8px;
+}

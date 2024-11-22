@@ -20,7 +20,7 @@ import {
 } from "@mui/icons-material";
 import {
   addCategory,
-  categoryPagination,
+  categoryPaginationAdmin,
   deleteCategory,
   editCategory,
   toggleStatusCategory,

@@ -17,6 +17,9 @@ public class JWTResponse {
     private String address;
     private Date dob;
     private String avatar;
+    private Boolean gender;
     private Boolean status;
     private Set<String> roles;
+    private Date createdDate;
+
 }

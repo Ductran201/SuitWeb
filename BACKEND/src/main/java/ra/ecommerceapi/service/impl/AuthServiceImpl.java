@@ -108,6 +108,8 @@ public class AuthServiceImpl implements IAuthService {
                 .phone(userDetailsCustom.getUser().getPhone())
                 .status(userDetailsCustom.getUser().getStatus())
                 .roles(userDetailsCustom.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
+                .createdDate(userDetailsCustom.getUser().getCreatedDate())
+                .gender(userDetailsCustom.getUser().getGender())
                 .build();
 
 //        jwtResponse.setRoles(userDetailsCustom.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));

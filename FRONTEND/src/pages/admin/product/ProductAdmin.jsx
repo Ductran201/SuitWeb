@@ -183,8 +183,6 @@ export default function ProductAdmin() {
       } else if (formType == "edit") {
         setFileEdit(newFile);
       }
-
-      // setErrorMessage("");
     }
   };
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BASE_URL } from "../api";
+import { BASE_URL, FORM_DATA } from "../api";
 // import { Cookies } from "react-cookie";
 import Cookies from "js-cookie";
 
@@ -30,8 +30,10 @@ export const signIn = createAsyncThunk(
   async (formSignIn, { rejectWithValue }) => {
     try {
       const res = await BASE_URL.post("auth/signIn", formSignIn);
-      Cookies.set("objectCookies", JSON.stringify(res.data));
-
+      // Set cookies in 10 sec
+      Cookies.set("objectCookies", JSON.stringify(res.data), {
+        expires: 3600 / 86400,
+      });
       // const cookies = new Cookies();
       // cookies.set("accessToken", res.data, { maxAge: 86400000 });
       // console.log(cookies);
@@ -47,7 +49,6 @@ export const signOut = createAsyncThunk("auth/signOut", async () => {
     // const cookies = new Cookies();
     // cookies.remove("accessToken");
     Cookies.remove("objectCookies");
-    localStorage.removeItem("userInfor");
   }
 });
 
@@ -57,6 +58,19 @@ export const loadUserFromCookie = createAsyncThunk(
     return token;
   }
 );
+
+// USER
+
+export const getUserInfor = createAsyncThunk("user/getInfor", async () => {
+  const res = await BASE_URL.get("user/account");
+  return res.data.data;
+});
+
+export const editUserInfor = createAsyncThunk("user/editUser", async (user) => {
+  const res = await FORM_DATA.put("user/account", user);
+  console.log(res);
+  return res.data.data;
+});
 
 export const userPagination = createAsyncThunk(
   "user/pagination",

@@ -2,6 +2,7 @@ package ra.ecommerceapi.controller.all;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -22,8 +23,20 @@ public class CategoryController {
     private final IProductService productService;
 
     @GetMapping("")
-    public ResponseEntity<?> listPagination(@RequestParam(defaultValue = "") String search
-            , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<?> listPagination(
+            @RequestParam(defaultValue = "") String search,
+            @PageableDefault(size = 2) Pageable pageable,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestParam(required = false) Boolean noPagination) {
+
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        // No pagination
+        if (Boolean.TRUE.equals(noPagination)) {
+            return ResponseEntity.ok().body(new ResponseWrapper<>(categoryService.findAll(), EHttpStatus.SUCCESS, 200));
+        }
         return ResponseEntity.ok().body(new ResponseWrapper<>(categoryService.findAllPaginationUser(search, pageable), EHttpStatus.SUCCESS, 200));
     }
 

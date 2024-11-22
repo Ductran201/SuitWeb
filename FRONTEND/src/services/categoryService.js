@@ -1,33 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BASE_URL, FORM_DATA } from "../api";
 
-export const categoryPagination = createAsyncThunk(
+// ADMIN
+export const categoryPaginationAdmin = createAsyncThunk(
   "category/pagination",
   async ({ page, search, size, sortField, sortDirection }) => {
     const res = await BASE_URL.get(
       `admin/categories?page=${
         page - 1
       }&search=${search}&size=${size}&sortField=${sortField}&sortDirection=${sortDirection}`
-    );
-    return res.data.data;
-  }
-);
-
-export const categoryNoPagination = createAsyncThunk(
-  "category/noPagination",
-  async () => {
-    const res = await BASE_URL.get("admin/categories?noPagination=true");
-    return res.data.data;
-  }
-);
-
-export const findAllProductByCategory = createAsyncThunk(
-  "category/findAllProduct",
-  async ({ id, page, search, size, sortField, sortDirection }) => {
-    const res = await BASE_URL.get(
-      `categories/${id}/products?page=${
-        page - 1
-      }&size=${size}&sortDirection=${sortDirection}&sortField=${sortField}&search=${search}`
     );
     return res.data.data;
   }
@@ -78,5 +59,27 @@ export const toggleStatusCategory = createAsyncThunk(
   async (id) => {
     const res = await BASE_URL.put(`admin/categories/${id}/toggleStatus`);
     return res;
+  }
+);
+
+// USER
+
+export const findAllProductByCategory = createAsyncThunk(
+  "category/findAllProduct",
+  async ({ id, page, search, size, sortField, sortDirection }) => {
+    const res = await BASE_URL.get(
+      `categories/${id}/products?page=${
+        page - 1
+      }&size=${size}&sortDirection=${sortDirection}&sortField=${sortField}&search=${search}`
+    );
+    return res.data.data;
+  }
+);
+
+export const categoryNoPagination = createAsyncThunk(
+  "category/noPagination",
+  async () => {
+    const res = await BASE_URL.get("/categories?noPagination=true");
+    return res.data.data;
   }
 );

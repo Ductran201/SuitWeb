@@ -22,7 +22,6 @@ import ra.ecommerceapi.service.IProductService;
 @RequestMapping("/api.com/v2/admin/categories")
 public class ACategoryController {
     private final ICategoryService categoryService;
-    private final IProductService productService;
 
     /**
      * @param search   String
@@ -33,9 +32,9 @@ public class ACategoryController {
     @GetMapping("")
     public ResponseEntity<?> listPagination(
             @RequestParam(defaultValue = "") String search,
-            @RequestParam(defaultValue = "id") String sortField,   // Field to sort by (e.g., name, price)
-            @RequestParam(defaultValue = "DESC") String sortDirection,  // Sorting direction (ASC or DESC)
-            @PageableDefault(page = 0, size = 2) Pageable pageable,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @PageableDefault(size = 2) Pageable pageable,
             @RequestParam(required = false) Boolean noPagination) {
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);

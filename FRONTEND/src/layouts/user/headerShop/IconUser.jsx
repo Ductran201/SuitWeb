@@ -7,7 +7,7 @@ import Choices from "../../../components/choices";
 import Cookies from "js-cookie";
 import { signOut } from "../../../services/userService";
 
-export default function AccountUser() {
+export default function IconUser() {
   const cookies = JSON.parse(Cookies.get("objectCookies") || null);
 
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function AccountUser() {
         {
           // name: `${new Cookies().get("accessToken").data.email}`,
           name: `${cookies?.data.email}`,
-          function: () => navigate("/account"),
+          function: () => navigate("/account/infor"),
         },
 
         {
