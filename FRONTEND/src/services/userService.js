@@ -32,10 +32,10 @@ export const signIn = createAsyncThunk(
       const res = await BASE_URL.post("auth/signIn", formSignIn);
       // Set cookies in 10 sec
       Cookies.set("objectCookies", JSON.stringify(res.data), {
-        expires: 3600 / 86400,
+        expires: 10000 / 86400,
       });
-      // const cookies = new Cookies();
-      // cookies.set("accessToken", res.data, { maxAge: 86400000 });
+      //  const cookies = new Cookies();
+      //  cookies.set("accessToken", res.data, { maxAge: 86400000 });
       // console.log(cookies);
       return res.data.data;
     } catch (error) {

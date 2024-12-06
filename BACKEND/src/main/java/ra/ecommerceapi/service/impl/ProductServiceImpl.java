@@ -2,7 +2,6 @@ package ra.ecommerceapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ import ra.ecommerceapi.repository.IProductRepo;
 import ra.ecommerceapi.service.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +34,47 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public List<ProductOverviewResponse> findTopProductNewest(Long id) {
-        return productRepo.findTopProductNewest(id);
+    public List<ProductResponse> findTopProductNewest(Long categoryId) {
+// Lấy danh sách 2 sản phẩm mới nhất theo Id thuộc categoryId và status = true
+        List<Product> products = productRepo.findTop1ByCategoryIdAndStatusTrueOrderByIdDesc(categoryId);
+
+        List<ProductResponse> productResponseList = new ArrayList<>();
+
+        for (Product product : products) {
+            Set<Color> colorSet = new HashSet<>();
+            Set<Size> sizeSet = new HashSet<>();
+            List<ProductDetailAllResponse> productDetailAllResponseList = new ArrayList<>();
+
+            // Lấy danh sách ProductDetail theo ProductId
+            List<ProductDetail> productDetailList = productDetailRepo.findAllByProductId(product.getId());
+
+            for (ProductDetail productDetail : productDetailList) {
+                colorSet.add(productDetail.getColor());
+                sizeSet.add(productDetail.getSize());
+
+                // Lấy danh sách ảnh phụ cho từng ProductDetail
+                List<ImgProductDetail> imgProductDetailList = imgProductDetailService.findAllImagesByProductDetailId(productDetail.getId());
+
+                // Thêm vào danh sách ProductDetailAllResponse
+                productDetailAllResponseList.add(ProductDetailAllResponse.builder()
+                        .productDetail(productDetail)
+                        .images(imgProductDetailList)
+                        .build());
+            }
+
+            // Tạo ProductResponse cho sản phẩm hiện tại
+            ProductResponse productResponse = ProductResponse.builder()
+                    .productId(product.getId())
+                    .productName(product.getName())
+                    .colorSet(colorSet)
+                    .sizeSet(sizeSet)
+                    .productDetailAllResponse(productDetailAllResponseList)
+                    .build();
+
+            productResponseList.add(productResponse);
+        }
+
+        return productResponseList;
     }
 
     @Override
@@ -74,6 +111,7 @@ public class ProductServiceImpl implements IProductService {
         return ProductResponse.builder()
                 .colorSet(colorSet)
                 .sizeSet(sizeSet)
+                .productId(id)
                 .productName(findById(id).getName())
                 .productDetailAllResponse(productDetailAllResponseList)
                 .build();

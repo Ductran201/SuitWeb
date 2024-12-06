@@ -408,6 +408,7 @@ export default function ProductDetailAdmin() {
               <TextField
                 {...register("price", {
                   required: "Must not be blank",
+                  min: 0,
                 })}
                 type="number"
                 size="small"

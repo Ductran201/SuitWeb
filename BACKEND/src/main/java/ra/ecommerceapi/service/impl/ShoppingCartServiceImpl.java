@@ -17,7 +17,6 @@ import ra.ecommerceapi.repository.IOrderRepo;
 import ra.ecommerceapi.repository.IShoppingCartRepo;
 import ra.ecommerceapi.service.IAuthService;
 import ra.ecommerceapi.service.IProductDetailService;
-import ra.ecommerceapi.service.IProductService;
 import ra.ecommerceapi.service.IShoppingCartService;
 
 import java.math.BigDecimal;
@@ -44,6 +43,7 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
 
         return shoppingCartRepo.findAllByUser(userCurrent).stream().map(c -> {
             CartResponse cartResponse = CartResponse.builder()
+                    .id(c.getId())
                     .productDetail(c.getProductDetail())
                     .totalPrice(c.getProductDetail().getPrice())
                     .quantity(c.getOrderQuantity())
@@ -63,13 +63,33 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
 
     @Override
     public CartResponse save(CartRequest cartRequest) throws CustomException {
+
         User userCurrent = authService.getCurrentUser().getUser();
 
         ProductDetail productDetail = productDetailService.findById(cartRequest.getProductDetailId());
-        //check exist product in cart
 
+//        Case 1: if the productDetail exists in cart ==> plus the new quantity
         if (shoppingCartRepo.existsByUserAndProductDetail(userCurrent, productDetail)) {
-            throw new CustomException("This product already in cart", HttpStatus.BAD_REQUEST);
+            ShoppingCart oldCartItem = shoppingCartRepo.findByUserAndProductDetail(userCurrent, productDetail);
+            int newQuantity =oldCartItem.getOrderQuantity() + cartRequest.getQuantity();
+
+            if (newQuantity > productDetail.getStockQuantity()) {
+                throw new CustomException("Quantity exceeds available stock",HttpStatus.BAD_REQUEST);
+            }
+
+            oldCartItem.setOrderQuantity(newQuantity);
+
+            shoppingCartRepo.save(oldCartItem);
+            return CartResponse.builder()
+                    .totalPrice(oldCartItem.getProductDetail().getPrice())
+                    .quantity(oldCartItem.getOrderQuantity())
+                    .productDetail(productDetail)
+                    .build();
+        }
+//        Case 2: if the productDetail does not exist in cart ==> add new
+
+        if (cartRequest.getQuantity() > productDetail.getStockQuantity()) {
+            throw new CustomException("Quantity exceeds available stock",HttpStatus.BAD_REQUEST);
         }
 
         ShoppingCart newCart = ShoppingCart.builder()
@@ -92,16 +112,15 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
     }
 
     @Override
-    public CartResponse save(CartRequest cartRequest, Long id) throws CustomException {
+    public CartResponse changeQuantityCart( Long cartId,Integer newQuantity) throws CustomException {
         // find cart by user and id cart
-        ShoppingCart oldCart = findByUserAndId(id);
+        ShoppingCart oldCart = findByUserAndId(cartId);
 
-        if (!oldCart.getProductDetail().getId().equals(cartRequest.getProductDetailId())) {
-            throw new CustomException("Product ID does not match with the cart item", HttpStatus.CONFLICT);
+        if(newQuantity > oldCart.getProductDetail().getStockQuantity()){
+            throw new CustomException("Quantity exceeds available stock",HttpStatus.BAD_REQUEST);
         }
-
         // change quantity
-        oldCart.setOrderQuantity(oldCart.getOrderQuantity() + cartRequest.getQuantity());
+        oldCart.setOrderQuantity(newQuantity);
         oldCart.setUpdatedDate(new Date());
 
         ShoppingCart editCart = shoppingCartRepo.save(oldCart);

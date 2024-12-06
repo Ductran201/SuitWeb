@@ -6,6 +6,8 @@ import sizeSlice from "./sizeSlice";
 import colorSlice from "./colorSlice";
 import productDetailSlice from "./productDetailSlice";
 import authSlice from "./authSlice";
+import cartSlice from "./cartSlice";
+import wishListSlice from "./wishListSlice";
 const reducers = combineReducers({
   category: categorySlice,
   product: productSlice,
@@ -14,6 +16,8 @@ const reducers = combineReducers({
   color: colorSlice,
   productDetail: productDetailSlice,
   auth: authSlice,
+  listCart: cartSlice,
+  wishList: wishListSlice,
 });
 
 export default reducers;

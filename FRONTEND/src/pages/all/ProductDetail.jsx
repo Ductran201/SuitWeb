@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { findProductById } from "../../services/productService";
+import { addCart } from "../../services/cartService";
+import { message } from "antd";
+import Cookies from "js-cookie";
+import RelatedProduct from "./home/RelatedProduct";
 
 const FIXED_SIZES = ["S", "M", "L", "XL", "XXL"];
 
 export default function ProductDetail() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { productInfor } = useSelector((state) => state.product);
-
+  console.log(productInfor);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
-
-  console.log(productInfor);
 
   // Kiểm tra size khả dụng dựa trên màu sắc đã chọn
   const isSizeAvailableForColor = (sizeName) => {
@@ -33,6 +36,8 @@ export default function ProductDetail() {
       item.productDetail.color.id === selectedColor &&
       item.productDetail.size.id === selectedSize
   );
+
+  // console.log(filterProductDetail);
 
   // Lấy dữ liệu sản phẩm
   useEffect(() => {
@@ -60,7 +65,6 @@ export default function ProductDetail() {
         isSizeAvailableForColor(sizeName)
       );
 
-      console.log(firstAvailableSize);
       if (firstAvailableSize) {
         const sizeData = productInfor?.sizeSet.find(
           (size) => size.name === firstAvailableSize
@@ -86,6 +90,28 @@ export default function ProductDetail() {
     }
   };
 
+  const handleAddCart = async (id) => {
+    // const cookies = JSON.parse(Cookies.get("objectCookies") || null);
+    // console.log(cookies);
+    // if (!cookies) {
+    //   navigate("/signin");
+    //   message.warning("You need to sign in first");
+    //   return;
+    // }
+    try {
+      const cartRequest = {
+        quantity: quantity,
+        productDetailId: id,
+      };
+
+      await dispatch(addCart(cartRequest)).unwrap();
+      message.success("Add cart successfully!!");
+    } catch (error) {
+      // message.error(error);
+      console.log("ádasd");
+    }
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -93,7 +119,8 @@ export default function ProductDetail() {
   return (
     <>
       <p>Breadcrumb</p>
-      <section className="grid grid-cols-2 gap-5 px-[100px]">
+
+      <section className="grid grid-cols-2 gap-5 px-[100px] mb-7">
         {/* List images for each productDetail */}
         <div className="flex gap-2">
           <div className="space-y-4">
@@ -125,7 +152,6 @@ export default function ProductDetail() {
             <>
               <h1>Kind: {filterProductDetail.productDetail.name}</h1>
               <p className="text-red-600 font-bold text-[20px]">
-                {" "}
                 {filterProductDetail.productDetail.price} vnđ
               </p>
               <p>Stock: {filterProductDetail.productDetail.stockQuantity}</p>
@@ -193,7 +219,9 @@ export default function ProductDetail() {
             <h4 className="text-lg font-medium">Quantity:</h4>
             <div className="flex gap-2 mt-2">
               <button
-                className="px-2 py-1 border border-gray-300"
+                className={`px-2 py-1 border border-gray-300 ${
+                  quantity === 1 ? "bg-gray-400 cursor-not-allowed" : ""
+                }`}
                 onClick={() => handleQuantityChange(quantity - 1)}
               >
                 -
@@ -215,7 +243,12 @@ export default function ProductDetail() {
 
           {/* Buy button */}
           <div className="mt-4 space-y-2">
-            <button className="w-full bg-orange-500 text-white py-2 cursor-pointer">
+            <button
+              onClick={() =>
+                handleAddCart(filterProductDetail.productDetail.id)
+              }
+              className="w-full bg-orange-500 text-white py-2 cursor-pointer"
+            >
               Thêm vào giỏ
             </button>
             <button className="w-full bg-orange-500 text-white py-2 cursor-pointer">
@@ -224,6 +257,8 @@ export default function ProductDetail() {
           </div>
         </div>
       </section>
+
+      <RelatedProduct></RelatedProduct>
     </>
   );
 }

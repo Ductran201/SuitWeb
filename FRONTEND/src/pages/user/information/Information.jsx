@@ -27,8 +27,7 @@ export default function Information() {
       });
     }
   }, [infor]);
-  // console.log(user);
-  // console.log("Ádsad");
+
   const {
     register,
     clearErrors,

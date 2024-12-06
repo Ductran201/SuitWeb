@@ -19,6 +19,8 @@ public interface IShoppingCartRepo extends JpaRepository<ShoppingCart,Long> {
 
     Boolean existsByUserAndProductDetail(User user, ProductDetail productDetail);
 
+    ShoppingCart findByUserAndProductDetail(User user, ProductDetail productDetail);
+
     void deleteAllByUser(User user);
 
 }

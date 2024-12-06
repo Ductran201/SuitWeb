@@ -16,7 +16,7 @@ public interface IShoppingCartService {
 
     CartResponse save(CartRequest cartRequest) throws CustomException;
 
-    CartResponse save(CartRequest cartRequest,Long id) throws CustomException;
+    CartResponse changeQuantityCart(Long cartId,Integer newQuantity) throws CustomException;
 
     void delete(Long id);
 

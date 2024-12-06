@@ -23,7 +23,7 @@ public class ShoppingCartController {
         return new ResponseEntity<>(new ResponseWrapper<>(shoppingCartService.findAll(), EHttpStatus.SUCCESS, 200), HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping("")
     public ResponseEntity<?> add(@Valid @RequestBody CartRequest cartRequest) throws CustomException {
         return new ResponseEntity<>(ResponseWrapper.builder()
                 .data(shoppingCartService.save(cartRequest))
@@ -32,12 +32,12 @@ public class ShoppingCartController {
                 .build(), HttpStatus.CREATED);
     }
 
-    @PutMapping("/items/{cartId}")
-    public ResponseEntity<?> editQuantity(@Valid @RequestBody CartRequest cartRequest, @PathVariable Long cartId) throws CustomException {
-        return new ResponseEntity<>(new ResponseWrapper<>(shoppingCartService.save(cartRequest, cartId), EHttpStatus.SUCCESS, 200), HttpStatus.OK);
+    @PutMapping("/{cartId}")
+    public ResponseEntity<?> changeQuantityCart( @PathVariable Long cartId,@RequestBody Integer newQuantity) throws CustomException {
+        return new ResponseEntity<>(new ResponseWrapper<>(shoppingCartService.changeQuantityCart(cartId, newQuantity), EHttpStatus.SUCCESS, 200), HttpStatus.OK);
     }
 
-    @DeleteMapping("/items/{cartId}")
+    @DeleteMapping("/{cartId}")
     public ResponseEntity<?> delete(@PathVariable Long cartId) {
         shoppingCartService.delete(cartId);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);

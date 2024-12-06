@@ -37,7 +37,6 @@ export default function ProductByCategory() {
   useEffect(() => {
     loadInitialData();
   }, [id, page, size, sortDirection, sortField]);
-  console.log(data);
   return (
     <>
       <section className="grid grid-cols-6">

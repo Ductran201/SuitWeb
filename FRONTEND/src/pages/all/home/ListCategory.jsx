@@ -8,9 +8,18 @@ import {
 
 import { Button } from "@mui/material";
 import { topNewestProduct } from "../../../services/productService";
+import { findAllWishList, toggleWishList } from "../../../services/wishList";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import Cookies from "js-cookie";
+import ProductCard from "../ProductCard";
 
 export default function ListCategory() {
-  const [selectCategory, setSelectCategory] = useState();
+  // Kiểm tra trạng thái đăng nhập
+  const isAuthenticated = () => {
+    const cookies = JSON.parse(Cookies.get("objectCookies") || null);
+    return cookies;
+    // return !!cookies?.data?.accessToken; // Có token nghĩa là đã đăng nhập
+  };
   const dispatch = useDispatch();
 
   const { data: products, error: productError } = useSelector(
@@ -21,12 +30,56 @@ export default function ListCategory() {
     (state) => state.category
   );
 
+  const { data: wishList, error: wishListError } = useSelector(
+    (state) => state.wishList
+  );
+
+  const [selectCategory, setSelectCategory] = useState();
+  const [selectedColor, setSelectedColor] = useState({}); // Lưu trạng thái cuối cùng của màu được chọn
+
+  // console.log(products);
+
+  // Khi bắt đầu load sản phẩm, mặc định chọn màu đầu tiên của mỗi sản phẩm
+  useEffect(() => {
+    if (products) {
+      const initialColors = {};
+      products.forEach((product) => {
+        const firstColor = product.colorSet?.[0];
+        if (firstColor) {
+          initialColors[product.productName] = firstColor.id;
+        }
+      });
+      setSelectedColor(initialColors);
+    }
+  }, [products]);
+
+  // Xử lý khi hover vào màu
+  const handleHoverColor = (productName, colorId) => {
+    setSelectedColor((prev) => ({
+      ...prev,
+      [productName]: colorId,
+    }));
+  };
+  const getCurrentDetail = (product, productName) => {
+    const colorId = selectedColor[productName];
+    return product.productDetailAllResponse.find(
+      (detail) => detail.productDetail.color.id === colorId
+    );
+  };
+
   const loadInitialData = () => {
     dispatch(categoryNoPagination());
   };
 
+  const loadWishList = () => {
+    dispatch(findAllWishList());
+  };
+
   useEffect(() => {
     loadInitialData();
+    if (isAuthenticated()) {
+      loadWishList();
+    }
   }, []);
 
   useEffect(() => {
@@ -42,7 +95,11 @@ export default function ListCategory() {
     dispatch(topNewestProduct(id));
   };
 
-  console.log(categories);
+  const handleToggleWishList = (productId) => {
+    dispatch(toggleWishList(productId))
+      .then(() => loadWishList())
+      .catch((error) => console.log(error));
+  };
 
   return (
     <>
@@ -63,17 +120,31 @@ export default function ListCategory() {
         ))}
       </div>
 
-      {/* top 4 products */}
+      {/* top newest products */}
       <div className="grid grid-cols-4 gap-5">
-        {products?.map((item, index) => (
-          <div key={index}>
-            <Link to={`/product/${item.id}`}>
-              <img src={`${item.image}`} alt="" />
-              <p>{item.name}</p>
-              <b>{item.price} đ</b>
-            </Link>
-          </div>
-        ))}
+        {products?.map((item, index) => {
+          const currentDetail = getCurrentDetail(item, item.productName);
+          const currentImage = currentDetail?.images?.[0]?.image || "";
+          const currentPrice =
+            currentDetail?.productDetail?.price || "Chưa có giá";
+
+          return (
+            <ProductCard
+              key={item.productId}
+              productId={item.productId}
+              productName={item.productName}
+              currentImage={currentImage}
+              currentPrice={currentPrice}
+              wishList={wishList?.some((wish) => wish.id === item.productId)}
+              onToggleWishList={() => handleToggleWishList(item.productId)}
+              colorSet={item.colorSet}
+              selectedColor={selectedColor[item.productName]}
+              onHoverColor={(colorId) =>
+                handleHoverColor(item.productName, colorId)
+              }
+            />
+          );
+        })}
       </div>
 
       <div className="text-center">

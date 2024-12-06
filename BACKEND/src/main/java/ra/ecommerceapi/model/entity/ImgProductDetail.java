@@ -17,5 +17,4 @@ public class ImgProductDetail extends BaseObject {
     @ManyToOne
     @JoinColumn(name = "productDetailId")
     private ProductDetail productDetail;
-
 }

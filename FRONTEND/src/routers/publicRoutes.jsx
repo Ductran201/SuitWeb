@@ -19,6 +19,8 @@ import History from "../pages/user/history/History";
 import Coupons from "../pages/user/coupons/Coupons";
 import data from "../data/index.json";
 import CartUser from "../pages/user/cart/CartUser";
+import ProductCard from "../pages/all/ProductCard";
+import Test2 from "../pages/all/home/Test2";
 
 const publicRoutes = [
   {
@@ -36,6 +38,11 @@ const publicRoutes = [
       {
         path: "about",
         element: <AboutShop />,
+      },
+
+      {
+        path: "branch",
+        element: <ProductCard />,
       },
       {
         path: "/account",
@@ -83,6 +90,11 @@ const publicRoutes = [
       {
         path: "/test",
         element: <Test data={data} />,
+      },
+
+      {
+        path: "/test2",
+        element: <Test2 />,
       },
     ],
   },

@@ -25,7 +25,7 @@ public interface IProductService {
     void toggleStatus(Long id);
     // FOR USER
 
-    List<ProductOverviewResponse> findTopProductNewest(Long id);
+    List<ProductResponse> findTopProductNewest(Long id);
 
     Page<ProductOverviewResponse> findAllPaginationUser(Long id, String search, Pageable pageable);
 

@@ -8,7 +8,6 @@ export default function AdminLayout() {
   // const { isSignIn, data } = useSelector((state) => state.auth);
 
   // console.log(isSignIn);
-  // console.log(data);
   const cookies = JSON.parse(Cookies.get("objectCookies") || null);
   console.log(cookies);
 

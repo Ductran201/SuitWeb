@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ra.ecommerceapi.model.dto.response.ProductOverviewResponse;
+import ra.ecommerceapi.model.dto.response.ProductResponse;
 import ra.ecommerceapi.model.entity.Product;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public interface IProductRepo extends JpaRepository<Product, Long> {
     //    FOR ADMIN
     Page<Product> findAllByNameContains(String name, Pageable pageable);
+
     @Modifying
     @Query("update Product p set p.status = (not p.status) where p.id =:id")
     void toggleStatus(Long id);
@@ -37,8 +39,7 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
             "AND pd.id = (SELECT MIN(pd2.id) " +
             "             FROM ProductDetail pd2 " +
             "             WHERE pd2.product = p)")
-
-    Page<ProductOverviewResponse> findAllByCategoryIdAndNameContainsAndStatusTrue(Long categoryId,String name, Pageable pageable);
+    Page<ProductOverviewResponse> findAllByCategoryIdAndNameContainsAndStatusTrue(Long categoryId, String name, Pageable pageable);
 
     //    COMMON
     @Query("select p.image from Product p where p.id= :id")
@@ -46,10 +47,28 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
 
     Boolean existsByName(String name);
 
-    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
-            "from Product p " +
-            "join ProductDetail pd on pd.product=p where p.category.id=:id and p.status = true order by pd.price asc limit 1")
-    List<ProductOverviewResponse> findTopProductNewest(Long id);
+//    =====================================
+    //    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
+//            "from Product p " +
+//            "join ProductDetail pd on pd.product=p where p.category.id=:id and p.status = true order by pd.price asc limit 1")
+//    @Query("select new ra.ecommerceapi.model.dto.response.ProductResponse(\n" +
+//            "        p.name,\n" +
+//            "        (select distinct pd.color from ProductDetail pd where pd.product = p),\n" +
+//            "        (select distinct pd.size from ProductDetail pd where pd.product = p),\n" +
+//            "        (select new ra.ecommerceapi.model.dto.response.ProductDetailAllResponse(\n" +
+//            "            pd,\n" +
+//            "            (select img from ImgProductDetail img where img.productDetail = pd)\n" +
+//            "        )\n" +
+//            "        from ProductDetail pd where pd.product = p order by pd.price asc)\n" +
+//            "    )\n" +
+//            "    from Product p \n" +
+//            "    where p.category.id = :id and p.status = true")
+//    List<ProductResponse> findTopProductNewest(Long id);
+//================================================
+
+    List<Product> findTop1ByCategoryIdAndStatusTrueOrderByIdDesc(Long categoryId);
+
+
 // This for if limit doesnt work
 //    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.name, pd.price) " +
 //            "from Product p " +

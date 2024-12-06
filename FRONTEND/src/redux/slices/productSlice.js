@@ -64,6 +64,7 @@ const productSlice = createSlice({
     builder.addCase(findProductById.fulfilled, (state, action) => {
       state.loading = SUCCESS;
       state.productInfor = action.payload;
+      console.log(action.payload);
     });
   },
 });

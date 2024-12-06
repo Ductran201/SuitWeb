@@ -20,10 +20,10 @@ public interface IProductDetailRepo extends JpaRepository<ProductDetail, Long> {
     void toggleStatus(Long id);
 
     Boolean existsByName(String name);
-//    FOR USER
 
+    //    FOR USER
 
-//    COMMON
+    //    COMMON
     List<ProductDetail> findAllByProductId(Long id);
 
 }
