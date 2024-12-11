@@ -4,6 +4,7 @@ import lombok.*;
 import ra.ecommerceapi.model.entity.Color;
 import ra.ecommerceapi.model.entity.Size;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -14,17 +15,11 @@ import java.util.Set;
 @Builder
 public class ProductResponse {
     private Long productId;
+    private Long categoryId;
     private String productName;
     private Set<Color> colorSet;
     private Set<Size> sizeSet;
     private List<ProductDetailAllResponse> productDetailAllResponse;
+    private Date viewTime;
 }
 
-//public class ProductResponseDTO {
-//    private String name;
-//    private String description;
-//    private String image;
-//    private List<ProductDetailDTO> productDetails;
-//
-//    // Getters và Setters
-//}

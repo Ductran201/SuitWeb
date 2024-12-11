@@ -1,34 +1,61 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import Cookies from "js-cookie";
+import { findAllWishList, toggleWishList } from "../../services/wishList";
 
 export default function ProductCard({
   productId,
   productName,
   currentImage,
   currentPrice,
-  wishList,
-  onToggleWishList,
   colorSet,
   selectedColor,
   onHoverColor,
 }) {
+  // Kiểm tra trạng thái đăng nhập
+  const isAuthenticated = () => {
+    const cookies = JSON.parse(Cookies.get("objectCookies") || null);
+    return cookies;
+    // return !!cookies?.data?.accessToken; // Có token nghĩa là đã đăng nhập
+  };
+  const dispatch = useDispatch();
+  const { data: wishList, error: wishListError } = useSelector(
+    (state) => state.wishList
+  );
+  const loadWishList = () => {
+    dispatch(findAllWishList());
+  };
+
+  const isWishList = wishList?.some((wish) => wish.id === productId);
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      loadWishList();
+    }
+  }, []);
+
+  const handleToggleWishList = (productId) => {
+    dispatch(toggleWishList(productId))
+      .then(() => loadWishList())
+      .catch((error) => console.log(error));
+  };
   return (
     <>
-      <div className="flex flex-col items-center gap-3 p-4 bg-white shadow-md rounded-lg">
+      <div className="relative flex flex-col gap-3 p-4 bg-white shadow-md rounded-lg">
         {/* Discount */}
         {/* <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-sm rounded">
               {item?.discount}
             </div> */}
 
-        <Link to={`/product/${productId}`}>
+        <Link to={`/product/${productId}`} className="w-full">
           {/* Product Image */}
-          <div className="aspect-w-1 aspect-h-1s">
+          <div className="w-full h-[400px]">
             <img
               src={currentImage}
               alt="Hovered"
-              className="h-48 w-full object-cover rounded-md"
+              className="h-full w-full object-cover rounded-md"
             />
           </div>
 
@@ -42,8 +69,10 @@ export default function ProductCard({
           </div>
         </Link>
         <FavoriteBorderIcon
-          onClick={onToggleWishList}
-          className={`cursor-pointer ${wishList ? "text-red-600" : ""}`}
+          onClick={() => handleToggleWishList(productId)}
+          className={`absolute right-3 bottom-[15%] cursor-pointer ${
+            isWishList ? "text-red-600" : ""
+          }`}
           fontSize="large"
         />
 
@@ -56,7 +85,7 @@ export default function ProductCard({
                 selectedColor === color.id ? "border-black" : "border-gray-300"
               }`}
               style={{
-                backgroundColor: color.name.toLowerCase(), // Màu sắc dựa vào tên
+                backgroundColor: color.name.toLowerCase(),
               }}
               onMouseEnter={() => onHoverColor(color.id)}
             ></div>

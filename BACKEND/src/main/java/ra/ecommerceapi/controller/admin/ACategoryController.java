@@ -15,7 +15,6 @@ import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.dto.request.CategoryRequest;
 import ra.ecommerceapi.service.ICategoryService;
-import ra.ecommerceapi.service.IProductService;
 
 @Controller
 @RequiredArgsConstructor

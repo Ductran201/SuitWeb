@@ -1,25 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { findProductById } from "../../services/productService";
+import {
+  findProductById,
+  topNewestProduct,
+} from "../../services/productService";
 import { addCart } from "../../services/cartService";
 import { message } from "antd";
-import Cookies from "js-cookie";
 import RelatedProduct from "./home/RelatedProduct";
+import { createOrUpdateHistoryView } from "../../services/historyService";
 
 const FIXED_SIZES = ["S", "M", "L", "XL", "XXL"];
 
 export default function ProductDetail() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const { data: products } = useSelector((state) => state.product);
   const navigate = useNavigate();
   const { productInfor } = useSelector((state) => state.product);
-  console.log(productInfor);
+  // console.log(productInfor);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+
+  const categoryId = productInfor?.categoryId;
 
   // Kiểm tra size khả dụng dựa trên màu sắc đã chọn
   const isSizeAvailableForColor = (sizeName) => {
@@ -39,6 +45,10 @@ export default function ProductDetail() {
 
   // console.log(filterProductDetail);
 
+  const addOrUpdateHistoryView = () => {
+    dispatch(createOrUpdateHistoryView(id));
+  };
+
   // Lấy dữ liệu sản phẩm
   useEffect(() => {
     const loadData = () => {
@@ -46,7 +56,14 @@ export default function ProductDetail() {
       setLoading(false);
     };
     loadData();
+    addOrUpdateHistoryView();
   }, [id, dispatch]);
+
+  useEffect(() => {
+    if (categoryId) {
+      dispatch(topNewestProduct(categoryId));
+    }
+  }, [categoryId]);
 
   // Cập nhật state khi productInfor thay đổi
   useEffect(() => {

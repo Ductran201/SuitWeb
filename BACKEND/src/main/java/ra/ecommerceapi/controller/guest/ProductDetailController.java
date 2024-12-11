@@ -1,4 +1,4 @@
-package ra.ecommerceapi.controller.all;
+package ra.ecommerceapi.controller.guest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
-import ra.ecommerceapi.service.IImgProductDetailService;
 import ra.ecommerceapi.service.IProductDetailService;
 
 @RestController

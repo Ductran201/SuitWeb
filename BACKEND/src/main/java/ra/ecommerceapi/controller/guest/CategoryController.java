@@ -1,6 +1,5 @@
-package ra.ecommerceapi.controller.all;
+package ra.ecommerceapi.controller.guest;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,16 +39,26 @@ public class CategoryController {
         return ResponseEntity.ok().body(new ResponseWrapper<>(categoryService.findAllPaginationUser(search, pageable), EHttpStatus.SUCCESS, 200));
     }
 
-    @GetMapping("/{id}/products")
-    public ResponseEntity<?> listProductsByCategoryForUser(@PathVariable Long id,
-                                                           @RequestParam(defaultValue = "sh") String search,
+    @GetMapping("/{categoryId}/products")
+    public ResponseEntity<?> listProductsByCategoryForGuest(@PathVariable Long categoryId,
+                                                           @RequestParam(defaultValue = "") String search,
                                                            @PageableDefault(size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        categoryService.findById(id);
-
+        categoryService.findById(categoryId);
 
         return ResponseEntity.ok().body(ResponseWrapper.builder()
-                .data(productService.findAllPaginationUser(id, search, pageable))
+                .data(productService.findAllProductByCategory(categoryId, search, pageable))
+                .code(200)
+                .status(EHttpStatus.SUCCESS)
+                .build());
+    }
+
+    @GetMapping("/{categoryId}/products/related")
+    public ResponseEntity<?> list5ProductRelatedByCategory(@PathVariable Long categoryId){
+        categoryService.findById(categoryId);
+
+        return ResponseEntity.ok().body(ResponseWrapper.builder()
+                .data(productService.findTopProductNewestByCategory(categoryId))
                 .code(200)
                 .status(EHttpStatus.SUCCESS)
                 .build());

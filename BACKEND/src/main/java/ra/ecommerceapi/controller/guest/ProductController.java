@@ -1,4 +1,4 @@
-package ra.ecommerceapi.controller.all;
+package ra.ecommerceapi.controller.guest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,17 +17,6 @@ public class ProductController {
     private final IProductService productService;
     private final ICategoryService categoryService;
 
-//    @GetMapping("")
-//    public ResponseEntity<?> listPagination(@RequestParam(defaultValue = "") String search
-//            , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-//        return ResponseEntity.ok().body(
-//                ResponseWrapper.builder()
-//                        .data(productService.findAllPaginationUser(search, pageable))
-//                        .status(EHttpStatus.SUCCESS)
-//                        .code(200)
-//                        .build()
-//        );
-//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findProductResponseById(@PathVariable Long id) {
@@ -52,27 +41,18 @@ public class ProductController {
 //        );
 //    }
 
-
-
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> delete(@PathVariable Long id) {
-//        productService.findById(id);
-//        productService.delete(id);
-//        return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
-//    }
-
-
     @GetMapping("/newest/{categoryId}")
     public ResponseEntity<?> topProductNewest(@PathVariable Long categoryId) {
         categoryService.findById(categoryId);
         return ResponseEntity.ok().body(
                 ResponseWrapper.builder()
-                        .data(productService.findTopProductNewest(categoryId))
+                        .data(productService.findTopProductNewestByCategory(categoryId))
                         .status(EHttpStatus.SUCCESS)
                         .code(200)
                         .build()
         );
     }
+
 
 
 

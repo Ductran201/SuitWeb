@@ -3,13 +3,13 @@ package ra.ecommerceapi.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
 import ra.ecommerceapi.model.dto.response.ProductDetailAllResponse;
-import ra.ecommerceapi.model.dto.response.ProductOverviewResponse;
 import ra.ecommerceapi.model.dto.response.ProductResponse;
 import ra.ecommerceapi.model.entity.*;
 import ra.ecommerceapi.repository.IProductDetailRepo;
@@ -34,9 +34,9 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public List<ProductResponse> findTopProductNewest(Long categoryId) {
+    public List<ProductResponse> findTopProductNewestByCategory(Long categoryId) {
 // Lấy danh sách 2 sản phẩm mới nhất theo Id thuộc categoryId và status = true
-        List<Product> products = productRepo.findTop1ByCategoryIdAndStatusTrueOrderByIdDesc(categoryId);
+        List<Product> products = productRepo.findTop2ByCategoryIdAndStatusTrueOrderByIdDesc(categoryId);
 
         List<ProductResponse> productResponseList = new ArrayList<>();
 
@@ -69,6 +69,7 @@ public class ProductServiceImpl implements IProductService {
                     .colorSet(colorSet)
                     .sizeSet(sizeSet)
                     .productDetailAllResponse(productDetailAllResponseList)
+                    .categoryId(product.getCategory().getId())
                     .build();
 
             productResponseList.add(productResponse);
@@ -78,8 +79,49 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public Page<ProductOverviewResponse> findAllPaginationUser(Long id, String search, Pageable pageable) {
-        return productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(id, search, pageable);
+    public Page<ProductResponse> findAllProductByCategory(Long categoryId, String search, Pageable pageable) {
+//        return productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(id, search, pageable);
+        Page<Product> products = productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(categoryId, search, pageable);
+
+        List<ProductResponse> productResponseList = new ArrayList<>();
+
+        for (Product product : products) {
+            Set<Color> colorSet = new HashSet<>();
+            Set<Size> sizeSet = new HashSet<>();
+            List<ProductDetailAllResponse> productDetailAllResponseList = new ArrayList<>();
+
+            // Lấy danh sách ProductDetail theo ProductId
+            List<ProductDetail> productDetailList = productDetailRepo.findAllByProductId(product.getId());
+
+            for (ProductDetail productDetail : productDetailList) {
+                colorSet.add(productDetail.getColor());
+                sizeSet.add(productDetail.getSize());
+
+                // Lấy danh sách ảnh phụ cho từng ProductDetail
+                List<ImgProductDetail> imgProductDetailList = imgProductDetailService.findAllImagesByProductDetailId(productDetail.getId());
+
+                // Thêm vào danh sách ProductDetailAllResponse
+                productDetailAllResponseList.add(ProductDetailAllResponse.builder()
+                        .productDetail(productDetail)
+                        .images(imgProductDetailList)
+                        .build());
+            }
+
+            // Tạo ProductResponse cho sản phẩm hiện tại
+            ProductResponse productResponse = ProductResponse.builder()
+                    .productId(product.getId())
+                    .productName(product.getName())
+                    .colorSet(colorSet)
+                    .sizeSet(sizeSet)
+                    .productDetailAllResponse(productDetailAllResponseList)
+                    .categoryId(product.getCategory().getId())
+                    .build();
+
+            productResponseList.add(productResponse);
+        }
+//        Transform from List --> Page
+
+        return new PageImpl<>(productResponseList, pageable, products.getTotalElements());
     }
 
     @Override
@@ -114,6 +156,7 @@ public class ProductServiceImpl implements IProductService {
                 .productId(id)
                 .productName(findById(id).getName())
                 .productDetailAllResponse(productDetailAllResponseList)
+                .categoryId(findById(id).getCategory().getId())
                 .build();
     }
 

@@ -12,14 +12,9 @@ import { findAllWishList, toggleWishList } from "../../../services/wishList";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Cookies from "js-cookie";
 import ProductCard from "../ProductCard";
+import useProductCard from "../../../components/useProductCard/useProductCard";
 
 export default function ListCategory() {
-  // Kiểm tra trạng thái đăng nhập
-  const isAuthenticated = () => {
-    const cookies = JSON.parse(Cookies.get("objectCookies") || null);
-    return cookies;
-    // return !!cookies?.data?.accessToken; // Có token nghĩa là đã đăng nhập
-  };
   const dispatch = useDispatch();
 
   const { data: products, error: productError } = useSelector(
@@ -30,56 +25,17 @@ export default function ListCategory() {
     (state) => state.category
   );
 
-  const { data: wishList, error: wishListError } = useSelector(
-    (state) => state.wishList
-  );
+  const { selectedColor, handleHoverColor, getCurrentDetail } =
+    useProductCard(products);
 
   const [selectCategory, setSelectCategory] = useState();
-  const [selectedColor, setSelectedColor] = useState({}); // Lưu trạng thái cuối cùng của màu được chọn
-
-  // console.log(products);
-
-  // Khi bắt đầu load sản phẩm, mặc định chọn màu đầu tiên của mỗi sản phẩm
-  useEffect(() => {
-    if (products) {
-      const initialColors = {};
-      products.forEach((product) => {
-        const firstColor = product.colorSet?.[0];
-        if (firstColor) {
-          initialColors[product.productName] = firstColor.id;
-        }
-      });
-      setSelectedColor(initialColors);
-    }
-  }, [products]);
-
-  // Xử lý khi hover vào màu
-  const handleHoverColor = (productName, colorId) => {
-    setSelectedColor((prev) => ({
-      ...prev,
-      [productName]: colorId,
-    }));
-  };
-  const getCurrentDetail = (product, productName) => {
-    const colorId = selectedColor[productName];
-    return product.productDetailAllResponse.find(
-      (detail) => detail.productDetail.color.id === colorId
-    );
-  };
 
   const loadInitialData = () => {
     dispatch(categoryNoPagination());
   };
 
-  const loadWishList = () => {
-    dispatch(findAllWishList());
-  };
-
   useEffect(() => {
     loadInitialData();
-    if (isAuthenticated()) {
-      loadWishList();
-    }
   }, []);
 
   useEffect(() => {
@@ -93,12 +49,6 @@ export default function ListCategory() {
   const handlePreCategory = (id) => {
     setSelectCategory(id);
     dispatch(topNewestProduct(id));
-  };
-
-  const handleToggleWishList = (productId) => {
-    dispatch(toggleWishList(productId))
-      .then(() => loadWishList())
-      .catch((error) => console.log(error));
   };
 
   return (
@@ -122,7 +72,7 @@ export default function ListCategory() {
 
       {/* top newest products */}
       <div className="grid grid-cols-4 gap-5">
-        {products?.map((item, index) => {
+        {products?.map((item) => {
           const currentDetail = getCurrentDetail(item, item.productName);
           const currentImage = currentDetail?.images?.[0]?.image || "";
           const currentPrice =
@@ -135,8 +85,6 @@ export default function ListCategory() {
               productName={item.productName}
               currentImage={currentImage}
               currentPrice={currentPrice}
-              wishList={wishList?.some((wish) => wish.id === item.productId)}
-              onToggleWishList={() => handleToggleWishList(item.productId)}
               colorSet={item.colorSet}
               selectedColor={selectedColor[item.productName]}
               onHoverColor={(colorId) =>

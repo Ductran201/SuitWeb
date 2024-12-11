@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   categoryNoPagination,
   categoryPaginationAdmin,
-  findAllProductByCategory,
 } from "../../services/categoryService";
 import { FAILED, PENDING, SUCCESS } from "../constants";
 
