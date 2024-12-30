@@ -10,6 +10,8 @@ public interface IAddressService {
 
     AddressResponse findByUserAndId(Long id);
 
+    AddressResponse findDefaultAddress();
+
     AddressResponse save(AddressRequest addressRequest);
 
     AddressResponse save(AddressRequest addressRequest,Long id);

@@ -2,8 +2,9 @@ package ra.ecommerceapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +22,6 @@ public class History {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
-    @Temporal(TemporalType.DATE)
-    private Date viewTime;
+    @CreationTimestamp
+    private LocalDateTime viewTime;
 }

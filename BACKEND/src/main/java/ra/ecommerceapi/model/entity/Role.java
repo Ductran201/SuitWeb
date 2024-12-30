@@ -12,9 +12,6 @@ import ra.ecommerceapi.model.constant.RoleName;
 @Builder
 @Entity
 public class Role extends BaseObject {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
     @Enumerated(value = EnumType.STRING)
     private RoleName roleName;
 }

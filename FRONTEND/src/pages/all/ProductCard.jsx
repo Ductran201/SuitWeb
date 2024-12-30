@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Cookies from "js-cookie";
 import { findAllWishList, toggleWishList } from "../../services/wishList";
+import { convertLocalDateTime } from "../../services/common";
 
 export default function ProductCard({
   productId,
@@ -13,6 +14,7 @@ export default function ProductCard({
   colorSet,
   selectedColor,
   onHoverColor,
+  viewTime,
 }) {
   // Kiểm tra trạng thái đăng nhập
   const isAuthenticated = () => {
@@ -91,6 +93,7 @@ export default function ProductCard({
             ></div>
           ))}
         </div>
+        {viewTime && <p>View time: {convertLocalDateTime(viewTime)}</p>}
       </div>
     </>
   );

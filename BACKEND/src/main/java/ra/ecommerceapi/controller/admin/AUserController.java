@@ -60,8 +60,6 @@ public class AUserController {
     @DeleteMapping("/{userId}/role/{roleId}")
     public ResponseEntity<?> deleteRoleForUser(@PathVariable Long userId, @PathVariable Long roleId) throws CustomException {
         userService.deleteRoleForUser(userId, roleId);
-//        return ResponseEntity.ok().body(
-//                new ResponseWrapper<>("Delete role successfully",EHttpStatus.SUCCESS,200));
         return new ResponseEntity<>("Delete role successfully", HttpStatus.NO_CONTENT);
     }
 

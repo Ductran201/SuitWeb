@@ -16,6 +16,7 @@ import ra.ecommerceapi.repository.IOrderDetailRepo;
 import ra.ecommerceapi.repository.IOrderRepo;
 import ra.ecommerceapi.repository.IShoppingCartRepo;
 import ra.ecommerceapi.service.IAuthService;
+import ra.ecommerceapi.service.IImgProductDetailService;
 import ra.ecommerceapi.service.IProductDetailService;
 import ra.ecommerceapi.service.IShoppingCartService;
 
@@ -34,6 +35,7 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
     private final IAddressRepo addressRepo;
     private final IAuthService authService;
     private final IProductDetailService productDetailService;
+    private final IImgProductDetailService imgProductDetailService;
     private final ModelMapper modelMapper;
 
 
@@ -45,6 +47,7 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
             CartResponse cartResponse = CartResponse.builder()
                     .id(c.getId())
                     .productDetail(c.getProductDetail())
+                    .images(imgProductDetailService.findAllImagesByProductDetailId(c.getProductDetail().getId()))
                     .totalPrice(c.getProductDetail().getPrice())
                     .quantity(c.getOrderQuantity())
                     .build();

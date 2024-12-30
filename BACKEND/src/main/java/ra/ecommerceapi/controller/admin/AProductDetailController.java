@@ -33,7 +33,7 @@ public class AProductDetailController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) throws CustomException {
-        return ResponseEntity.ok().body(new ResponseWrapper<>(productDetailService.findById(id), EHttpStatus.SUCCESS, 200));
+        return ResponseEntity.ok().body(new ResponseWrapper<>(productDetailService.getAllProductDetails(id), EHttpStatus.SUCCESS, 200));
     }
 
     @PostMapping("")

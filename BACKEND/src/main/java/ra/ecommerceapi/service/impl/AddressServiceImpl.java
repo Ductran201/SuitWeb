@@ -42,6 +42,20 @@ public class AddressServiceImpl implements IAddressService {
                 .build();
     }
 
+    @Override
+    public AddressResponse findDefaultAddress() {
+        User userCurrent = authService.getCurrentUser().getUser();
+
+        Address defaultAddress= addressRepo.findTop1ByUserOrderByIdDesc(userCurrent);
+        return AddressResponse.builder()
+                .id(defaultAddress.getId())
+                .fullAddress(defaultAddress.getFullAddress())
+                .userId(defaultAddress.getUser().getId())
+                .nameReceiver(defaultAddress.getNameReceiver())
+                .phoneReceiver(defaultAddress.getPhoneReceiver())
+                .build();
+    }
+
 
     @Override
     public AddressResponse save(AddressRequest addressRequest) {

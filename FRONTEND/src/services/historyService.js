@@ -13,7 +13,6 @@ export const createOrUpdateHistoryView = createAsyncThunk(
   "history/createOrUpdate",
   async (productId) => {
     const res = await BASE_URL.post(`user/history/products/${productId}`);
-    console.log(res);
     return res;
   }
 );

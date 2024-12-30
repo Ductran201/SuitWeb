@@ -52,17 +52,21 @@ export default function ListCategory() {
   };
 
   return (
-    <>
-      <div className="text-center font-bold">Suggest products</div>
+    <div className="mb-10">
+      <div className="text-[20px] mb-3 text-center font-[500]">
+        Suggest products
+      </div>
 
-      <div className="flex justify-center gap-10 bg-slate-500 ">
+      <div className="flex justify-center gap-2">
         {categories?.map((cat) => (
           <button
             key={cat.id}
             onClick={() => handlePreCategory(cat.id)}
             to="#"
-            className={`hover:bg-red-400 p-4 ${
-              selectCategory == cat.id ? "bg-green-400" : ""
+            className={`min-w-[120px] rounded-full p-2 ${
+              selectCategory == cat.id
+                ? "bg-[#ffb400] font-[500]"
+                : "opacity-80"
             } `}
           >
             {cat.name}
@@ -71,7 +75,7 @@ export default function ListCategory() {
       </div>
 
       {/* top newest products */}
-      <div className="grid grid-cols-4 gap-5">
+      <div className="grid grid-cols-4 gap-5 mb-6">
         {products?.map((item) => {
           const currentDetail = getCurrentDetail(item, item.productName);
           const currentImage = currentDetail?.images?.[0]?.image || "";
@@ -96,8 +100,13 @@ export default function ListCategory() {
       </div>
 
       <div className="text-center">
-        <Link to={`/category/${selectCategory}`}>See more</Link>
+        <Link
+          className="p-2 border inline-block border-black min-w-[250px] rounded-lg font-[500]"
+          to={`/category/${selectCategory}`}
+        >
+          See more
+        </Link>
       </div>
-    </>
+    </div>
   );
 }

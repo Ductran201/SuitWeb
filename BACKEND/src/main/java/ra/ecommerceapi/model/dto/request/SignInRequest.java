@@ -1,6 +1,5 @@
 package ra.ecommerceapi.model.dto.request;
 
-import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 

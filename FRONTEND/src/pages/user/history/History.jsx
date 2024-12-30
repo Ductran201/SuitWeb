@@ -16,7 +16,9 @@ export default function History() {
   }, []);
   return (
     <>
-      <h2 className="font-bold text-center mb-4">History view product</h2>
+      <h2 className="text-[20px] font-[500] text-center mb-3">
+        History view product
+      </h2>
       <div className="grid grid-cols-4 gap-5">
         {products?.map((item) => {
           // console.log(item.productResponse);
@@ -38,6 +40,7 @@ export default function History() {
               onHoverColor={(colorId) =>
                 handleHoverColor(item.productName, colorId)
               }
+              viewTime={item.viewTime}
             />
           );
         })}

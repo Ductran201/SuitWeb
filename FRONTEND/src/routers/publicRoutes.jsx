@@ -21,6 +21,8 @@ import data from "../data/index.json";
 import CartUser from "../pages/user/cart/CartUser";
 import ProductCard from "../pages/all/ProductCard";
 import Test2 from "../pages/all/home/Test2";
+import Checkout from "../pages/user/checkout/Checkout";
+import DonePayment from "../pages/user/donePayment/DonePayment";
 
 const publicRoutes = [
   {
@@ -80,11 +82,15 @@ const publicRoutes = [
         element: <CartUser />,
       },
       {
+        path: "/checkout",
+        element: <Checkout />,
+      },
+      {
         path: "/category/:id",
         element: <ProductByCategory />,
       },
       {
-        path: "/product/:id",
+        path: "/product/:productId",
         element: <ProductDetail />,
       },
       {
@@ -97,6 +103,11 @@ const publicRoutes = [
         element: <Test2 />,
       },
     ],
+  },
+
+  {
+    path: "/done",
+    element: <DonePayment />,
   },
 
   {

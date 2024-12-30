@@ -24,7 +24,13 @@ public interface IProductDetailService {
     void toggleStatus(Long id);
     //FOR USER
 
-    ProductDetailAllResponse getAllProductDetails(Long id) throws CustomException;
+    /**
+     *
+     * @param productDetailId
+     * @return the response of productDetail with all properties
+     * @throws CustomException
+     */
+    ProductDetailAllResponse getAllProductDetails(Long productDetailId) throws CustomException;
 
     //COMMON
 

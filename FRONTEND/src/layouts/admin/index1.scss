@@ -1,0 +1,24 @@
+/* Default Theme */
+:root {
+  --bg-color: #ffffff; /* Màu nền mặc định */
+  --text-color: #000000; /* Màu chữ mặc định */
+}
+
+/* Dark Mode */
+.dark {
+  --bg-color: #1e1e1e; /* Nền đen */
+  --text-color: #d32f2f; /* Màu chữ đỏ */
+}
+
+/* Áp dụng màu vào các phần tử */
+body,
+html {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+
+.dark * {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}

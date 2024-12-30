@@ -131,12 +131,12 @@ public class ProductDetailServiceImpl implements IProductDetailService {
     }
 
     @Override
-    public ProductDetailAllResponse getAllProductDetails(Long id) throws CustomException {
+    public ProductDetailAllResponse getAllProductDetails(Long productDetailId) throws CustomException {
 
-        List<ImgProductDetail> listImages = imgProductDetailService.findAllImagesByProductDetailId(id);
+        List<ImgProductDetail> listImages = imgProductDetailService.findAllImagesByProductDetailId(productDetailId);
 
         return ProductDetailAllResponse.builder()
-                .productDetail(findById(id))
+                .productDetail(findById(productDetailId))
                 .images(listImages)
                 .build();
 

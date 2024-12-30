@@ -1,0 +1,42 @@
+:root {
+  --primary-admin-color: #f1f5f9;
+  --panel-color: #fff;
+  --text-color: #000;
+  --black-light-color: #707070;
+  --border-color: #e2e8f0;
+  --toggle-color: #ddd;
+  --box1-color: #dbeafe;
+  --box2-color: #f3e8ff;
+  --box3-color: #d2f4ee;
+  --box4-color: #fee2e2;
+  --number-color: #1e293b;
+  --box-text-color: #64748b;
+  --title-icon-color: #fff;
+  --hover-bg-color: #eff6ff;
+  --hover-text-bg-color: #3b82f6;
+  --primary-btn-color: #2563eb;
+  --danger-color: #f43f5e;
+  --success-color: #22c55e;
+  --secondary-admin-color: #d4d4d4;
+  --warning-color: #fbbf24;
+  --btn-color: #fafafa;
+  --btn-gradient-from: #1c92d2;
+  --btn-gradient-to: #c6426e;
+
+  /* user */
+  --primary-user-color: #da291c;
+  --blue-user-color: rgb(63, 129, 194);
+  --plus-user-color: #2f80ed;
+  --bg-user-color: #f5f5f5;
+  --white-user-color: #ffffff;
+  --black-user-color: #000;
+  --nav-user-color: #333f48;
+  --text-user-color: #333f48;
+  --border-user-color: #e6e7e8;
+  --gold-user-color: #f89406;
+  --success-user-color: #01a244;
+  --error-user-color: #e74c3c;
+  --header-user-height: 96px;
+  --header-sort-bar-height: 46px;
+  --header-mobile-height: 68px;
+}

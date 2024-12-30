@@ -14,7 +14,6 @@ import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
-import ra.ecommerceapi.repository.ICategoryRepo;
 import ra.ecommerceapi.service.ICategoryService;
 import ra.ecommerceapi.service.IProductService;
 
@@ -28,7 +27,7 @@ public class AProductController {
     /**
      * @param search   String
      * @param pageable Pageable
-     * @apiNote handle get all products with pagination and search for admin role
+     * @apiNote handle get all products with pagination or no pagination and can be searched for admin role
      */
 
     @GetMapping("")

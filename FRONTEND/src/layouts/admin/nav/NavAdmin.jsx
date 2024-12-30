@@ -1,57 +1,104 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import {
+  AppstoreOutlined,
+  SolutionOutlined,
+  UserOutlined,
+  ProductFilled,
+  StockOutlined,
+  AuditOutlined,
+  BgColorsOutlined,
+  GatewayOutlined,
+} from "@ant-design/icons";
+import { Button, Layout, Menu } from "antd";
 
 export default function NavAdmin() {
-  return (
-    <menu className=" w-[200px]">
-      <img
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png"
-        alt=""
-        className="p-4"
-      />
-      <div className="flex flex-col gap-2 p-3">
-        <NavLink
-          end
-          to={"/admin"}
-          className={"hover:text-yellow-500 px-1 py-4 block"}
-        >
-          Dash Board
-        </NavLink>
-        <NavLink
-          to={"/admin/user"}
-          className={"hover:text-yellow-500 px-1 py-4 block"}
-        >
-          Account Management
-        </NavLink>
-        <NavLink
-          to={"/admin/category"}
-          className={"hover:text-yellow-500 px-1 py-4 block"}
-        >
-          Category Management
-        </NavLink>
-        <NavLink
-          to={"/admin/product"}
-          className={"hover:text-yellow-500 px-1 py-4 block"}
-        >
-          Product Management
-        </NavLink>
-        <NavLink
-          to={"/admin/color"}
-          className={"hover:text-yellow-500 px-1 py-4 block"}
-        >
-          Color Management
-        </NavLink>
-        <NavLink
-          to={"/admin/size"}
-          className={"hover:text-yellow-500 px-1 py-4 block"}
-        >
-          Size Management
-        </NavLink>
+  const location = useLocation(); // Hook để lấy thông tin đường dẫn hiện tại
+  const currentPath = location.pathname; // Lấy đường dẫn hiện tại
 
-        <NavLink to={"/"} className={"hover:text-yellow-500 px-1 py-4 block"}>
-          Home Shop
-        </NavLink>
+  // console.log(currentPath);
+  const items = [
+    {
+      key: "1",
+      icon: <AppstoreOutlined />,
+      label: "Dash Board",
+      link: "/admin",
+    },
+    {
+      key: "2",
+      icon: <UserOutlined />,
+      label: "Account Management",
+      link: "/admin/user",
+    },
+    {
+      key: "3",
+      icon: <AuditOutlined />,
+      label: "Category Management",
+      link: "/admin/category",
+    },
+    {
+      key: "4",
+      icon: <ProductFilled />,
+      label: "Product Management",
+      link: "/admin/product",
+    },
+    {
+      key: "5",
+      icon: <SolutionOutlined />,
+      label: "Order Management",
+      link: "/admin/order",
+    },
+    {
+      key: "6",
+      icon: <BgColorsOutlined />,
+      label: "Color Management",
+      link: "/admin/color",
+    },
+    {
+      key: "7",
+      icon: <GatewayOutlined />,
+      label: "Size Management",
+      link: "/admin/size",
+    },
+    {
+      key: "8",
+      icon: <StockOutlined />,
+      label: "Voucher",
+      link: "/admin/voucher",
+    },
+    {
+      key: "9",
+      icon: <StockOutlined />,
+      label: "Comment",
+      link: "/admin/comment",
+    },
+    {
+      key: "10",
+      icon: <StockOutlined />,
+      label: "Shop",
+      link: "/",
+    },
+  ];
+
+  return (
+    <>
+      <div className="text-center my-4">
+        <Link to="/admin" className="text-white">
+          ADMIN
+        </Link>
       </div>
-    </menu>
+      <hr></hr>
+      <div />
+      <Menu
+        theme="dark"
+        mode="inline"
+        selectedKeys={[currentPath]}
+        items={items.map((item) => ({
+          key: item.link,
+          icon: item.icon,
+          label: <Link to={item.link}>{item.label}</Link>,
+        }))}
+      ></Menu>
+    </>
   );
 }

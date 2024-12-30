@@ -51,7 +51,19 @@ export const deleteCart = createAsyncThunk(
       console.log(res);
       return res;
     } catch (error) {
-      // return error.response.data.data
+      return rejectWithValue(error.response.data.data);
+    }
+  }
+);
+
+export const checkout = createAsyncThunk(
+  "cart/checkout",
+  async (checkoutRequest, { rejectWithValue }) => {
+    try {
+      const res = await BASE_URL.post(`user/cart/checkout`, checkoutRequest);
+      console.log(res);
+      return res;
+    } catch (error) {
       return rejectWithValue(error.response.data.data);
     }
   }

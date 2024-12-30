@@ -14,16 +14,3 @@ public class ProductDetailAllResponse {
     private ProductDetail productDetail;
     private List<ImgProductDetail> images;
 }
-
-
-//public class ProductDetailDTO {
-//    private String name;
-//    private BigDecimal price;
-//    private Integer stockQuantity;
-//    private Date updatedDate;
-//    private String color;
-//    private String size;
-//    private List<String> images;
-//
-//    // Getters và Setters
-//}

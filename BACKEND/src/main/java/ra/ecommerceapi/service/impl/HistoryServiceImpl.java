@@ -11,6 +11,7 @@ import ra.ecommerceapi.repository.IHistoryRepo;
 import ra.ecommerceapi.repository.IProductDetailRepo;
 import ra.ecommerceapi.service.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -76,14 +77,13 @@ public class HistoryServiceImpl implements IHistoryService {
         if (isExist) {
             // if exist --> update the viewDate
             History history = findByProductId(productId);
-            history.setViewTime(new Date());
+            history.setViewTime(LocalDateTime.now());
             historyRepo.save(history);
         } else {
             // if not --> create new
             History newHistory = History.builder()
                     .user(user)
                     .product(product)
-                    .viewTime(new Date())
                     .build();
             historyRepo.save(newHistory);
         }

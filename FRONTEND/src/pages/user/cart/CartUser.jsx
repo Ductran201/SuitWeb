@@ -6,11 +6,12 @@ import {
   updateQuantityCart,
 } from "../../../services/cartService";
 import Cookies from "js-cookie";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { message } from "antd";
 import DialogCustom from "../../../components/dialog";
 import { Delete } from "@mui/icons-material";
 import { useDebounce } from "@uidotdev/usehooks";
+import { formatCurrencyVND } from "../../../services/common";
 const Cart = () => {
   const dispatch = useDispatch();
   const { data } = useSelector((state) => state.listCart);
@@ -20,6 +21,7 @@ const Cart = () => {
   const [pendingUpdate, setPendingUpdate] = useState(null);
   const [updatingItemId, setUpdatingItemId] = useState(null);
 
+  console.log(data);
   const debouncedPendingUpdate = useDebounce(pendingUpdate, 900);
 
   useEffect(() => {
@@ -35,8 +37,6 @@ const Cart = () => {
   useEffect(() => {
     loadData();
   }, []);
-
-  // console.log(data);
 
   const totalQuantity =
     data?.reduce((total, item) => total + item.quantity, 0) || 0;
@@ -112,7 +112,7 @@ const Cart = () => {
             <div className="bg-gray-100 min-h-screen">
               <div className="max-w-7xl mx-auto py-6 px-4">
                 {/* Thông báo miễn phí vận chuyển */}
-                <div className="bg-white shadow rounded-lg p-4 mb-6">
+                {/* <div className="bg-white shadow rounded-lg p-4 mb-6">
                   <p className="text-green-600 font-medium">
                     🎉 Chúc mừng! Đơn hàng của bạn được{" "}
                     <span className="font-bold">Miễn phí vận chuyển</span>
@@ -123,23 +123,23 @@ const Cart = () => {
                       style={{ width: "100%" }}
                     ></div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Khuyến mại */}
-                <div className="bg-white shadow rounded-lg p-4 mb-6">
+                {/* <div className="bg-white shadow rounded-lg p-4 mb-6">
                   <div className="flex items-center gap-2 text-orange-500 font-medium">
                     🔥
                     <span>Khuyến mại trong giỏ hàng của bạn chỉ còn</span>
                     <span className="font-bold text-black">3 phút 35 giây</span>
                     <span>trước khi hết khuyến mại</span>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Danh sách sản phẩm */}
                 <div className="bg-white shadow rounded-lg p-6">
                   <h2 className="font-bold text-lg mb-4">Đang được giảm giá</h2>
 
-                  {/* Sản phẩm */}
+                  {/* PRODUCTS */}
                   <div className="space-y-4">
                     {/* RENDER CART  */}
                     {data?.map((item, index) => (
@@ -151,7 +151,7 @@ const Cart = () => {
                         <div className="flex items-center gap-4">
                           <input type="checkbox" className="h-5 w-5" />
                           <img
-                            src="https://via.placeholder.com/80"
+                            src={item.images[0].image}
                             alt="Product"
                             className="w-20 h-20 object-cover rounded"
                           />
@@ -165,10 +165,10 @@ const Cart = () => {
                               {item.productDetail.size.name}
                             </p>
                             <div className="text-red-500 font-bold">
-                              349.300đ
+                              {formatCurrencyVND(item.productDetail.price)}
                             </div>
                             <div className="text-gray-400 line-through text-sm">
-                              {item.productDetail.price} đ
+                              {formatCurrencyVND(item.productDetail.price)}
                             </div>
                             <p className="text-sm text-orange-500">
                               Đã tiết kiệm 149.700đ
@@ -221,7 +221,9 @@ const Cart = () => {
                       <span className="text-gray-600">
                         Tổng giá trị sản phẩm
                       </span>
-                      <span className="font-bold">{totalPrice}đ</span>
+                      <span className="font-bold">
+                        {formatCurrencyVND(totalPrice)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Vận chuyển</span>
@@ -235,12 +237,15 @@ const Cart = () => {
                   <div className="flex justify-between mt-4">
                     <span className="font-bold text-lg">Tổng thanh toán</span>
                     <span className="font-bold text-lg text-red-500">
-                      {totalPrice}
+                      {formatCurrencyVND(totalPrice - 20000)}
                     </span>
                   </div>
-                  <button className="bg-yellow-500 text-white font-bold w-full py-3 rounded-lg mt-4">
+                  <Link
+                    to={"/checkout"}
+                    className="block text-center bg-yellow-500 text-white font-bold w-full py-3 rounded-lg mt-4"
+                  >
                     Mua hàng {totalQuantity}
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

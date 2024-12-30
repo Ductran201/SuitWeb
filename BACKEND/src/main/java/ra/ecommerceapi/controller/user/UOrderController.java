@@ -1,6 +1,5 @@
 package ra.ecommerceapi.controller.user;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
-import ra.ecommerceapi.model.dto.request.OrderRequestStatus;
 import ra.ecommerceapi.service.IOrderService;
 
 import java.util.UUID;

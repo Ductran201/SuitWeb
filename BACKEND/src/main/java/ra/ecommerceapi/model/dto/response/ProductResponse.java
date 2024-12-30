@@ -4,6 +4,7 @@ import lombok.*;
 import ra.ecommerceapi.model.entity.Color;
 import ra.ecommerceapi.model.entity.Size;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +21,6 @@ public class ProductResponse {
     private Set<Color> colorSet;
     private Set<Size> sizeSet;
     private List<ProductDetailAllResponse> productDetailAllResponse;
-    private Date viewTime;
+    private LocalDateTime viewTime;
 }
 

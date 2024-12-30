@@ -26,20 +26,7 @@ public class ProductController {
                         .code(200)
                         .data(productService.findProductResponseByProductId(id))
                 .build());
-//        return ResponseEntity.ok().body(productService.findProductResponseByProductId(id));
     }
-
-//    @GetMapping("/categories/{categoryId}")
-//    public ResponseEntity<?> findByCategoryId(@PathVariable Long categoryId
-//            , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-//        return ResponseEntity.ok().body(
-//                ResponseWrapper.builder()
-//                        .data(productService.findAllByCategoryIdAndStatusTrue(categoryId, pageable))
-//                        .status(EHttpStatus.SUCCESS)
-//                        .code(200)
-//                        .build()
-//        );
-//    }
 
     @GetMapping("/newest/{categoryId}")
     public ResponseEntity<?> topProductNewest(@PathVariable Long categoryId) {

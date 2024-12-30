@@ -9,16 +9,18 @@ import { addCart } from "../../services/cartService";
 import { message } from "antd";
 import RelatedProduct from "./home/RelatedProduct";
 import { createOrUpdateHistoryView } from "../../services/historyService";
+import { formatCurrencyVND } from "../../services/common";
+import Comment from "../user/comment/Comment";
 
 const FIXED_SIZES = ["S", "M", "L", "XL", "XXL"];
 
 export default function ProductDetail() {
-  const { id } = useParams();
+  const { productId } = useParams();
+  // console.log("first", id);
   const dispatch = useDispatch();
   const { data: products } = useSelector((state) => state.product);
   const navigate = useNavigate();
   const { productInfor } = useSelector((state) => state.product);
-  // console.log(productInfor);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -43,21 +45,19 @@ export default function ProductDetail() {
       item.productDetail.size.id === selectedSize
   );
 
-  // console.log(filterProductDetail);
-
   const addOrUpdateHistoryView = () => {
-    dispatch(createOrUpdateHistoryView(id));
+    dispatch(createOrUpdateHistoryView(productId));
   };
 
   // Lấy dữ liệu sản phẩm
   useEffect(() => {
     const loadData = () => {
-      dispatch(findProductById(id));
+      dispatch(findProductById(productId));
       setLoading(false);
     };
     loadData();
     addOrUpdateHistoryView();
-  }, [id, dispatch]);
+  }, [productId, dispatch]);
 
   useEffect(() => {
     if (categoryId) {
@@ -107,7 +107,7 @@ export default function ProductDetail() {
     }
   };
 
-  const handleAddCart = async (id) => {
+  const handleAddCart = async (productDetailId) => {
     // const cookies = JSON.parse(Cookies.get("objectCookies") || null);
     // console.log(cookies);
     // if (!cookies) {
@@ -118,7 +118,7 @@ export default function ProductDetail() {
     try {
       const cartRequest = {
         quantity: quantity,
-        productDetailId: id,
+        productDetailId: productDetailId,
       };
 
       await dispatch(addCart(cartRequest)).unwrap();
@@ -138,6 +138,7 @@ export default function ProductDetail() {
       <p>Breadcrumb</p>
 
       <section className="grid grid-cols-2 gap-5 px-[100px] mb-7">
+        {/* <section className="flex"> */}
         {/* List images for each productDetail */}
         <div className="flex gap-2">
           <div className="space-y-4">
@@ -157,19 +158,19 @@ export default function ProductDetail() {
           <div>
             <img
               src={selectedImage}
-              className=" h-[calc(100vh-56px)] w-full object-cover"
+              className="w-full h-[calc(100vh-60px)] object-cover"
             />
           </div>
         </div>
 
         {/* Thông tin sản phẩm */}
-        <div>
+        <div className="">
           <h2 className="text-2xl font-bold">{productInfor?.productName}</h2>
           {filterProductDetail && (
             <>
               <h1>Kind: {filterProductDetail.productDetail.name}</h1>
               <p className="text-red-600 font-bold text-[20px]">
-                {filterProductDetail.productDetail.price} vnđ
+                {formatCurrencyVND(filterProductDetail.productDetail.price)}
               </p>
               <p>Stock: {filterProductDetail.productDetail.stockQuantity}</p>
             </>
@@ -264,16 +265,18 @@ export default function ProductDetail() {
               onClick={() =>
                 handleAddCart(filterProductDetail.productDetail.id)
               }
-              className="w-full bg-orange-500 text-white py-2 cursor-pointer"
+              className="border border-black rounded-xl w-full text-black py-2 hover:bg-opacity-10 cursor-pointer"
             >
               Thêm vào giỏ
             </button>
-            <button className="w-full bg-orange-500 text-white py-2 cursor-pointer">
+            <button className="w-full bg-[#ffb400] text-black rounded-xl hover:bg-opacity-60 py-2 cursor-pointer">
               Mua ngay
             </button>
           </div>
         </div>
       </section>
+
+      <Comment />
 
       <RelatedProduct></RelatedProduct>
     </>

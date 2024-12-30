@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ra.ecommerceapi.model.entity.User;
 
 import java.util.Collection;
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor

@@ -3,6 +3,5 @@
 @tailwind utilities;
 
 .active{
-    background-color: aquamarine;
-    color: red;
+    color: #ff5b6a;
 }

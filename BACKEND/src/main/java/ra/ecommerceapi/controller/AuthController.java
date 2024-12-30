@@ -22,7 +22,6 @@ public class AuthController {
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest) throws CustomException {
-//        authService.signUp(signUpRequest);
         return new ResponseEntity<>(new ResponseDataSuccess<>(authService.signUp(signUpRequest), HttpStatus.CREATED),HttpStatus.CREATED);
     }
 

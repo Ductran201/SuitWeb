@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import Choices from "../../../components/choices";
 import { useDispatch } from "react-redux";
 import IconUser from "./IconUser";
 
@@ -45,14 +44,14 @@ export default function HeaderShop() {
   };
 
   return (
-    <div className="bg-red-400 flex justify-between items-center ">
+    <div className="bg-white border-b-2 border-[#eceff4] flex justify-between items-center p-2">
       <div className="flex items-center">
         {/* LOGO */}
         <div className="mr-4 p-[10px]">
           <Link to="/">
             <img
-              className="w-[100px]"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png"
+              className="w-[100px] h-[56px]"
+              src="https://bizweb.dktcdn.net/100/345/548/themes/706243/assets/logo_share.png?1733121221120"
               alt=""
             />
           </Link>
@@ -62,7 +61,7 @@ export default function HeaderShop() {
           {NAV.map((item, index) => (
             <NavLink
               key={index}
-              className={"hover:text-red-500 font-bold text-[20px] p-[10px]"}
+              className={"hover:text-[#ff5b6a] font-bold text-[20px] p-[10px]"}
               to={item.path}
             >
               {item.name}
@@ -72,6 +71,7 @@ export default function HeaderShop() {
 
         {/* RIGHT */}
       </div>
+
       <div className="flex justify-center items-center gap-3">
         <TextField label="Search" size="small" />
         <div>

@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import ra.ecommerceapi.model.entity.User;
 import ra.ecommerceapi.repository.IUserRepo;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceCustom implements UserDetailsService {

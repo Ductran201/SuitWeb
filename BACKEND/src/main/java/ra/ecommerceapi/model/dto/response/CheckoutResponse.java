@@ -1,9 +1,7 @@
 package ra.ecommerceapi.model.dto.response;
 
-import jakarta.persistence.*;
 import lombok.*;
 import ra.ecommerceapi.model.constant.OrderStatus;
-import ra.ecommerceapi.model.entity.User;
 
 import java.util.Date;
 

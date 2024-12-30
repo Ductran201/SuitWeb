@@ -652,7 +652,7 @@ export default function ProductDetailAdmin() {
             <th className="border ">SIZE</th>
             <th className="border ">STATUS</th>
             <th className="border ">CREATED DATE</th>
-            <th className="border w-4 "></th>
+            <th className="border w-4"></th>
           </tr>
         </thead>
         <tbody className="text-center bg-white">

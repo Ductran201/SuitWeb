@@ -11,4 +11,6 @@ public interface IAddressRepo extends JpaRepository<Address,Long> {
     List<Address> findAllByUser(User user);
 
     Optional<Address> findByUserAndId(User user, Long id);
+
+    Address findTop1ByUserOrderByIdDesc(User user);
 }

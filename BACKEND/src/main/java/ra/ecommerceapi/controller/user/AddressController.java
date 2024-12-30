@@ -33,6 +33,11 @@ public class AddressController {
         return ResponseEntity.ok().body(new ResponseWrapper<>(addressService.findByUserAndId(addressId),EHttpStatus.SUCCESS,200));
     }
 
+    @GetMapping("/default")
+    public ResponseEntity<?> findDefaultAddress() {
+        return ResponseEntity.ok().body(new ResponseWrapper<>(addressService.findDefaultAddress(),EHttpStatus.SUCCESS,200));
+    }
+
     @PostMapping("")
     public ResponseEntity<?> add(@Valid @RequestBody AddressRequest addressRequest) {
         return new ResponseEntity<>(new ResponseWrapper<>(addressService.save(addressRequest),EHttpStatus.SUCCESS,201),HttpStatus.CREATED);
