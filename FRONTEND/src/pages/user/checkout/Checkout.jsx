@@ -7,15 +7,18 @@ import {
   findAllAddress,
   findDefaultAddress,
 } from "../../../services/addressService";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Checkout() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { data } = useSelector((state) => state.listCart);
   const { data: listAddress, addressDefault } = useSelector(
     (state) => state.address
   );
   const [selectedAddress, setSelectedAddress] = useState(null);
+  const [note, setNote] = useState("");
 
   const loadData = () => {
     dispatch(findListCartByUser());
@@ -25,7 +28,7 @@ export default function Checkout() {
 
   const handleChangeAddress = (e) => {
     const selected = listAddress.find(
-      (address) => address.fullAddress === e.target.value
+      (address) => address.id === Number(e.target.value)
     );
     setSelectedAddress(selected);
   };
@@ -34,12 +37,25 @@ export default function Checkout() {
     loadData();
   }, []);
 
-  const handlePayment = () => {
+  // If dont have any item cart it will navigate to "/cart"
+  if (data?.length === 0) {
     console.log("first");
-    dispatch(checkout({ data: "123", data1: "sdfsdfds" }));
-    // .then((res) => console.log("res", res))
-    // .catch((err) => console.log("err", err));
+    navigate("/cart");
+  }
+
+  const handlePayment = () => {
+    const addressId = selectedAddress?.id || addressDefault?.id;
+
+    const payload = {
+      note,
+      addressId,
+    };
+
+    console.log("payload", payload);
+    dispatch(checkout(payload));
   };
+
+  console.log(data);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -57,8 +73,10 @@ export default function Checkout() {
                 onChange={handleChangeAddress}
               >
                 <option>----Choose the address----</option>
-                {listAddress?.map((address, i) => (
-                  <option key={i}>{address.fullAddress}</option>
+                {listAddress?.map((address) => (
+                  <option value={address.id} key={address.id}>
+                    {address.fullAddress}
+                  </option>
                 ))}
               </select>
             </div>
@@ -87,6 +105,8 @@ export default function Checkout() {
           <textarea
             placeholder="Note"
             className="border border-black   p-4 w-full"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
           ></textarea>
 
           <h2 className="text-lg font-semibold mt-6 mb-4">

@@ -1,9 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-  findProductById,
-  productPagination,
-  topNewestProduct,
-} from "../../services/productService";
+
 import { FAILED, PENDING, SUCCESS } from "../constants";
 import {
   findAllAddress,
@@ -15,9 +11,6 @@ const initialState = {
   data: null,
   addressDefault: null,
   error: null,
-  totalPages: 1,
-  totalElements: null,
-  numberOfElements: null,
 };
 
 const addressSlice = createSlice({

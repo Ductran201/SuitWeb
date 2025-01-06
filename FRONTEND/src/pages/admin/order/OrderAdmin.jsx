@@ -1,36 +1,28 @@
 import { Button, Pagination, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Choices from "../../../components/choices";
+import { Delete, Edit, FilterAlt, Lock, LockOpen } from "@mui/icons-material";
 import {
-  Close,
-  Delete,
-  Edit,
-  FilterAlt,
-  Lock,
-  LockOpen,
-  MoreHoriz,
-} from "@mui/icons-material";
-import {
-  addProduct,
-  productPagination,
   deleteProduct,
-  editProduct,
   toggleStatusProduct,
 } from "../../../services/productService";
 
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
 import DialogCustom from "../../../components/dialog";
 import AlertCustom from "../../../components/alert/AlertCustom";
 import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
-import { categoryNoPagination } from "../../../services/categoryService";
-import SelectCustom from "../../../components/select/SelectCustom";
-import { Link } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { orderPagination } from "../../../services/orderService";
 
-export default function ProductAdmin() {
+export default function OrderAdmin() {
   const dispatch = useDispatch();
+  const { orderId } = useParams();
+
+  if (orderId) {
+    return <Outlet />;
+  }
 
   // Pagination
   const [sortField, setSortField] = useState("id");
@@ -45,6 +37,7 @@ export default function ProductAdmin() {
   const [isDialog, setIsDialog] = useState(false);
   const [alertConfig, setAlertConfig] = useState({});
   const [isAlert, setIsAlert] = useState(false);
+  // const [isOrderDetail, setIsOrderDetail] = useState(false);
 
   const [baseId, setBaseId] = useState(null);
 
@@ -71,77 +64,60 @@ export default function ProductAdmin() {
     setIsFormEdit(false);
   };
 
-  const onSubmit = async (dataForm) => {
-    try {
-      const formData = new FormData();
-      formData.append("name", dataForm.name);
-      formData.append("description", dataForm.description);
-      formData.append("categoryId", dataForm.categoryId);
+  // const onSubmit = async (dataForm) => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("name", dataForm.name);
+  //     formData.append("description", dataForm.description);
+  //     formData.append("categoryId", dataForm.categoryId);
 
-      if (fileAdd) {
-        formData.append("file", fileAdd.file);
-      } else if (fileEdit && fileEdit.file) {
-        // Update change the old image
-        formData.append("file", fileEdit.file);
-      } else if (!fileEdit) {
-        //  Delete the old image
-        formData.append("file", new File([], ""));
-      }
+  //     if (fileAdd) {
+  //       formData.append("file", fileAdd.file);
+  //     } else if (fileEdit && fileEdit.file) {
+  //       // Update change the old image
+  //       formData.append("file", fileEdit.file);
+  //     } else if (!fileEdit) {
+  //       //  Delete the old image
+  //       formData.append("file", new File([], ""));
+  //     }
 
-      const action = isFormAdd
-        ? addProduct(formData)
-        : editProduct({ product: formData, id: baseId });
+  //     const action = isFormAdd
+  //       ? addProduct(formData)
+  //       : editProduct({ product: formData, id: baseId });
 
-      await dispatch(action).unwrap();
-      loadProductPagination();
-      const propsAlert = {
-        mainContent: isFormAdd
-          ? "Create new product successfully!!"
-          : "Updated product successfully!!",
-        severity: "success",
-      };
+  //     await dispatch(action).unwrap();
+  //     loadProductPagination();
+  //     const propsAlert = {
+  //       mainContent: isFormAdd
+  //         ? "Create new product successfully!!"
+  //         : "Updated product successfully!!",
+  //       severity: "success",
+  //     };
 
-      handleShowAlert(propsAlert);
-      resetForm();
-    } catch (error) {
-      setError("name", {
-        type: "manual",
-        message: error,
-      });
-    }
-  };
+  //     handleShowAlert(propsAlert);
+  //     resetForm();
+  //   } catch (error) {
+  //     setError("name", {
+  //       type: "manual",
+  //       message: error,
+  //     });
+  //   }
+  // };
 
   const debounce = useDebounce(search, 500);
-  // Data of product
-  const {
-    data: productData,
-    error: productError,
-    totalPages,
-    totalElements,
-    numberOfElements,
-  } = useSelector((state) => state.product);
 
   // Data of category
-  const { data: categoryData, error: categoryError } = useSelector(
-    (state) => state.category
+  const { data, totalPages, totalElements, numberOfElements } = useSelector(
+    (state) => state.order
   );
 
-  const loadProductPagination = () => {
-    dispatch(
-      productPagination({ page, size, search, sortField, sortDirection })
-    );
-  };
-
-  const loadCategoryList = () => {
-    dispatch(categoryNoPagination());
+  const loadOrderPagination = () => {
+    dispatch(orderPagination({ page, size, search, sortField, sortDirection }));
+    // console.log("first");
   };
 
   useEffect(() => {
-    loadCategoryList();
-  }, []);
-
-  useEffect(() => {
-    loadProductPagination();
+    loadOrderPagination();
   }, [page, debounce, size, sortDirection, sortField]);
 
   const handleSearch = (e) => {
@@ -222,17 +198,16 @@ export default function ProductAdmin() {
 
   const handleOpenEdit = (id) => {
     // find the old product
-    const findById = productData.find((pro) => pro.id === id);
+    const findById = data.find((order) => order.id === id);
 
     if (findById) {
       setBaseId(id);
       setIsFormEdit(true);
-
-      Object.entries(findById).forEach(([key, value]) => {
-        setValue(key, value);
-      });
-      setFileEdit(findById.image ? { url: findById.image } : null);
-      setValue("categoryId", findById.category.id);
+      // Object.entries(findById).forEach(([key, value]) => {
+      //   setValue(key, value);
+      // });
+      // setFileEdit(findById.image ? { url: findById.image } : null);
+      // setValue("categoryId", findById.category.id);
     }
   };
 
@@ -322,111 +297,16 @@ export default function ProductAdmin() {
     },
   ];
 
-  console.log(productData);
+  console.log("data", data);
 
-  // ==================== HTML ================================
   return (
     <>
       {isAlert && <AlertCustom {...alertConfig} />}
       {isDialog && <DialogCustom {...dialogConfig} />}
-
-      {isFormAdd && (
+      {/* {isOrderDetail && <OrderDetailAdmin />} */}
+      {/* {isFormEdit && (
         <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="w-[300px] min-h-[250px] bg-gray-500 p-4"
-          >
-            <div className="flex justify-between items-center mb-5">
-              <h1 className="">Add</h1>
-              <Close className="cursor-pointer" onClick={resetForm} />
-            </div>
-            <div className="flex justify-center items-center flex-col gap-6">
-              <TextField
-                {...register("name", {
-                  required: "Must not be blank",
-                  validate: (value) =>
-                    value.trim() !== "" ? true : "Must not be blank",
-                })}
-                size="small"
-                fullWidth
-                label="Name"
-                variant="outlined"
-                error={!!errors.name}
-                helperText={errors.name?.message}
-              />
-              <TextField
-                {...register("description", {
-                  required: "Must not be blank",
-                  validate: (value) =>
-                    value.trim() !== "" || "Must not be blank",
-                })}
-                size="small"
-                fullWidth
-                label="description"
-                variant="outlined"
-                error={!!errors.description}
-                helperText={
-                  errors.description ? errors.description.message : ""
-                }
-              />
-
-              <SelectCustom
-                {...register("categoryId", {
-                  required: "Please select a category",
-                })}
-                label={"category"}
-                data={categoryData}
-                value={watch("categoryId")}
-                onChange={(e) => {
-                  setValue("categoryId", e.target.value);
-                  clearErrors("categoryId");
-                }}
-                error={!!errors.categoryId}
-                helperText={errors.categoryId?.message}
-              ></SelectCustom>
-              <Button
-                fullWidth
-                variant="contained"
-                component="label"
-                startIcon={<CloudUploadIcon />}
-                onChange={(e) => {
-                  handleGetFile(e, "add");
-                }}
-              >
-                Upload files
-                <input type="file" hidden />
-              </Button>
-              {fileAdd && (
-                <div className="relative w-20 h-20 mt-2">
-                  <img
-                    src={fileAdd.url}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage("add")}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                  >
-                    X
-                  </button>
-                </div>
-              )}
-
-              <Button type="submit" variant="contained" fullWidth>
-                Add
-              </Button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {isFormEdit && (
-        <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="w-[300px] min-h-[250px] bg-white border border-black p-4 "
-          >
+          <form className="w-[300px] min-h-[250px] bg-white border border-black p-4 ">
             <div className="flex justify-between items-center mb-5">
               <h1 className="">Edit</h1>
               <Close className="cursor-pointer" onClick={resetForm} />
@@ -510,7 +390,7 @@ export default function ProductAdmin() {
             </div>
           </form>
         </div>
-      )}
+      )} */}
 
       {/* MAIN CONTENT OF PAGE */}
 
@@ -532,10 +412,6 @@ export default function ProductAdmin() {
             listOptions={listFilter}
           ></Choices>
         </div>
-
-        <Button variant="contained" onClick={() => setIsFormAdd(true)}>
-          Add new product
-        </Button>
       </div>
 
       {/* MAIN TABLE */}
@@ -546,45 +422,37 @@ export default function ProductAdmin() {
               <input type="checkbox" name="" id="" />
             </th>
             <th className="border ">ID</th>
-            <th className="border ">NAME</th>
-            <th className="border w-[150px]">IMAGE</th>
-            <th className="border ">Category</th>
-            <th className="border ">STATUS</th>
+            <th className="border ">ACCOUNT</th>
             <th className="border ">CREATED DATE</th>
+            <th className="border ">STATUS</th>
+            <th className="border ">TOTAL PRICE</th>
             <th className="border w-4 "></th>
           </tr>
         </thead>
 
         <tbody className="text-center bg-white">
-          {productData?.map((pro) => (
-            <tr key={pro.id}>
+          {data?.map((order) => (
+            <tr key={order.id}>
               <td className="">
                 <input type="checkbox" />
               </td>
-              <td>{pro.id}</td>
+              <td>{order.id}</td>
               <td>
-                <Link to={`/admin/productDetail/${pro.id}`}>{pro.name}</Link>
+                <Link to={`/admin/order/${order.id}`}>
+                  {order.email || "null"}
+                </Link>
               </td>
-              <td>
-                {pro.image && (
-                  <img
-                    src={pro.image}
-                    alt=""
-                    className="h-[100px] w-[100%] object-cover"
-                  />
-                )}
-              </td>
-              <td>{pro?.category?.name}</td>
 
-              <td>{pro.status ? "Active" : "Inactive"}</td>
-
-              <td>{pro.createdDate}</td>
+              <td>{order.createdDate}</td>
+              <td>{order.orderStatus}</td>
+              <td>{order.totalPrice}</td>
 
               <td>
-                <Choices
-                  icon={<MoreHoriz />}
-                  listOptions={listOptions(pro.id, pro.status)}
-                ></Choices>
+                ASDSADASD
+                {/* <Choices
+                      icon={<MoreHoriz />}
+                      // listOptions={listOptions(order.id, pro.status)}
+                    ></Choices> */}
               </td>
             </tr>
           ))}

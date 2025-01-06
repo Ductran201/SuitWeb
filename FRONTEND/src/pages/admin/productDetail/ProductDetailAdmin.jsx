@@ -93,7 +93,7 @@ export default function ProductDetailAdmin() {
       formData.append("sizeId", dataForm.sizeId);
       formData.append("productId", productId);
 
-      // Kiểm tra kỹ các phần tử của fileEdit để đảm bảo chỉ lấy những id hợp lệ
+      // Check fileEdit to get the proper id
 
       // Send the id of existingImageIdsToKeep to server
       const existingImageIdsToKeep = fileEdit

@@ -2,6 +2,8 @@ import AdminLayout from "../layouts/admin";
 import CategoryAdmin from "../pages/admin/category/CategoryAdmin";
 import ColorAdmin from "../pages/admin/color/ColorAdmin";
 import DashboardAdmin from "../pages/admin/dashboard/Dashboard";
+import OrderAdmin from "../pages/admin/order/OrderAdmin";
+import OrderDetailAdmin from "../pages/admin/order/OrderDetailAdmin";
 import ProductAdmin from "../pages/admin/product/ProductAdmin";
 import ProductDetailAdmin from "../pages/admin/productDetail/ProductDetailAdmin";
 import SizeAdmin from "../pages/admin/size/SizeAdmin";
@@ -36,6 +38,11 @@ const privateRoutes = [
       {
         path: "size",
         element: <SizeAdmin />,
+      },
+      {
+        path: "order",
+        element: <OrderAdmin />,
+        children: [{ path: ":orderId", element: <OrderDetailAdmin /> }],
       },
       {
         path: "productDetail/:productId",

@@ -76,7 +76,7 @@ export default function ListCategory() {
 
       {/* top newest products */}
       <div className="grid grid-cols-4 gap-5 mb-6">
-        {products?.map((item) => {
+        {products?.map((item, i) => {
           const currentDetail = getCurrentDetail(item, item.productName);
           const currentImage = currentDetail?.images?.[0]?.image || "";
           const currentPrice =
@@ -84,7 +84,8 @@ export default function ListCategory() {
 
           return (
             <ProductCard
-              key={item.productId}
+              // key={item.productId}
+              key={i}
               productId={item.productId}
               productName={item.productName}
               currentImage={currentImage}
