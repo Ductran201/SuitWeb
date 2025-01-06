@@ -2,7 +2,6 @@ package ra.ecommerceapi.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ra.ecommerceapi.model.base.BaseObject;
 import ra.ecommerceapi.model.constant.OrderStatus;
 
 import java.math.BigDecimal;

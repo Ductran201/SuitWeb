@@ -11,6 +11,7 @@ import ra.ecommerceapi.repository.IAddressRepo;
 import ra.ecommerceapi.service.IAddressService;
 import ra.ecommerceapi.service.IAuthService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -66,8 +67,10 @@ public class AddressServiceImpl implements IAddressService {
                 .fullAddress(addressRequest.getFullAddress())
                 .nameReceiver(addressRequest.getNameReceiver())
                 .phoneReceiver(addressRequest.getPhoneReceiver())
+                .updatedDate(new Date())
                 .build();
         newAddress.setStatus(true);
+        newAddress.setCreatedDate(new Date());
 
         // save to database
         Address saveAddress= addressRepo.save(newAddress);
@@ -86,6 +89,7 @@ public class AddressServiceImpl implements IAddressService {
         oldAddress.setFullAddress(addressRequest.getFullAddress());
         oldAddress.setNameReceiver(addressRequest.getNameReceiver());
         oldAddress.setPhoneReceiver(addressRequest.getPhoneReceiver());
+        oldAddress.setUpdatedDate(new Date());
 
         addressRepo.save(oldAddress);
 

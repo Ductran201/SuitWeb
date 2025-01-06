@@ -43,15 +43,14 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
     public List<CartResponse> findAll() {
         User userCurrent = authService.getCurrentUser().getUser();
 
-        return shoppingCartRepo.findAllByUser(userCurrent).stream().map(c -> {
-            CartResponse cartResponse = CartResponse.builder()
-                    .id(c.getId())
-                    .productDetail(c.getProductDetail())
-                    .images(imgProductDetailService.findAllImagesByProductDetailId(c.getProductDetail().getId()))
-                    .totalPrice(c.getProductDetail().getPrice())
-                    .quantity(c.getOrderQuantity())
+        return shoppingCartRepo.findAllByUser(userCurrent).stream().map(shoppingCart -> {
+             return CartResponse.builder()
+                    .id(shoppingCart.getId())
+                    .productDetail(shoppingCart.getProductDetail())
+                    .images(imgProductDetailService.findAllImagesByProductDetailId(shoppingCart.getProductDetail().getId()))
+                    .totalPrice(shoppingCart.getProductDetail().getPrice())
+                    .quantity(shoppingCart.getOrderQuantity())
                     .build();
-            return cartResponse;
         }).toList();
     }
 
@@ -161,14 +160,6 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
         Address address = addressRepo.findByUserAndId(userCurrent, checkoutRequest.getAddressId()).orElseThrow(() -> new NoSuchElementException("Not found this address"));
 
         // Calculate total price
-//        Double totalPrice = cartItems.stream()
-//                .mapToDouble(cartItem -> cartItem.getProduct().getPrice() * cartItem.getOrderQuantity())
-//                .sum();
-
-//        Double totalPrice = 0;
-//        for (ShoppingCart cart : cartItems) {
-//            totalPrice += cart.getProductDetail().getPrice() * cart.getOrderQuantity();
-//        }
 
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (ShoppingCart cart : cartItems) {
@@ -186,6 +177,7 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
                 .receiveAddress(address.getFullAddress())
                 .receivePhone(address.getPhoneReceiver())
                 .createdDate(new Date())
+                .updatedDate(new Date())
                 .user(userCurrent)
                 .build();
 
@@ -201,6 +193,9 @@ public class ShoppingCartServiceImpl implements IShoppingCartService {
                     .productDetail(cartItem.getProductDetail())
                     .purchaseOrder(savedOrder)
                     .build();
+            orderDetail.setCreatedDate(new Date());
+            orderDetail.setStatus(true);
+
             return orderDetailRepo.save(orderDetail);
         }).toList();
 

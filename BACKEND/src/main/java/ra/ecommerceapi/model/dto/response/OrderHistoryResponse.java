@@ -1,12 +1,17 @@
 package ra.ecommerceapi.model.dto.response;
 
+import lombok.*;
 import ra.ecommerceapi.model.constant.OrderStatus;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class OrderAllResponse {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter@Setter
+@Builder
+public class OrderHistoryResponse {
     private Long id;
     private UUID code;
     private BigDecimal totalPrice;

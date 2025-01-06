@@ -1,17 +1,17 @@
 package ra.ecommerceapi.service;
 
-import org.hibernate.query.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ra.ecommerceapi.exception.CustomException;
-import ra.ecommerceapi.model.dto.request.OrderRequestStatus;
+import ra.ecommerceapi.model.constant.OrderStatus;
+import ra.ecommerceapi.model.dto.response.OrderHistoryResponse;
 import ra.ecommerceapi.model.dto.response.OrderResponse;
 
 import java.util.UUID;
 
 
 public interface IOrderService {
-    Page<OrderResponse> findAllPaginationAdmin(String search, Pageable pageable);
+    Page<OrderHistoryResponse> findAllPaginationAdminTest(String search, Pageable pageable);
 
     Page<OrderResponse> findAllPaginationUser(String search, Pageable pageable);
 
@@ -19,11 +19,11 @@ public interface IOrderService {
 
     Page<OrderResponse> filterByStatusByUser(String orderStatus, Pageable pageable) throws CustomException;
 
-    OrderResponse findById(Long id);
+    OrderHistoryResponse findById(Long id);
 
     OrderResponse findByUserAndCode(UUID code) throws CustomException;
 
-    OrderResponse changeStatus(Long id, OrderRequestStatus orderRequestStatus);
+    OrderResponse changeStatus(Long id, OrderStatus orderStatus) throws CustomException;
 
     OrderResponse cancelOrderByUser(Long id) throws CustomException;
 

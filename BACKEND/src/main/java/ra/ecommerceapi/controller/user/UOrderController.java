@@ -44,6 +44,17 @@ public class UOrderController {
         );
     }
 
+//PENDING
+//    @GetMapping("/{orderId/orderDetail}")
+//    public ResponseEntity<?> getAllOrderDetailById(@PathVariable Long orderId)  {
+//        return ResponseEntity.ok().body(
+//                ResponseWrapper.builder()
+//                        .data(orderService.findByUserAndCode(orderCode))
+//                        .status(EHttpStatus.SUCCESS)
+//                        .code(200)
+//                        .build()
+//        );
+//    }
 
     @GetMapping("/status/{orderStatus}")
     public ResponseEntity<?> getAllByStatus(@PathVariable String orderStatus

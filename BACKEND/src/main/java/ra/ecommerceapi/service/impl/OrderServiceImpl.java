@@ -8,42 +8,62 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.OrderStatus;
-import ra.ecommerceapi.model.dto.request.OrderRequestStatus;
+import ra.ecommerceapi.model.dto.response.OrderHistoryResponse;
 import ra.ecommerceapi.model.dto.response.OrderResponse;
 import ra.ecommerceapi.model.entity.PurchaseOrder;
 import ra.ecommerceapi.model.entity.User;
 import ra.ecommerceapi.repository.IOrderRepo;
 import ra.ecommerceapi.service.IAuthService;
+import ra.ecommerceapi.service.IOrderDetailService;
 import ra.ecommerceapi.service.IOrderService;
 
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements IOrderService {
     private final IOrderRepo orderRepo;
+    private final IOrderDetailService orderDetailService;
     private final ModelMapper modelMapper;
     private final IAuthService authService;
 
+    private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) throws CustomException {
+        // Define allowed transitions
+        Map<OrderStatus, List<OrderStatus>> allowedTransitions = new HashMap<>();
+        allowedTransitions.put(OrderStatus.WAITING, List.of(OrderStatus.CONFIRM));
+        allowedTransitions.put(OrderStatus.CONFIRM, List.of(OrderStatus.DELIVERY));
+        allowedTransitions.put(OrderStatus.DELIVERY, List.of(OrderStatus.SUCCESS, OrderStatus.CANCEL));
+        allowedTransitions.put(OrderStatus.SUCCESS, List.of()); // No further transitions
+        allowedTransitions.put(OrderStatus.CANCEL, List.of()); // No further transitions
+        allowedTransitions.put(OrderStatus.DENIED, List.of()); // No further transitions
+
+        // Check if the new status is valid for the current status
+        if (!allowedTransitions.containsKey(currentStatus) ||
+                !allowedTransitions.get(currentStatus).contains(newStatus)) {
+            throw new CustomException("Cannot change status from " + currentStatus + " to " + newStatus,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @Override
-    public Page<OrderResponse> findAllPaginationAdmin(String search, Pageable pageable) {
-        return orderRepo.findAllByCodeContains(search, pageable).map(or -> modelMapper.map(or, OrderResponse.class));
-//        return orderRepo.findAllByCode(search,pageable).map(o -> {
-//            OrderResponse orderResponse = OrderResponse.builder()
-//                    .id(o.getId())
-//                    .email(o.getUser().getEmail())
-//                    .code(o.getCode())
-//                    .totalPrice(o.getTotalPrice())
-//                    .note(o.getNote())
-//                    .receivePhone(o.getReceivePhone())
-//                    .receiveName(o.getReceiveName())
-//                    .receiveAddress(o.getReceiveAddress())
-//                    .createdDate(o.getCreatedDate())
-//                    .receivedDate(o.getReceivedDate())
-//                    .build();
-//            return orderResponse;
-//        });
+    public Page<OrderHistoryResponse> findAllPaginationAdminTest(String search, Pageable pageable) {
+        return orderRepo.findAllByCodeLike(search, pageable).map((or) -> {
+
+            return OrderHistoryResponse.builder()
+                    .id(or.getId())
+                    .code(or.getCode())
+                    .totalPrice(or.getTotalPrice())
+                    .note(or.getNote())
+                    .receiveName(or.getReceiveName())
+                    .receiveAddress(or.getReceiveAddress())
+                    .receivePhone(or.getReceivePhone())
+                    .orderStatus(or.getOrderStatus())
+                    .createdDate(or.getCreatedDate())
+                    .receivedDate(or.getReceivedDate())
+                    .email(or.getUser().getEmail())
+                    .orderDetailResponses(orderDetailService.findAllOrderDetail(or.getId()))
+                    .build();
+        });
     }
 
     @Override
@@ -79,19 +99,21 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public OrderResponse findById(Long id) {
+    public OrderHistoryResponse findById(Long id) {
         PurchaseOrder order = orderRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found this order"));
-        return OrderResponse.builder()
+        return OrderHistoryResponse.builder()
                 .id(order.getId())
                 .code(order.getCode())
+                .totalPrice(order.getTotalPrice())
                 .note(order.getNote())
+                .receiveName(order.getReceiveName())
                 .receiveAddress(order.getReceiveAddress())
                 .receivePhone(order.getReceivePhone())
-                .receiveName(order.getReceiveName())
+                .orderStatus(order.getOrderStatus())
                 .createdDate(order.getCreatedDate())
                 .receivedDate(order.getReceivedDate())
-                .orderStatus(order.getOrderStatus())
-                .totalPrice(order.getTotalPrice())
+                .email(order.getUser().getEmail())
+                .orderDetailResponses(orderDetailService.findAllOrderDetail(order.getId()))
                 .build();
     }
 
@@ -114,11 +136,15 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public OrderResponse changeStatus(Long id, OrderRequestStatus orderRequestStatus) {
+    public OrderResponse changeStatus(Long id, OrderStatus newStatus) throws CustomException {
         PurchaseOrder oldOrder = orderRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found this order"));
 
-        oldOrder.setOrderStatus(orderRequestStatus.getStatus());
+        OrderStatus currentStatus = oldOrder.getOrderStatus();
 
+        // Validate status transition
+        validateStatusTransition(currentStatus, newStatus);
+
+        oldOrder.setOrderStatus(newStatus);
         orderRepo.save(oldOrder);
 
         return OrderResponse.builder()
@@ -142,8 +168,8 @@ public class OrderServiceImpl implements IOrderService {
 
         if (oldOrder.getOrderStatus().equals(OrderStatus.WAITING)) {
             oldOrder.setOrderStatus(OrderStatus.CANCEL);
-        }else {
-            throw new CustomException("Can not cancel this order",HttpStatus.CONFLICT);
+        } else {
+            throw new CustomException("Can not cancel this order", HttpStatus.CONFLICT);
         }
 
         orderRepo.save(oldOrder);
@@ -161,6 +187,4 @@ public class OrderServiceImpl implements IOrderService {
                 .totalPrice(oldOrder.getTotalPrice())
                 .build();
     }
-
-
 }
