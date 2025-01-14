@@ -1,21 +1,16 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
-import { Select, TextField } from "@mui/material";
 
-export default function NativeSelectCustom({ label, data, onChange }) {
+export default function NativeSelectCustom({ defaultValue, data, onChange }) {
   return (
     <>
       <Box sx={{ minWidth: 200 }}>
         <FormControl fullWidth>
-          {/* <InputLabel variant="standard" htmlFor="uncontrolled-native">
-            {label}
-          </InputLabel> */}
           <NativeSelect
+            value={defaultValue}
             variant="standard"
-            defaultValue={2}
             onChange={(e) => onChange(e.target.value)}
           >
             {data?.map((opt, index) => (

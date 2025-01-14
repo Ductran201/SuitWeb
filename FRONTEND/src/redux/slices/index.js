@@ -11,6 +11,7 @@ import wishListSlice from "./wishListSlice";
 import historyViewSlice from "./historyViewSlice";
 import addressSlice from "./addressSlice";
 import orderSlice from "./orderSlice";
+import orderSliceUser from "./orderSliceUser";
 const reducers = combineReducers({
   category: categorySlice,
   product: productSlice,
@@ -24,6 +25,7 @@ const reducers = combineReducers({
   historyView: historyViewSlice,
   address: addressSlice,
   order: orderSlice,
+  orderUser: orderSliceUser,
 });
 
 export default reducers;

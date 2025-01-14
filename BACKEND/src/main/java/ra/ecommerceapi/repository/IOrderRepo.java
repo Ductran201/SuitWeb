@@ -17,13 +17,12 @@ public interface IOrderRepo extends JpaRepository<PurchaseOrder, Long> {
     @Query(value = "SELECT * FROM PurchaseOrder WHERE BIN_TO_UUID(code) LIKE %:code%", nativeQuery = true)
     Page<PurchaseOrder> findAllByCodeLike(@Param("code") String code, Pageable pageable);
 
-    Page<PurchaseOrder> findAllByUserAndCodeContains(User user, String code, Pageable pageable);
+    @Query(value = "select  * from PurchaseOrder where userId = :userId and BIN_TO_UUID(code) LIKE %:code%", nativeQuery = true)
+    Page<PurchaseOrder> findAllByUserAndCodeContains(@Param("userId") Long userId, @Param("code") String code, Pageable pageable);
 
     Page<PurchaseOrder> findAllByOrderStatus(OrderStatus orderStatus, Pageable pageable);
 
     Page<PurchaseOrder> findAllByUserAndOrderStatus(User user, OrderStatus orderStatus, Pageable pageable);
-
-    Optional<PurchaseOrder> findByUserAndCode(User user, UUID code);
 
     Optional<PurchaseOrder> findByUserAndId(User user, Long id);
 

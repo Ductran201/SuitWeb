@@ -14,7 +14,7 @@ import AlertCustom from "../../../components/alert/AlertCustom";
 import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
 import { Link, Outlet, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { orderPagination } from "../../../services/orderService";
+import { orderPaginationAdmin } from "../../../services/orderService";
 
 export default function OrderAdmin() {
   const dispatch = useDispatch();
@@ -31,89 +31,23 @@ export default function OrderAdmin() {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(2);
 
-  const [isFormAdd, setIsFormAdd] = useState(false);
-  const [isFormEdit, setIsFormEdit] = useState(false);
   const [dialogConfig, setDialogConfig] = useState({});
   const [isDialog, setIsDialog] = useState(false);
   const [alertConfig, setAlertConfig] = useState({});
   const [isAlert, setIsAlert] = useState(false);
-  // const [isOrderDetail, setIsOrderDetail] = useState(false);
 
   const [baseId, setBaseId] = useState(null);
 
-  const [fileAdd, setFileAdd] = useState(null);
-  const [fileEdit, setFileEdit] = useState(null);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    clearErrors,
-    setError,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm();
-
-  const resetForm = () => {
-    reset();
-    clearErrors();
-    setFileAdd(null);
-    setFileEdit(null);
-    setIsFormAdd(false);
-    setIsFormEdit(false);
-  };
-
-  // const onSubmit = async (dataForm) => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("name", dataForm.name);
-  //     formData.append("description", dataForm.description);
-  //     formData.append("categoryId", dataForm.categoryId);
-
-  //     if (fileAdd) {
-  //       formData.append("file", fileAdd.file);
-  //     } else if (fileEdit && fileEdit.file) {
-  //       // Update change the old image
-  //       formData.append("file", fileEdit.file);
-  //     } else if (!fileEdit) {
-  //       //  Delete the old image
-  //       formData.append("file", new File([], ""));
-  //     }
-
-  //     const action = isFormAdd
-  //       ? addProduct(formData)
-  //       : editProduct({ product: formData, id: baseId });
-
-  //     await dispatch(action).unwrap();
-  //     loadProductPagination();
-  //     const propsAlert = {
-  //       mainContent: isFormAdd
-  //         ? "Create new product successfully!!"
-  //         : "Updated product successfully!!",
-  //       severity: "success",
-  //     };
-
-  //     handleShowAlert(propsAlert);
-  //     resetForm();
-  //   } catch (error) {
-  //     setError("name", {
-  //       type: "manual",
-  //       message: error,
-  //     });
-  //   }
-  // };
-
   const debounce = useDebounce(search, 500);
 
-  // Data of category
   const { data, totalPages, totalElements, numberOfElements } = useSelector(
     (state) => state.order
   );
 
   const loadOrderPagination = () => {
-    dispatch(orderPagination({ page, size, search, sortField, sortDirection }));
-    // console.log("first");
+    dispatch(
+      orderPaginationAdmin({ page, size, search, sortField, sortDirection })
+    );
   };
 
   useEffect(() => {
@@ -136,29 +70,6 @@ export default function OrderAdmin() {
   const handleSelectFilter = (sortField, sortDirection) => {
     setSortField(sortField);
     setSortDirection(sortDirection);
-  };
-
-  const handleGetFile = (e, formType) => {
-    const file = e.target.files[0];
-    if (file) {
-      const newFile = {
-        url: URL.createObjectURL(file),
-        file,
-      };
-      if (formType == "add") {
-        setFileAdd(newFile);
-      } else if (formType == "edit") {
-        setFileEdit(newFile);
-      }
-    }
-  };
-
-  const handleRemoveImage = (formType) => {
-    if (formType === "add") {
-      setFileAdd(null);
-    } else if (formType === "edit") {
-      setFileEdit(null);
-    }
   };
 
   const handleShowAlert = (propsAlert) => {
@@ -203,11 +114,6 @@ export default function OrderAdmin() {
     if (findById) {
       setBaseId(id);
       setIsFormEdit(true);
-      // Object.entries(findById).forEach(([key, value]) => {
-      //   setValue(key, value);
-      // });
-      // setFileEdit(findById.image ? { url: findById.image } : null);
-      // setValue("categoryId", findById.category.id);
     }
   };
 
@@ -303,94 +209,6 @@ export default function OrderAdmin() {
     <>
       {isAlert && <AlertCustom {...alertConfig} />}
       {isDialog && <DialogCustom {...dialogConfig} />}
-      {/* {isOrderDetail && <OrderDetailAdmin />} */}
-      {/* {isFormEdit && (
-        <div className="fixed inset-0 flex justify-center items-center h-[100%] z-10">
-          <form className="w-[300px] min-h-[250px] bg-white border border-black p-4 ">
-            <div className="flex justify-between items-center mb-5">
-              <h1 className="">Edit</h1>
-              <Close className="cursor-pointer" onClick={resetForm} />
-            </div>
-            <div className="flex justify-center items-center flex-col gap-6">
-              <TextField
-                {...register("name", {
-                  required: "Must not be blank",
-                  validate: (value) => {
-                    value.trim() != "" || "Must not be blank";
-                  },
-                })}
-                size="small"
-                fullWidth
-                label="Name"
-                variant="outlined"
-                error={!!errors.name}
-                helperText={errors.name ? errors.name.message : ""}
-              />
-              <TextField
-                {...register("description", {
-                  required: "Must not be blank",
-                  validate: (value) => {
-                    value.trim() != "" || "Must not be blank";
-                  },
-                })}
-                size="small"
-                fullWidth
-                label="description"
-                variant="outlined"
-                error={!!errors.description}
-                helperText={
-                  errors.description ? errors.description?.message : ""
-                }
-              />
-              <SelectCustom
-                {...register("categoryId", {
-                  required: "Must not be blank",
-                })}
-                onChange={(e) => {
-                  setValue("categoryId", e.target.value);
-                  clearErrors("categoryId");
-                }}
-                label={"category"}
-                data={categoryData}
-                value={watch("categoryId")}
-                error={!!errors.categoryId}
-                helperText={errors.categoryId?.message}
-              ></SelectCustom>
-              <Button
-                fullWidth
-                component="label"
-                variant="contained"
-                startIcon={<CloudUploadIcon />}
-                onChange={(e) => {
-                  handleGetFile(e, "edit");
-                }}
-              >
-                Upload files
-                <input type="file" hidden />
-              </Button>
-              {fileEdit && (
-                <div className="relative w-20 h-20 mt-2">
-                  <img
-                    src={fileEdit.url}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage("edit")}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                  >
-                    X
-                  </button>
-                </div>
-              )}
-              <Button type="submit" variant="contained" fullWidth>
-                Edit
-              </Button>
-            </div>
-          </form>
-        </div>
-      )} */}
 
       {/* MAIN CONTENT OF PAGE */}
 

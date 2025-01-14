@@ -46,7 +46,7 @@ public class OrderServiceImpl implements IOrderService {
 
 
     @Override
-    public Page<OrderHistoryResponse> findAllPaginationAdminTest(String search, Pageable pageable) {
+    public Page<OrderHistoryResponse> findAllPaginationAdmin(String search, Pageable pageable) {
         return orderRepo.findAllByCodeLike(search, pageable).map((or) -> {
 
             return OrderHistoryResponse.builder()
@@ -67,9 +67,26 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Page<OrderResponse> findAllPaginationUser(String search, Pageable pageable) {
+    public Page<OrderHistoryResponse> findAllPaginationUser(String search, Pageable pageable) {
         User userCurrent = authService.getCurrentUser().getUser();
-        return orderRepo.findAllByUserAndCodeContains(userCurrent, search, pageable).map(or -> modelMapper.map(or, OrderResponse.class));
+
+        return orderRepo.findAllByUserAndCodeContains(userCurrent.getId(), search, pageable).map((or) -> {
+            return OrderHistoryResponse.builder()
+                    .id(or.getId())
+                    .code(or.getCode())
+                    .totalPrice(or.getTotalPrice())
+                    .note(or.getNote())
+                    .receiveName(or.getReceiveName())
+                    .receiveAddress(or.getReceiveAddress())
+                    .receivePhone(or.getReceivePhone())
+                    .orderStatus(or.getOrderStatus())
+                    .createdDate(or.getCreatedDate())
+                    .receivedDate(or.getReceivedDate())
+                    .email(or.getUser().getEmail())
+                    .orderDetailResponses(orderDetailService.findAllOrderDetail(or.getId()))
+                    .build();
+        });
+
     }
 
     @Override
@@ -118,22 +135,27 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public OrderResponse findByUserAndCode(UUID code) throws CustomException {
+    public OrderHistoryResponse findByIdAndUser(Long id) throws CustomException {
+
         User userCurrent = authService.getCurrentUser().getUser();
-        PurchaseOrder oldOrder = orderRepo.findByUserAndCode(userCurrent, code).orElseThrow(() -> new CustomException("Not found this order", HttpStatus.NOT_FOUND));
-        return OrderResponse.builder()
+        PurchaseOrder oldOrder = orderRepo.findByUserAndId(userCurrent, id).orElseThrow(() -> new CustomException("Not found this order", HttpStatus.NOT_FOUND));
+
+        return OrderHistoryResponse.builder()
                 .id(oldOrder.getId())
                 .code(oldOrder.getCode())
+                .totalPrice(oldOrder.getTotalPrice())
                 .note(oldOrder.getNote())
+                .receiveName(oldOrder.getReceiveName())
                 .receiveAddress(oldOrder.getReceiveAddress())
                 .receivePhone(oldOrder.getReceivePhone())
-                .receiveName(oldOrder.getReceiveName())
+                .orderStatus(oldOrder.getOrderStatus())
                 .createdDate(oldOrder.getCreatedDate())
                 .receivedDate(oldOrder.getReceivedDate())
-                .orderStatus(oldOrder.getOrderStatus())
-                .totalPrice(oldOrder.getTotalPrice())
+                .email(oldOrder.getUser().getEmail())
+                .orderDetailResponses(orderDetailService.findAllOrderDetail(oldOrder.getId()))
                 .build();
     }
+
 
     @Override
     public OrderResponse changeStatus(Long id, OrderStatus newStatus) throws CustomException {

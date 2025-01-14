@@ -7,13 +7,12 @@ import ra.ecommerceapi.model.constant.OrderStatus;
 import ra.ecommerceapi.model.dto.response.OrderHistoryResponse;
 import ra.ecommerceapi.model.dto.response.OrderResponse;
 
-import java.util.UUID;
 
 
 public interface IOrderService {
-    Page<OrderHistoryResponse> findAllPaginationAdminTest(String search, Pageable pageable);
+    Page<OrderHistoryResponse> findAllPaginationAdmin(String search, Pageable pageable);
 
-    Page<OrderResponse> findAllPaginationUser(String search, Pageable pageable);
+    Page<OrderHistoryResponse> findAllPaginationUser(String search, Pageable pageable);
 
     Page<OrderResponse> filterByStatus(String orderStatus, Pageable pageable) throws CustomException;
 
@@ -21,7 +20,7 @@ public interface IOrderService {
 
     OrderHistoryResponse findById(Long id);
 
-    OrderResponse findByUserAndCode(UUID code) throws CustomException;
+    OrderHistoryResponse findByIdAndUser(Long id) throws CustomException;
 
     OrderResponse changeStatus(Long id, OrderStatus orderStatus) throws CustomException;
 

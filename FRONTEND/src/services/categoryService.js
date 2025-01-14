@@ -62,15 +62,32 @@ export const toggleStatusCategory = createAsyncThunk(
   }
 );
 
-// USER
+// const query = new URLSearchParams({
+//   search: "shirt",
+//   sortField: "name",
+//   sortDirection: "ASC",
+//   colorIds: [1, 2], // Đỏ và Cam
+//   sizeIds: [3], // Kích thước M
+//   page: 0,
+//   size: 10,
+// }).toString();
 
 export const findAllProductByCategory = createAsyncThunk(
   "category/findAllProduct",
-  async ({ id, page, search, size, sortField, sortDirection }) => {
+  async ({
+    id,
+    page,
+    search,
+    size,
+    sortField,
+    sortDirection,
+    colorIds,
+    sizeIds,
+  }) => {
     const res = await BASE_URL.get(
       `categories/${id}/products?page=${
         page - 1
-      }&size=${size}&sortDirection=${sortDirection}&sortField=${sortField}&search=${search}`
+      }&size=${size}&sortDirection=${sortDirection}&sortField=${sortField}&search=${search}&colorIds=${colorIds}&sizeIds=${sizeIds}`
     );
     return res.data.data;
   }

@@ -12,10 +12,8 @@ import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.constant.OrderStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
-import ra.ecommerceapi.model.dto.request.OrderRequestStatus;
 import ra.ecommerceapi.service.IOrderService;
 
-import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,7 +26,7 @@ public class AOrderController {
             , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(
                 ResponseWrapper.builder()
-                        .data(orderService.findAllPaginationAdminTest(search, pageable))
+                        .data(orderService.findAllPaginationAdmin(search, pageable))
                         .status(EHttpStatus.SUCCESS)
                         .code(200)
                         .build()

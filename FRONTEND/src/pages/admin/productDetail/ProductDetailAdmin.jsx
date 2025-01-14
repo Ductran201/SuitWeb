@@ -18,7 +18,6 @@ import {
   addProductDetail,
   productDetailById,
 } from "../../../services/productDetailService";
-import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
@@ -27,9 +26,10 @@ import AlertCustom from "../../../components/alert/AlertCustom";
 import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
 import { sizeNoPagination } from "../../../services/sizeService";
 import SelectCustom from "../../../components/select/SelectCustom";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { colorNoPagination } from "../../../services/colorService";
 import { useForm } from "react-hook-form";
+import usePaginationCustom from "../../../components/usePaginationCustom/UsePaginationCustom";
 
 export default function ProductDetailAdmin() {
   const dispatch = useDispatch();
@@ -56,7 +56,6 @@ export default function ProductDetailAdmin() {
   // Data of product
   const {
     data: productDetailData,
-    error: productDetailError,
     totalPages,
     totalElements,
     numberOfElements,
@@ -81,7 +80,13 @@ export default function ProductDetailAdmin() {
     setFileAdd([]);
     setFileEdit([]);
   };
-  // console.log(" add", fileAdd);
+
+  const {
+    handleSearch,
+    handleChangePage,
+    handleChangeSize,
+    handleSelectFilter,
+  } = usePaginationCustom();
 
   const onSubmit = async (dataForm) => {
     try {
@@ -183,27 +188,16 @@ export default function ProductDetailAdmin() {
     loadProductDetailPagination();
   }, [page, debounce, sizePage, sortDirection, sortField]);
 
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    setPage(0);
-  };
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setPage(Number(searchParams.get("page")) || 1);
+    setSizePage(Number(searchParams.get("size")) || 2);
+    setSearch(searchParams.get("search") || "");
+    setSortField(searchParams.get("sortField") || "id");
+    setSortDirection(searchParams.get("sortDirection") || "DESC");
+  }, [window.location.search]);
 
-  const handlePage = (e, value) => {
-    setPage(value);
-  };
-
-  const handleChangePageSize = (newSize) => {
-    setSizePage(newSize);
-  };
-
-  const handleSelectFilter = (sortField, sortDirection) => {
-    setSortField(sortField);
-    setSortDirection(sortDirection);
-  };
-
-  // console.log(fileEdit?.length == 0);
-
-  console.log("fileedit:", fileEdit);
+  // console.log("fileedit:", fileEdit);
 
   const handleGetFile = (e, formType) => {
     const files = Array.from(e.target.files);
@@ -245,7 +239,7 @@ export default function ProductDetailAdmin() {
         setIsDialog(false);
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(error);
       });
   };
 
@@ -699,14 +693,14 @@ export default function ProductDetailAdmin() {
         </div>
 
         <NativeSelectCustom
-          onChange={handleChangePageSize}
+          onChange={handleChangeSize}
           // label={"Size"}
           data={dataPageSize}
         />
 
         <Pagination
           size="large"
-          onChange={handlePage}
+          onChange={handleChangePage}
           count={totalPages}
           color="primary"
         ></Pagination>

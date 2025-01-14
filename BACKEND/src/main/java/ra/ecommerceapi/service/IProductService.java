@@ -27,7 +27,7 @@ public interface IProductService {
     ProductResponse findProductResponseByProductId(Long id);
 
     // COMMON
-    Page<ProductResponse> findAllProductByCategory(Long categoryId, String search, Pageable pageable);
+    Page<ProductResponse> findAllProductByCategory(Long categoryId, String search,List<Long> colorIds, List<Long> sizeIds, Pageable pageable);
 
     List<Product> findAll();
 

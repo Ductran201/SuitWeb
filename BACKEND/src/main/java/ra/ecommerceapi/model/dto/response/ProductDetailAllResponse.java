@@ -13,4 +13,5 @@ import java.util.List;
 public class ProductDetailAllResponse {
     private ProductDetail productDetail;
     private List<ImgProductDetail> images;
+
 }

@@ -3,9 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { FAILED, PENDING, SUCCESS } from "../constants";
 
 import {
-  findOrderById,
-  orderPaginationAdmin,
-} from "../../services/orderService";
+  findOrderByIdUser,
+  orderPaginationUser,
+} from "../../services/orderUserService";
 
 const initialState = {
   loading: "idle",
@@ -17,17 +17,17 @@ const initialState = {
   numberOfElements: null,
 };
 
-const orderSlice = createSlice({
-  name: "order",
+const orderSliceUser = createSlice({
+  name: "orderUser",
   initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
     // Pagination
     builder
-      .addCase(orderPaginationAdmin.pending, (state) => {
+      .addCase(orderPaginationUser.pending, (state) => {
         state.loading = PENDING;
       })
-      .addCase(orderPaginationAdmin.fulfilled, (state, action) => {
+      .addCase(orderPaginationUser.fulfilled, (state, action) => {
         const { content, totalPages, totalElements, numberOfElements } =
           action.payload;
         state.loading = SUCCESS;
@@ -36,15 +36,15 @@ const orderSlice = createSlice({
         state.totalElements = totalElements;
         state.numberOfElements = numberOfElements;
       })
-      .addCase(orderPaginationAdmin.rejected, (state, action) => {
+      .addCase(orderPaginationUser.rejected, (state, action) => {
         state.loading = FAILED;
         state.error = action.error;
       })
       // FindById
-      .addCase(findOrderById.fulfilled, (state, action) => {
+      .addCase(findOrderByIdUser.fulfilled, (state, action) => {
         state.loading = SUCCESS;
         state.orderDetail = action.payload;
       });
   },
 });
-export default orderSlice.reducer;
+export default orderSliceUser.reducer;

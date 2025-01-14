@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 
+import ra.ecommerceapi.model.entity.Color;
 import ra.ecommerceapi.service.ICategoryService;
 import ra.ecommerceapi.service.IProductService;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,22 +42,40 @@ public class CategoryController {
         return ResponseEntity.ok().body(new ResponseWrapper<>(categoryService.findAllPaginationUser(search, pageable), EHttpStatus.SUCCESS, 200));
     }
 
+    /**
+     * Hardest API
+     *
+     * @param categoryId
+     * @param search
+     * @param sortField
+     * @param sortDirection
+     * @param pageable
+     * @return the pagination of products with super filter
+     */
+
     @GetMapping("/{categoryId}/products")
     public ResponseEntity<?> listProductsByCategoryForGuest(@PathVariable Long categoryId,
-                                                           @RequestParam(defaultValue = "") String search,
-                                                           @PageableDefault(size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+                                                            @RequestParam(defaultValue = "") String search,
+                                                            @RequestParam(defaultValue = "id") String sortField,
+                                                            @RequestParam(defaultValue = "DESC") String sortDirection,
+                                                            @RequestParam(required = false) List<Long> colorIds,
+                                                            @RequestParam(required = false) List<Long> sizeIds,
+                                                            @PageableDefault(size = 5) Pageable pageable
     ) {
         categoryService.findById(categoryId);
 
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         return ResponseEntity.ok().body(ResponseWrapper.builder()
-                .data(productService.findAllProductByCategory(categoryId, search, pageable))
+                .data(productService.findAllProductByCategory(categoryId, search, colorIds,sizeIds, pageable))
                 .code(200)
                 .status(EHttpStatus.SUCCESS)
                 .build());
     }
 
     @GetMapping("/{categoryId}/products/related")
-    public ResponseEntity<?> list5ProductRelatedByCategory(@PathVariable Long categoryId){
+    public ResponseEntity<?> list5ProductRelatedByCategory(@PathVariable Long categoryId) {
         categoryService.findById(categoryId);
 
         return ResponseEntity.ok().body(ResponseWrapper.builder()
@@ -65,3 +86,5 @@ public class CategoryController {
     }
 
 }
+
+

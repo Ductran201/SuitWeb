@@ -9,7 +9,7 @@ export default function History() {
   const { data: products } = useSelector((state) => state.historyView);
   const { selectedColor, handleHoverColor, getCurrentDetail } =
     useProductCard(products);
-  console.log("123", products);
+  // console.log("123", products);
 
   useEffect(() => {
     dispatch(findAllHistoryView());

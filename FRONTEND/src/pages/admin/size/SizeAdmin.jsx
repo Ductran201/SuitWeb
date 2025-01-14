@@ -1,18 +1,10 @@
-import {
-  Button,
-  MenuItem,
-  Pagination,
-  Select,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, Pagination, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Choices from "../../../components/choices";
 import {
   Close,
   Delete,
   Edit,
-  Filter,
   FilterAlt,
   Lock,
   LockOpen,
@@ -25,24 +17,19 @@ import {
   editSize,
   toggleStatusSize,
 } from "../../../services/sizeService";
-import { styled } from "@mui/material/styles";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "@uidotdev/usehooks";
 import DialogCustom from "../../../components/dialog";
 import AlertCustom from "../../../components/alert/AlertCustom";
 import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
 import { useForm } from "react-hook-form";
+import usePaginationCustom from "../../../components/usePaginationCustom/UsePaginationCustom";
 
 export default function SizeAdmin() {
   const dispatch = useDispatch();
 
   // Pagination
-  const [sortField, setSortField] = useState("id");
-  const [sortDirection, setSortDirection] = useState("DESC");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [sizePage, setSizePage] = useState(2);
 
   const [isFormAdd, setIsFormAdd] = useState(false);
   const [isFormEdit, setIsFormEdit] = useState(false);
@@ -53,10 +40,34 @@ export default function SizeAdmin() {
 
   const [baseId, setBaseId] = useState(null);
 
+  const [page, setPage] = useState(1);
+  const [sizePage, setSizePage] = useState(2);
+  const [sortField, setSortField] = useState("id");
+  const [sortDirection, setSortDirection] = useState("DESC");
+  const [search, setSearch] = useState("");
+
+  const {
+    handleSearch,
+    handleChangePage,
+    handleChangeSize,
+    handleSelectFilter,
+  } = usePaginationCustom();
+
   const debounce = useDebounce(search, 500);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setPage(Number(searchParams.get("page")) || 1);
+    setSizePage(Number(searchParams.get("size")) || 2);
+    setSearch(searchParams.get("search") || "");
+    setSortField(searchParams.get("sortField") || "id");
+    setSortDirection(searchParams.get("sortDirection") || "DESC");
+  }, [window.location.search]);
+
   // Data of size
-  const { data, error, totalPages, totalElements, numberOfElements } =
-    useSelector((state) => state.size);
+  const { data, totalPages, totalElements, numberOfElements } = useSelector(
+    (state) => state.size
+  );
 
   const loadSizePagination = () => {
     dispatch(
@@ -66,31 +77,6 @@ export default function SizeAdmin() {
   useEffect(() => {
     loadSizePagination();
   }, [page, debounce, sizePage, sortDirection, sortField]);
-
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    setPage(0);
-  };
-
-  const handlePage = (e, value) => {
-    setPage(value);
-  };
-
-  const handleChangePageSize = (newSize) => {
-    setSizePage(newSize);
-  };
-
-  const handleSelectFilter = (sortField, sortDirection) => {
-    setSortField(sortField);
-    setSortDirection(sortDirection);
-  };
-
-  // const [file, setFile] = useState(null);
-
-  // const handleGetFile = (e) => {
-  //   console.log(e.target.files[0]);
-  //   setFile(e.target.files[0]);
-  // };
 
   const handleShowAlert = (propsAlert) => {
     setAlertConfig(propsAlert);
@@ -266,7 +252,6 @@ export default function SizeAdmin() {
     },
   ];
 
-  // ==================== HTML ================================
   return (
     <>
       {isAlert && <AlertCustom {...alertConfig} />}
@@ -408,14 +393,15 @@ export default function SizeAdmin() {
         </div>
 
         <NativeSelectCustom
-          onChange={handleChangePageSize}
-          //   label={"Size"}
+          onChange={handleChangeSize}
           data={dataPageSize}
+          defaultValue={sizePage}
         />
 
         <Pagination
           size="large"
-          onChange={handlePage}
+          page={page}
+          onChange={handleChangePage}
           count={totalPages}
           color="primary"
         ></Pagination>

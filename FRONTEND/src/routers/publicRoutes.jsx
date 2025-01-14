@@ -20,9 +20,10 @@ import Coupons from "../pages/user/coupons/Coupons";
 import data from "../data/index.json";
 import CartUser from "../pages/user/cart/CartUser";
 import ProductCard from "../pages/all/ProductCard";
-import Test2 from "../pages/all/home/Test2";
 import Checkout from "../pages/user/checkout/Checkout";
 import DonePayment from "../pages/user/donePayment/DonePayment";
+import OrderUser from "../pages/user/order/OrderUser";
+import OrderDetailUser from "../pages/user/order/OrderDetailUser";
 
 const publicRoutes = [
   {
@@ -65,7 +66,8 @@ const publicRoutes = [
           },
           {
             path: "history",
-            element: <History />,
+            element: <OrderUser />,
+            children: [{ path: ":orderId", element: <OrderDetailUser /> }],
           },
           {
             path: "coupons",
@@ -96,11 +98,6 @@ const publicRoutes = [
       {
         path: "/test",
         element: <Test data={data} />,
-      },
-
-      {
-        path: "/test2",
-        element: <Test2 />,
       },
     ],
   },

@@ -5,7 +5,6 @@ import ra.ecommerceapi.model.entity.Color;
 import ra.ecommerceapi.model.entity.Size;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 

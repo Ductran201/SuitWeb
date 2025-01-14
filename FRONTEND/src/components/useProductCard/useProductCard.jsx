@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 export default function useProductCard(products) {
   const [selectedColor, setSelectedColor] = useState({}); // Lưu trạng thái cuối cùng của màu được chọn
 
-  // console.log("mang products", products); // productResponse
+  // console.log("mang products", products);
+  //  productResponse
   useEffect(() => {
     if (products) {
       const initialColors = {};

@@ -1,331 +1,80 @@
-{
-    "productName": "Dress Shoes",
+[
+  {
+    "productId": 2,
+    "categoryId": 3,
+    "productName": "Plaid Shirt",
     "colorSet": [
-        {
-            "id": 16,
-            "status": true,
-            "createdDate": "2024-11-14",
-            "name": "Green"
-        },
-        {
-            "id": 2,
-            "status": true,
-            "createdDate": "2024-10-28",
-            "name": "Black"
-        }
+      {
+        "id": 16,
+        "status": true,
+        "createdDate": "2024-11-14",
+        "name": "Green"
+      },
+      {
+        "id": 1,
+        "status": true,
+        "createdDate": "2024-10-28",
+        "name": "Red"
+      }
     ],
     "sizeSet": [
-        {
-            "id": 2,
-            "status": true,
-            "createdDate": "2024-10-28",
-            "name": "M"
-        }
-    ],
-    "productDetailAllResponse": [
-        {
-            "productDetail": {
-                "id": 29,
-                "status": false,
-                "createdDate": "2024-11-14",
-                "name": "Dress Shoes Black",
-                "price": 232142.00,
-                "stockQuantity": 234,
-                "updatedDate": "2024-11-14",
-                "size": {
-                    "id": 2,
-                    "status": true,
-                    "createdDate": "2024-10-28",
-                    "name": "M"
-                },
-                "color": {
-                    "id": 2,
-                    "status": true,
-                    "createdDate": "2024-10-28",
-                    "name": "Black"
-                },
-                "product": {
-                    "id": 4,
-                    "status": true,
-                    "createdDate": "2024-10-29",
-                    "name": "Dress Shoes",
-                    "description": "For shoes 2",
-                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-29_12-16-141539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1730178975791772&alt=media",
-                    "updatedDate": "2024-10-29",
-                    "category": {
-                        "id": 2,
-                        "status": true,
-                        "createdDate": "2024-10-28",
-                        "name": "Shoes",
-                        "description": "",
-                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_03-14-35dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1730060076653860&alt=media"
-                    }
-                }
-            },
-            "images": [
-                {
-                    "id": 33,
-                    "status": true,
-                    "createdDate": "2024-11-14",
-                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-14_01-10-071539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1731521408265169&alt=media",
-                    "productDetail": {
-                        "id": 29,
-                        "status": false,
-                        "createdDate": "2024-11-14",
-                        "name": "Dress Shoes Black",
-                        "price": 232142.00,
-                        "stockQuantity": 234,
-                        "updatedDate": "2024-11-14",
-                        "size": {
-                            "id": 2,
-                            "status": true,
-                            "createdDate": "2024-10-28",
-                            "name": "M"
-                        },
-                        "color": {
-                            "id": 2,
-                            "status": true,
-                            "createdDate": "2024-10-28",
-                            "name": "Black"
-                        },
-                        "product": {
-                            "id": 4,
-                            "status": true,
-                            "createdDate": "2024-10-29",
-                            "name": "Dress Shoes",
-                            "description": "For shoes 2",
-                            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-29_12-16-141539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1730178975791772&alt=media",
-                            "updatedDate": "2024-10-29",
-                            "category": {
-                                "id": 2,
-                                "status": true,
-                                "createdDate": "2024-10-28",
-                                "name": "Shoes",
-                                "description": "",
-                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_03-14-35dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1730060076653860&alt=media"
-                            }
-                        }
-                    }
-                },
-                {
-                    "id": 34,
-                    "status": true,
-                    "createdDate": "2024-11-14",
-                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-14_01-10-0851ww-o5rh7L._AC_SY1000_.jpg?generation=1731521408999948&alt=media",
-                    "productDetail": {
-                        "id": 29,
-                        "status": false,
-                        "createdDate": "2024-11-14",
-                        "name": "Dress Shoes Black",
-                        "price": 232142.00,
-                        "stockQuantity": 234,
-                        "updatedDate": "2024-11-14",
-                        "size": {
-                            "id": 2,
-                            "status": true,
-                            "createdDate": "2024-10-28",
-                            "name": "M"
-                        },
-                        "color": {
-                            "id": 2,
-                            "status": true,
-                            "createdDate": "2024-10-28",
-                            "name": "Black"
-                        },
-                        "product": {
-                            "id": 4,
-                            "status": true,
-                            "createdDate": "2024-10-29",
-                            "name": "Dress Shoes",
-                            "description": "For shoes 2",
-                            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-29_12-16-141539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1730178975791772&alt=media",
-                            "updatedDate": "2024-10-29",
-                            "category": {
-                                "id": 2,
-                                "status": true,
-                                "createdDate": "2024-10-28",
-                                "name": "Shoes",
-                                "description": "",
-                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_03-14-35dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1730060076653860&alt=media"
-                            }
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            "productDetail": {
-                "id": 31,
-                "status": false,
-                "createdDate": "2024-11-14",
-                "name": "Dress Shoes Green",
-                "price": 22222.00,
-                "stockQuantity": 22,
-                "updatedDate": "2024-11-14",
-                "size": {
-                    "id": 2,
-                    "status": true,
-                    "createdDate": "2024-10-28",
-                    "name": "M"
-                },
-                "color": {
-                    "id": 16,
-                    "status": true,
-                    "createdDate": "2024-11-14",
-                    "name": "Green"
-                },
-                "product": {
-                    "id": 4,
-                    "status": true,
-                    "createdDate": "2024-10-29",
-                    "name": "Dress Shoes",
-                    "description": "For shoes 2",
-                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-29_12-16-141539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1730178975791772&alt=media",
-                    "updatedDate": "2024-10-29",
-                    "category": {
-                        "id": 2,
-                        "status": true,
-                        "createdDate": "2024-10-28",
-                        "name": "Shoes",
-                        "description": "",
-                        "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_03-14-35dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1730060076653860&alt=media"
-                    }
-                }
-            },
-            "images": [
-                {
-                    "id": 39,
-                    "status": true,
-                    "createdDate": "2024-11-14",
-                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-14_01-38-59ao-polo-nam-yody-apm3635-xla-2.webp?generation=1731523141001056&alt=media",
-                    "productDetail": {
-                        "id": 31,
-                        "status": false,
-                        "createdDate": "2024-11-14",
-                        "name": "Dress Shoes Green",
-                        "price": 22222.00,
-                        "stockQuantity": 22,
-                        "updatedDate": "2024-11-14",
-                        "size": {
-                            "id": 2,
-                            "status": true,
-                            "createdDate": "2024-10-28",
-                            "name": "M"
-                        },
-                        "color": {
-                            "id": 16,
-                            "status": true,
-                            "createdDate": "2024-11-14",
-                            "name": "Green"
-                        },
-                        "product": {
-                            "id": 4,
-                            "status": true,
-                            "createdDate": "2024-10-29",
-                            "name": "Dress Shoes",
-                            "description": "For shoes 2",
-                            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-29_12-16-141539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1730178975791772&alt=media",
-                            "updatedDate": "2024-10-29",
-                            "category": {
-                                "id": 2,
-                                "status": true,
-                                "createdDate": "2024-10-28",
-                                "name": "Shoes",
-                                "description": "",
-                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_03-14-35dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1730060076653860&alt=media"
-                            }
-                        }
-                    }
-                },
-                {
-                    "id": 40,
-                    "status": true,
-                    "createdDate": "2024-11-14",
-                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-14_01-39-00ao-polo-nam-yody-apm3635-xla-4.webp?generation=1731523141613755&alt=media",
-                    "productDetail": {
-                        "id": 31,
-                        "status": false,
-                        "createdDate": "2024-11-14",
-                        "name": "Dress Shoes Green",
-                        "price": 22222.00,
-                        "stockQuantity": 22,
-                        "updatedDate": "2024-11-14",
-                        "size": {
-                            "id": 2,
-                            "status": true,
-                            "createdDate": "2024-10-28",
-                            "name": "M"
-                        },
-                        "color": {
-                            "id": 16,
-                            "status": true,
-                            "createdDate": "2024-11-14",
-                            "name": "Green"
-                        },
-                        "product": {
-                            "id": 4,
-                            "status": true,
-                            "createdDate": "2024-10-29",
-                            "name": "Dress Shoes",
-                            "description": "For shoes 2",
-                            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-29_12-16-141539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1730178975791772&alt=media",
-                            "updatedDate": "2024-10-29",
-                            "category": {
-                                "id": 2,
-                                "status": true,
-                                "createdDate": "2024-10-28",
-                                "name": "Shoes",
-                                "description": "",
-                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_03-14-35dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1730060076653860&alt=media"
-                            }
-                        }
-                    }
-                },
-                {
-                    "id": 41,
-                    "status": true,
-                    "createdDate": "2024-11-14",
-                    "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-11-14_01-39-01ao-polo-nam-yody-apm3635-xla-5.webp?generation=1731523142387964&alt=media",
-                    "productDetail": {
-                        "id": 31,
-                        "status": false,
-                        "createdDate": "2024-11-14",
-                        "name": "Dress Shoes Green",
-                        "price": 22222.00,
-                        "stockQuantity": 22,
-                        "updatedDate": "2024-11-14",
-                        "size": {
-                            "id": 2,
-                            "status": true,
-                            "createdDate": "2024-10-28",
-                            "name": "M"
-                        },
-                        "color": {
-                            "id": 16,
-                            "status": true,
-                            "createdDate": "2024-11-14",
-                            "name": "Green"
-                        },
-                        "product": {
-                            "id": 4,
-                            "status": true,
-                            "createdDate": "2024-10-29",
-                            "name": "Dress Shoes",
-                            "description": "For shoes 2",
-                            "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-29_12-16-141539360706_20181009-150631-A10184BMT_Shoe_Matte_Black_PVC.avif?generation=1730178975791772&alt=media",
-                            "updatedDate": "2024-10-29",
-                            "category": {
-                                "id": 2,
-                                "status": true,
-                                "createdDate": "2024-10-28",
-                                "name": "Shoes",
-                                "description": "",
-                                "image": "https://storage.googleapis.com/download/storage/v1/b/e-commerceapi-a15ef.appspot.com/o/2024-10-28_03-14-35dong-phuc-ao-vest-cong-so-nam-mau-59_3701_HasThumb-400x600.jpg?generation=1730060076653860&alt=media"
-                            }
-                        }
-                    }
-                }
-            ]
-        }
+      {
+        "id": 3,
+        "status": true,
+        "createdDate": "2024-10-28",
+        "name": "XL"
+      },
+      {
+        "id": 2,
+        "status": true,
+        "createdDate": "2024-10-28",
+        "name": "M"
+      }
     ]
-}
+  },
+  {
+    "productId": 1,
+    "categoryId": 3,
+    "productName": "Shirt Standard",
+    "colorSet": [
+      {
+        "id": 1,
+        "status": true,
+        "createdDate": "2024-10-28",
+        "name": "Red"
+      },
+      {
+        "id": 7,
+        "status": true,
+        "createdDate": "2024-11-02",
+        "name": "yellow"
+      },
+      {
+        "id": 2,
+        "status": true,
+        "createdDate": "2024-10-28",
+        "name": "Black"
+      }
+    ],
+    "sizeSet": [
+      {
+        "id": 1,
+        "status": true,
+        "createdDate": "2024-10-28",
+        "name": "S"
+      },
+      {
+        "id": 3,
+        "status": true,
+        "createdDate": "2024-10-28",
+        "name": "XL"
+      },
+      {
+        "id": 2,
+        "status": true,
+        "createdDate": "2024-10-28",
+        "name": "M"
+      }
+    ]
+  }
+]

@@ -33,28 +33,16 @@ public class UOrderController {
         );
     }
 
-    @GetMapping("/{orderCode}")
-    public ResponseEntity<?> getById(@PathVariable UUID orderCode) throws CustomException {
+    @GetMapping("/{orderId}")
+    public ResponseEntity<?> getAllOrderDetailById(@PathVariable Long orderId) throws CustomException {
         return ResponseEntity.ok().body(
                 ResponseWrapper.builder()
-                        .data(orderService.findByUserAndCode(orderCode))
+                        .data(orderService.findByIdAndUser(orderId))
                         .status(EHttpStatus.SUCCESS)
                         .code(200)
                         .build()
         );
     }
-
-//PENDING
-//    @GetMapping("/{orderId/orderDetail}")
-//    public ResponseEntity<?> getAllOrderDetailById(@PathVariable Long orderId)  {
-//        return ResponseEntity.ok().body(
-//                ResponseWrapper.builder()
-//                        .data(orderService.findByUserAndCode(orderCode))
-//                        .status(EHttpStatus.SUCCESS)
-//                        .code(200)
-//                        .build()
-//        );
-//    }
 
     @GetMapping("/status/{orderStatus}")
     public ResponseEntity<?> getAllByStatus(@PathVariable String orderStatus

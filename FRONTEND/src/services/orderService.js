@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BASE_URL } from "../api";
 
-export const orderPagination = createAsyncThunk(
-  "order/pagination",
+export const orderPaginationAdmin = createAsyncThunk(
+  "order/paginationAdmin",
   async ({ page, search, size, sortField, sortDirection }) => {
     const res = await BASE_URL.get(
       `admin/orders?search=${search}&page=${page - 1}`

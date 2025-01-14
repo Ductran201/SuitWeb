@@ -79,9 +79,10 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> findAllProductByCategory(Long categoryId, String search, Pageable pageable) {
-//        return productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(id, search, pageable);
+    public Page<ProductResponse> findAllProductByCategory(Long categoryId, String search, List<Long> colorIds, List<Long> sizeIds, Pageable pageable) {
         Page<Product> products = productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(categoryId, search, pageable);
+
+        System.out.println(products.getSize());
 
         List<ProductResponse> productResponseList = new ArrayList<>();
 
@@ -93,36 +94,50 @@ public class ProductServiceImpl implements IProductService {
             // Lấy danh sách ProductDetail theo ProductId
             List<ProductDetail> productDetailList = productDetailRepo.findAllByProductId(product.getId());
 
+            // Kiểm tra xem sản phẩm chính có ít nhất một ProductDetail thỏa mãn điều kiện không
+            boolean hasMatchingDetail = false;
+
             for (ProductDetail productDetail : productDetailList) {
+                // Luôn thêm vào colorSet và sizeSet
                 colorSet.add(productDetail.getColor());
                 sizeSet.add(productDetail.getSize());
 
                 // Lấy danh sách ảnh phụ cho từng ProductDetail
                 List<ImgProductDetail> imgProductDetailList = imgProductDetailService.findAllImagesByProductDetailId(productDetail.getId());
 
-                // Thêm vào danh sách ProductDetailAllResponse
+                // Kiểm tra ProductDetail có thỏa mãn bộ lọc hay không
+                if ((colorIds == null || colorIds.isEmpty() || colorIds.contains(productDetail.getColor().getId())) &&
+                        (sizeIds == null || sizeIds.isEmpty() || sizeIds.contains(productDetail.getSize().getId()))) {
+                    hasMatchingDetail = true; // Đánh dấu sản phẩm có ProductDetail thỏa mãn điều kiện
+                }
+
+                // Thêm tất cả ProductDetail vào danh sách (không lọc)
                 productDetailAllResponseList.add(ProductDetailAllResponse.builder()
                         .productDetail(productDetail)
                         .images(imgProductDetailList)
                         .build());
             }
 
-            // Tạo ProductResponse cho sản phẩm hiện tại
-            ProductResponse productResponse = ProductResponse.builder()
-                    .productId(product.getId())
-                    .productName(product.getName())
-                    .colorSet(colorSet)
-                    .sizeSet(sizeSet)
-                    .productDetailAllResponse(productDetailAllResponseList)
-                    .categoryId(product.getCategory().getId())
-                    .build();
+            // Chỉ thêm ProductResponse nếu sản phẩm có ít nhất 1 ProductDetail thỏa mãn điều kiện
+            if (hasMatchingDetail) {
+                ProductResponse productResponse = ProductResponse.builder()
+                        .productId(product.getId())
+                        .productName(product.getName())
+                        .colorSet(colorSet) // Danh sách toàn bộ màu
+                        .sizeSet(sizeSet)   // Danh sách toàn bộ kích thước
+                        .productDetailAllResponse(productDetailAllResponseList) // Tất cả ProductDetail
+                        .categoryId(product.getCategory().getId())
+                        .build();
 
-            productResponseList.add(productResponse);
+                productResponseList.add(productResponse);
+            }
         }
-//        Transform from List --> Page
 
+        // Chuyển đổi từ List sang Page
         return new PageImpl<>(productResponseList, pageable, products.getTotalElements());
     }
+
+
 
     @Override
     public ProductResponse findProductResponseByProductId(Long id) {

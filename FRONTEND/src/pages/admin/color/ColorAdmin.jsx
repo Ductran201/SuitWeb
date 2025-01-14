@@ -1,18 +1,10 @@
-import {
-  Button,
-  MenuItem,
-  Pagination,
-  Select,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, Pagination, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Choices from "../../../components/choices";
 import {
   Close,
   Delete,
   Edit,
-  Filter,
   FilterAlt,
   Lock,
   LockOpen,
@@ -32,16 +24,24 @@ import DialogCustom from "../../../components/dialog";
 import AlertCustom from "../../../components/alert/AlertCustom";
 import NativeSelectCustom from "../../../components/nativeSelect/NativeSelectCustom";
 import { useForm } from "react-hook-form";
+import usePaginationCustom from "../../../components/usePaginationCustom/UsePaginationCustom";
 
 export default function ColorAdmin() {
   const dispatch = useDispatch();
 
-  // Pagination
+  // Pagination;
+  const [page, setPage] = useState(1);
+  const [sizePage, setSizePage] = useState(2);
   const [sortField, setSortField] = useState("id");
   const [sortDirection, setSortDirection] = useState("DESC");
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [sizePage, setSizePage] = useState(2);
+
+  const {
+    handleSearch,
+    handleChangePage,
+    handleChangeSize,
+    handleSelectFilter,
+  } = usePaginationCustom();
 
   const [isFormAdd, setIsFormAdd] = useState(false);
   const [isFormEdit, setIsFormEdit] = useState(false);
@@ -56,6 +56,15 @@ export default function ColorAdmin() {
   // Data of size
   const { data, error, totalPages, totalElements, numberOfElements } =
     useSelector((state) => state.color);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setPage(Number(searchParams.get("page")) || 1);
+    setSizePage(Number(searchParams.get("size")) || 2);
+    setSearch(searchParams.get("search") || "");
+    setSortField(searchParams.get("sortField") || "id");
+    setSortDirection(searchParams.get("sortDirection") || "DESC");
+  }, [window.location.search]);
 
   const loadColorPagination = () => {
     dispatch(
@@ -110,27 +119,10 @@ export default function ColorAdmin() {
     } catch (error) {
       setError("name", {
         type: "manual",
-        message: error, // API error message, e.g., "This color already exists"
+        message: error,
+        // API error message, e.g., "This color already exists"
       });
     }
-  };
-
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    setPage(0);
-  };
-
-  const handlePage = (e, value) => {
-    setPage(value);
-  };
-
-  const handleChangePageSize = (newSize) => {
-    setSizePage(newSize);
-  };
-
-  const handleSelectFilter = (sortField, sortDirection) => {
-    setSortField(sortField);
-    setSortDirection(sortDirection);
   };
 
   const handleShowAlert = (propsAlert) => {
@@ -267,7 +259,6 @@ export default function ColorAdmin() {
     },
   ];
 
-  // ==================== HTML ================================
   return (
     <>
       {isAlert && <AlertCustom {...alertConfig} />}
@@ -415,14 +406,15 @@ export default function ColorAdmin() {
         </div>
 
         <NativeSelectCustom
-          onChange={handleChangePageSize}
-          //   label={"Size"}
+          defaultValue={sizePage}
+          onChange={handleChangeSize}
           data={dataPageSize}
         />
 
         <Pagination
           size="large"
-          onChange={handlePage}
+          page={page}
+          onChange={handleChangePage}
           count={totalPages}
           color="primary"
         ></Pagination>
