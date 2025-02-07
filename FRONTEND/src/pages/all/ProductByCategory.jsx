@@ -1,18 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useDebounce } from "@uidotdev/usehooks";
 import { findAllProductByCategory } from "../../services/categoryService";
 import ProductCard from "./ProductCard";
 import useProductCard from "../../components/useProductCard/useProductCard";
 import { Pagination } from "@mui/material";
+
+import SortByCustom from "../../components/sortByCustom/SortByCustom";
+import debounce from "lodash.debounce";
 import usePaginationCustom from "../../components/usePaginationCustom/UsePaginationCustom";
 
 export default function ProductByCategory() {
   const dispatch = useDispatch();
-  const debounce = useDebounce();
 
   const { id } = useParams();
+
+  const [productsByCat, setProductsByCat] = useState([]);
 
   // Pagination
   const [sortField, setSortField] = useState("id");
@@ -21,31 +24,24 @@ export default function ProductByCategory() {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(5);
 
-  const {
-    data: products,
-    error,
-    totalPages,
-    totalElements,
-    numberOfElements,
-  } = useSelector((state) => state.product);
-  // console.log(products);
+  const { totalPages } = useSelector((state) => state.product);
+  // console.log("total page", totalPages);
 
   const {
     handleSearch,
     handleChangePage,
-    handleChangeSize,
     handleSelectFilter,
+    handleFilterChange,
+    clearFilters,
   } = usePaginationCustom();
 
   const [selectedFilters, setSelectedFilters] = useState({
-    colors: [],
-    sizes: [],
+    colorIds: [],
+    sizeIds: [],
   });
 
-  // console.log("selectedFilters", selectedFilters);
-
   const { selectedColor, handleHoverColor, getCurrentDetail } =
-    useProductCard(products);
+    useProductCard(productsByCat);
 
   const loadInitialData = () => {
     dispatch(
@@ -56,29 +52,53 @@ export default function ProductByCategory() {
         search,
         sortDirection,
         sortField,
-        colorIds: selectedFilters.colors,
-        sizeIds: selectedFilters.sizes,
+        colorIds: selectedFilters.colorIds,
+        sizeIds: selectedFilters.sizeIds,
       })
-    );
+    )
+      .then((res) => {
+        setProductsByCat(res.payload.content);
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
     loadInitialData();
-  }, [id, page, size, sortDirection, sortField, selectedFilters]);
+
+    // Set the param to Url
+    // const searchParams = new URLSearchParams(window.location.search);
+
+    // if (selectedFilters.colorIds.length > 0) {
+    //   searchParams.set("colorIds", selectedFilters.colorIds.join(","));
+    // }
+
+    // if (selectedFilters.sizeIds.length > 0) {
+    //   searchParams.set("sizeIds", selectedFilters.sizeIds.join(","));
+    // }
+
+    // window.history.replaceState(null, "", `${"?" + searchParams.toString()}`);
+  }, [id, page, size, search, sortDirection, sortField, selectedFilters]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
+
     setPage(Number(searchParams.get("page")) || 1);
     setSize(Number(searchParams.get("size")) || 5);
     setSearch(searchParams.get("search") || "");
     setSortField(searchParams.get("sortField") || "id");
     setSortDirection(searchParams.get("sortDirection") || "DESC");
-    // setSelectedFilters(
-    //   (selectedFilters.colors = searchParams.get("colorIds") || [])
-    // );
-    // setSelectedFilters(
-    //   (selectedFilters.sizes = searchParams.get("sizeIds") || [])
-    // );
+
+    const colorIds = searchParams.get("colorIds")
+      ? searchParams.get("colorIds").split(",").map(Number)
+      : [];
+    const sizeIds = searchParams.get("sizeIds")
+      ? searchParams.get("sizeIds").split(",").map(Number)
+      : [];
+
+    setSelectedFilters({
+      colorIds: colorIds,
+      sizeIds: sizeIds,
+    });
   }, [window.location.search]);
 
   // Initialize uniqueColors and uniqueSizes only once
@@ -87,29 +107,29 @@ export default function ProductByCategory() {
   const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (!isInitializedRef.current && products?.length > 0) {
+    if (!isInitializedRef.current && productsByCat?.length > 0) {
       uniqueColorsRef.current = [
         ...new Map(
-          products
+          productsByCat
             ?.flatMap((product) => product.colorSet)
             .map((color) => [color.name.toLowerCase(), color])
         ).values(),
       ];
       uniqueSizesRef.current = [
         ...new Map(
-          products
+          productsByCat
             ?.flatMap((product) => product.sizeSet)
             .map((size) => [size.name.toLowerCase(), size])
         ).values(),
       ];
       isInitializedRef.current = true; // Mark as initialized
     }
-  }, [products]);
+  }, [productsByCat]);
 
   const toggleFilter = (category, value) => {
     setSelectedFilters((prev) => {
       const updatedFilters = { ...prev };
-      console.log("1", updatedFilters);
+      // console.log("1", updatedFilters);
       if (updatedFilters[category]?.includes(value)) {
         updatedFilters[category] = updatedFilters[category].filter(
           (item) => item !== value
@@ -118,17 +138,32 @@ export default function ProductByCategory() {
         updatedFilters[category].push(value);
       }
 
-      console.log("2", updatedFilters);
+      handleFilterChange(category, updatedFilters[category]); // Gọi hàm cập nhật URL
+
       return updatedFilters;
     });
   };
 
-  const clearFilters = () => {
+  const clearAllFilters = () => {
     setSelectedFilters({
-      colors: [],
-      sizes: [],
+      colorIds: [],
+      sizeIds: [],
     });
+    clearFilters();
   };
+
+  // List for filter
+
+  const options = [
+    {
+      content: "New upload",
+      function: () => handleSelectFilter("createdDate", "DESC"),
+    },
+    {
+      content: "Old upload",
+      function: () => handleSelectFilter("createdDate", "ASC"),
+    },
+  ];
 
   return (
     <>
@@ -136,7 +171,7 @@ export default function ProductByCategory() {
         {/* Super filter */}
         <div className=" bg-red-400 col-span-1 p-4">
           <h2 className="font-bold text-lg mb-4">
-            {products?.length} products
+            {productsByCat?.length} products
           </h2>
           <h2 className="font-bold text-lg mb-4">Super filter</h2>
 
@@ -148,12 +183,12 @@ export default function ProductByCategory() {
                 <button
                   key={color.id}
                   className={`w-8 h-8 rounded-full ${
-                    selectedFilters.colors?.includes(color.id)
+                    selectedFilters.sizeIds?.includes(color.id)
                       ? "border-2 border-black"
                       : ""
                   }`}
                   style={{ backgroundColor: `${color.name}` }}
-                  onClick={() => toggleFilter("colors", color.id)}
+                  onClick={() => toggleFilter("colorIds", color.id)}
                 ></button>
               ))}
             </div>
@@ -167,11 +202,11 @@ export default function ProductByCategory() {
                 <button
                   key={size.id}
                   className={`border rounded px-2 py-1 text-sm hover:bg-gray-200 ${
-                    selectedFilters.sizes?.includes(size.id)
+                    selectedFilters.sizeIds?.includes(size.id)
                       ? "bg-gray-200"
                       : ""
                   }`}
-                  onClick={() => toggleFilter("sizes", size.id)}
+                  onClick={() => toggleFilter("sizeIds", size.id)}
                 >
                   {size.name}
                 </button>
@@ -202,7 +237,7 @@ export default function ProductByCategory() {
               {Object.keys(selectedFilters).map((key) =>
                 selectedFilters[key].map((filterId) => {
                   const filterName =
-                    key === "colors"
+                    key === "colorIds"
                       ? uniqueColorsRef.current.find(
                           (color) => color.id === filterId
                         )?.name
@@ -222,10 +257,10 @@ export default function ProductByCategory() {
                 })
               )}
 
-              {(selectedFilters.colors?.length > 0 ||
-                selectedFilters.sizes?.length > 0) && (
+              {(selectedFilters.colorIds?.length > 0 ||
+                selectedFilters.sizeIds?.length > 0) && (
                 <button
-                  onClick={clearFilters}
+                  onClick={clearAllFilters}
                   className="ml-4 bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600"
                 >
                   Clear filter
@@ -233,20 +268,12 @@ export default function ProductByCategory() {
               )}
             </div>
 
-            <div>
-              <select
-                className="border-2 border-black min-w-[150px] p-1 rounded-lg text-center"
-                name=""
-                id=""
-              >
-                <option value="">Sort By</option>
-                <option value="">ádsad</option>
-                <option value="">ádsad</option>
-              </select>
+            <div className="z-50">
+              <SortByCustom initContent={"Sort by"} options={options} />
             </div>
           </div>
           <div className="grid grid-cols-4 gap-5">
-            {products?.map((item) => {
+            {productsByCat?.map((item) => {
               const currentDetail = getCurrentDetail(item, item.productName);
               const currentImage = currentDetail?.images?.[0]?.image || "";
               const currentPrice =

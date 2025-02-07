@@ -8,11 +8,9 @@ export default function Choices({ listOptions, icon }) {
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-    // onClick();
   };
   const handleClose = () => {
     setAnchorEl(null);
-    // onClose();
   };
 
   return (
@@ -40,7 +38,6 @@ export default function Choices({ listOptions, icon }) {
             <MenuItem
               key={index}
               onClick={() => {
-                // opt.function(baseId);
                 opt.function();
                 handleClose();
               }}

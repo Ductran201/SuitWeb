@@ -12,6 +12,7 @@ import historyViewSlice from "./historyViewSlice";
 import addressSlice from "./addressSlice";
 import orderSlice from "./orderSlice";
 import orderSliceUser from "./orderSliceUser";
+import personSlice from "./personSlice";
 const reducers = combineReducers({
   category: categorySlice,
   product: productSlice,
@@ -26,6 +27,7 @@ const reducers = combineReducers({
   address: addressSlice,
   order: orderSlice,
   orderUser: orderSliceUser,
+  person: personSlice,
 });
 
 export default reducers;

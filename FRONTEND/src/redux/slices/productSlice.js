@@ -11,6 +11,7 @@ const initialState = {
   loading: "idle",
   data: null,
   productInfor: null,
+  productsByCategory: null,
   error: null,
   totalPages: 1,
   totalElements: null,
@@ -22,7 +23,7 @@ const productSlice = createSlice({
   initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Pagination
+    // Pagination Admin
     builder.addCase(productPagination.pending, (state) => {
       state.loading = PENDING;
     });
@@ -54,7 +55,7 @@ const productSlice = createSlice({
       const { content, totalPages, totalElements, numberOfElements } =
         action.payload;
       state.loading = SUCCESS;
-      state.data = content;
+      state.productsByCategory = content;
       state.totalPages = totalPages;
       state.totalElements = totalElements;
       state.numberOfElements = numberOfElements;

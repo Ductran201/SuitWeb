@@ -4,14 +4,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.dto.request.AddressRequest;
 import ra.ecommerceapi.service.IAddressService;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("api.com/v2/user/addresses")
 public class AddressController {

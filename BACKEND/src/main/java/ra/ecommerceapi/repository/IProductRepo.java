@@ -21,28 +21,18 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
     void toggleStatus(Long id);
 
     //    FOR USER
-//    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
-//            "from Product p " +
-//            "join ProductDetail pd on pd.product=p " +
-//            "where p.category.id = :id and p.name like %:name% and p.status = true")
-//    @Query("SELECT DISTINCT new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id, p.name, p.image, p.createdDate, pd.price) " +
-//            "FROM Product p " +
-//            "JOIN ProductDetail pd ON pd.product = p " +
-//            "WHERE p.category.id = :id AND p.name LIKE %:name% AND p.status = true " +
-//            "GROUP BY p.id")
+    @Query("SELECT DISTINCT p FROM Product p " +
+            "JOIN ProductDetail pd ON pd.product.id = p.id " +
+            "WHERE p.category.id = :categoryId " +
+            "AND (:search IS NULL OR p.name LIKE %:search%) " +
+            "AND (:colorIds IS NULL OR pd.color.id IN :colorIds) " +
+            "AND (:sizeIds IS NULL OR pd.size.id IN :sizeIds)")
 
-
-//    @Query("SELECT new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price)" +
-//            "FROM Product p " +
-//            "JOIN ProductDetail pd ON pd.product = p " +
-//            "WHERE p.category.id = :categoryId and p.name like %:name% and p.status = true " +
-//            "AND pd.id = (SELECT MIN(pd2.id) " +
-//            "             FROM ProductDetail pd2 " +
-//            "             WHERE pd2.product = p)")
-//    Page<ProductOverviewResponse> findAllByCategoryIdAndNameContainsAndStatusTrue(Long categoryId, String name, Pageable pageable);
-
-
-    Page<Product> findAllByCategoryIdAndNameContainsAndStatusTrue(Long categoryId, String name, Pageable pageable);
+    Page<Product> findAllFilteredProducts(@Param("categoryId") Long categoryId,
+                                          @Param("search") String search,
+                                          @Param("colorIds") List<Long> colorIds,
+                                          @Param("sizeIds") List<Long> sizeIds,
+                                          Pageable pageable);
 
     //    COMMON
     @Query("select p.image from Product p where p.id= :id")
@@ -50,25 +40,6 @@ public interface IProductRepo extends JpaRepository<Product, Long> {
 
     Boolean existsByName(String name);
 
-//    =====================================
-    //    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.id,p.name,p.image,p.createdDate,pd.price) " +
-//            "from Product p " +
-//            "join ProductDetail pd on pd.product=p where p.category.id=:id and p.status = true order by pd.price asc limit 1")
-
-//    List<ProductResponse> findTopProductNewest(Long id);
-//================================================
-
     List<Product> findTop2ByCategoryIdAndStatusTrueOrderByIdDesc(Long categoryId);
-
-
-// This for if limit doesnt work
-//    @Query("select new ra.ecommerceapi.model.dto.response.ProductOverviewResponse(p.name, pd.price) " +
-//            "from Product p " +
-//            "join ProductDetail pb on pb.product = p " +
-//            "order by pb.price desc")
-//    List<ProductOverviewResponse> findTopByPrice(Pageable pageable);
-
-//    List<ProductOverviewResponse> topProducts = productRepo.findTopByPrice(PageRequest.of(0, 1));
-
 
 }

@@ -49,27 +49,3 @@ const handleAddInterceptors = (instance) => {
 
 handleAddInterceptors(BASE_URL);
 handleAddInterceptors(FORM_DATA);
-
-// const handleAddInterceptors = (instance) => {
-//   // Request
-//   instance.interceptors.request.use(
-//     (config) => {
-//       // const cookies = new Cookies();
-
-//       // const accessToken = cookies.get("accessToken");
-
-//       // if (accessToken) {
-//       //   config.headers.Authorization = `Bearer ${accessToken.data.accessToken}`;
-//       // }
-
-//       // WARNING
-//       const cookies = JSON.parse(Cookies.get("objectCookies") || null);
-//       if (cookies) {
-//         config.headers.Authorization = `Bearer ${cookies.data.accessToken}`;
-//       }
-//       return config;
-//     },
-//     (err) => Promise.reject(err)
-//   );
-//   // Response
-// };

@@ -80,13 +80,10 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Page<ProductResponse> findAllProductByCategory(Long categoryId, String search, List<Long> colorIds, List<Long> sizeIds, Pageable pageable) {
-        Page<Product> products = productRepo.findAllByCategoryIdAndNameContainsAndStatusTrue(categoryId, search, pageable);
+        Page<Product> filteredProducts = productRepo.findAllFilteredProducts(categoryId, search, colorIds, sizeIds, pageable);
 
-        System.out.println(products.getSize());
-
-        List<ProductResponse> productResponseList = new ArrayList<>();
-
-        for (Product product : products) {
+        // Chuyển đổi từ Product sang ProductResponse
+        List<ProductResponse> productResponses = filteredProducts.getContent().stream().map(product -> {
             Set<Color> colorSet = new HashSet<>();
             Set<Size> sizeSet = new HashSet<>();
             List<ProductDetailAllResponse> productDetailAllResponseList = new ArrayList<>();
@@ -94,49 +91,32 @@ public class ProductServiceImpl implements IProductService {
             // Lấy danh sách ProductDetail theo ProductId
             List<ProductDetail> productDetailList = productDetailRepo.findAllByProductId(product.getId());
 
-            // Kiểm tra xem sản phẩm chính có ít nhất một ProductDetail thỏa mãn điều kiện không
-            boolean hasMatchingDetail = false;
-
             for (ProductDetail productDetail : productDetailList) {
-                // Luôn thêm vào colorSet và sizeSet
                 colorSet.add(productDetail.getColor());
                 sizeSet.add(productDetail.getSize());
 
-                // Lấy danh sách ảnh phụ cho từng ProductDetail
+                // Lấy danh sách ảnh phụ cho từng ProductDetail (nếu có)
                 List<ImgProductDetail> imgProductDetailList = imgProductDetailService.findAllImagesByProductDetailId(productDetail.getId());
 
-                // Kiểm tra ProductDetail có thỏa mãn bộ lọc hay không
-                if ((colorIds == null || colorIds.isEmpty() || colorIds.contains(productDetail.getColor().getId())) &&
-                        (sizeIds == null || sizeIds.isEmpty() || sizeIds.contains(productDetail.getSize().getId()))) {
-                    hasMatchingDetail = true; // Đánh dấu sản phẩm có ProductDetail thỏa mãn điều kiện
-                }
-
-                // Thêm tất cả ProductDetail vào danh sách (không lọc)
+                // Thêm tất cả ProductDetail vào danh sách
                 productDetailAllResponseList.add(ProductDetailAllResponse.builder()
                         .productDetail(productDetail)
                         .images(imgProductDetailList)
                         .build());
             }
 
-            // Chỉ thêm ProductResponse nếu sản phẩm có ít nhất 1 ProductDetail thỏa mãn điều kiện
-            if (hasMatchingDetail) {
-                ProductResponse productResponse = ProductResponse.builder()
-                        .productId(product.getId())
-                        .productName(product.getName())
-                        .colorSet(colorSet) // Danh sách toàn bộ màu
-                        .sizeSet(sizeSet)   // Danh sách toàn bộ kích thước
-                        .productDetailAllResponse(productDetailAllResponseList) // Tất cả ProductDetail
-                        .categoryId(product.getCategory().getId())
-                        .build();
+            return ProductResponse.builder()
+                    .productId(product.getId())
+                    .productName(product.getName())
+                    .colorSet(colorSet)
+                    .sizeSet(sizeSet)
+                    .productDetailAllResponse(productDetailAllResponseList)
+                    .categoryId(product.getCategory().getId())
+                    .build();
+        }).toList();
 
-                productResponseList.add(productResponse);
-            }
-        }
-
-        // Chuyển đổi từ List sang Page
-        return new PageImpl<>(productResponseList, pageable, products.getTotalElements());
+        return new PageImpl<>(productResponses, pageable, filteredProducts.getTotalElements());
     }
-
 
 
     @Override

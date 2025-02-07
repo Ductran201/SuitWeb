@@ -63,12 +63,15 @@ public class CategoryController {
                                                             @PageableDefault(size = 5) Pageable pageable
     ) {
         categoryService.findById(categoryId);
+//  check param null
+        List<Long> validColorIds = (colorIds == null || colorIds.isEmpty()) ? null : colorIds;
+        List<Long> validSizeIds = (sizeIds == null || sizeIds.isEmpty()) ? null : sizeIds;
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
         return ResponseEntity.ok().body(ResponseWrapper.builder()
-                .data(productService.findAllProductByCategory(categoryId, search, colorIds,sizeIds, pageable))
+                .data(productService.findAllProductByCategory(categoryId, search, validColorIds, validSizeIds, pageable))
                 .code(200)
                 .status(EHttpStatus.SUCCESS)
                 .build());

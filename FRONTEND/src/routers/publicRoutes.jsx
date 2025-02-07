@@ -1,4 +1,3 @@
-import { patch } from "@mui/material";
 import AccountRecord from "../layouts/accountRecord";
 import ShopLayout from "../layouts/user";
 import AboutShop from "../pages/all/about/AboutShop";
@@ -15,7 +14,6 @@ import Information from "../pages/user/information/Information";
 import Social from "../pages/user/social/Social";
 import WishList from "../pages/user/wishList/WishList";
 import ShippingAddress from "../pages/user/shippingAddress/ShippingAddress";
-import History from "../pages/user/history/History";
 import Coupons from "../pages/user/coupons/Coupons";
 import data from "../data/index.json";
 import CartUser from "../pages/user/cart/CartUser";
@@ -24,6 +22,9 @@ import Checkout from "../pages/user/checkout/Checkout";
 import DonePayment from "../pages/user/donePayment/DonePayment";
 import OrderUser from "../pages/user/order/OrderUser";
 import OrderDetailUser from "../pages/user/order/OrderDetailUser";
+import WebSocketDemo from "../pages/webSocket/WebSocketDemo";
+import ChatRoom from "../pages/webSocket/WebSocketDemo2";
+import WebSocketDemo3 from "../pages/webSocket/WebSocketDemo3";
 
 const publicRoutes = [
   {
@@ -98,6 +99,18 @@ const publicRoutes = [
       {
         path: "/test",
         element: <Test data={data} />,
+      },
+      {
+        path: "/websocket",
+        element: <WebSocketDemo />,
+      },
+      {
+        path: "/websocket2",
+        element: <ChatRoom />,
+      },
+      {
+        path: "/websocket3",
+        element: <WebSocketDemo3 />,
       },
     ],
   },

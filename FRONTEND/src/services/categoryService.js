@@ -62,16 +62,6 @@ export const toggleStatusCategory = createAsyncThunk(
   }
 );
 
-// const query = new URLSearchParams({
-//   search: "shirt",
-//   sortField: "name",
-//   sortDirection: "ASC",
-//   colorIds: [1, 2], // Đỏ và Cam
-//   sizeIds: [3], // Kích thước M
-//   page: 0,
-//   size: 10,
-// }).toString();
-
 export const findAllProductByCategory = createAsyncThunk(
   "category/findAllProduct",
   async ({
@@ -84,10 +74,18 @@ export const findAllProductByCategory = createAsyncThunk(
     colorIds,
     sizeIds,
   }) => {
+    const params = new URLSearchParams();
+
+    params.append("page", page - 1);
+    params.append("size", size);
+    params.append("sortDirection", sortDirection);
+    params.append("sortField", sortField);
+    if (search) params.append("search", search);
+    if (colorIds?.length > 0) params.append("colorIds", colorIds.join(","));
+    if (sizeIds?.length > 0) params.append("sizeIds", sizeIds.join(","));
+
     const res = await BASE_URL.get(
-      `categories/${id}/products?page=${
-        page - 1
-      }&size=${size}&sortDirection=${sortDirection}&sortField=${sortField}&search=${search}&colorIds=${colorIds}&sizeIds=${sizeIds}`
+      `categories/${id}/products?${params.toString()}`
     );
     return res.data.data;
   }
